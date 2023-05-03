@@ -29,7 +29,29 @@ app.use(express.json())
 if(process.env.OPEN_API_CORS !== "false") { 
   // This enables CORS for all requests. We may want to update this in the future and only apply to some routes.
   const cors = require('cors')
-  app.use(cors()) 
+  app.use(
+    cors({
+      "methods" : "GET,OPTIONS,HEAD,PUT,PATCH,DELETE,POST",
+      "allowedHeaders" : [
+        'Content-Type',
+        'Content-Length',
+        'Allow',
+        'Authorization',
+        'Location',
+        'ETag',
+        'Connection',
+        'Keep-Alive',
+        'Date',
+        'Cache-Control',
+        'Last-Modified',
+        'Link',
+        'X-HTTP-Method-Override'
+      ],
+      "exposedHeaders" : "*",
+      "origin" : "*",
+      "maxAge" : "600"
+    })
+  ) 
 }
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())

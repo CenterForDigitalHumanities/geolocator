@@ -13,43 +13,62 @@ and open the template in the editor.
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
     <link rel="stylesheet" href="stylesheets/style.css">
     <script src="js/app.js"></script>
+    <style>
+        span[title]{
+            border-bottom: 1px dotted #000;
+            cursor: default;
+        }
+    </style>
 </head>
 
 <body>
     <header>
         cubap as above
     </header>
+
     <div class="container">
-        <p class="intro">
-            Welcome to the RERUM Geolocator hosted by the Research Computing Group at Saint Louis University.
-            Here you can enhance Linked Open Data resource by providing geospatial descriptors. This does not affect the original resource nor does it notify the resource owner of the enhancement.  There is no user system and so data generated here cannot be attributed to you specifically.  However, it will be available to you and other applications to make it your own.
-        </p>
-        <p>
-            This application is intended to work within the scope of the IIIF Presentation API and encourages you to bring your own IIIF resources.  If your web resource fits this category, there are two main paths to take.
-        </p>
-        <h4>Web Annotation</h4>
-        <h4>navPlace</h4>
-        <!-- <p>
-            To learn more about the Research Computing Group, <a target="_blank"
-                href="https://www.slu.edu/research/faculty-resources/research-computing.php">visit their
-                website</a>.<br>
-            To learn more about IIIF and Web Annotations <a target="_blank" href="https://iiif.io">visit IIIF on the
-                web</a>.<br>
-            Want to see some IIIF data resource examples? <a target="_blank" href="https://iiif.io/api/cookbook/">See
-                IIIF data object recipes</a>.<br>
-            To learn more about GeoJSON-LD <a href="https://geojson.org/geojson-ld/">visit GeoJSON-LD on the
-                web</a>.<br>
-        </p> -->
-        <p>
-            <b>Use RERUM Geolocator</b><br>
-            <input class="button primary" type="button" onclick="document.location.href='annotate.html'"
-                value="Geolocate A Web Resource" />
-            <input class="button primary" type="button" onclick="document.location.href='leaflet-view.html'"
-                value="View Geolocations In Leaflet" />
-            <input class="button primary" type="button" onclick="document.location.href='mapML-view.html'"
-                value="View Geolocations In MapML" />
-        </p>
+        <div class="row">
+            <div class="col">
+                <h3> Welcome to the RERUM Geolocator </h3>
+                <p class="intro">
+                    Here you can enhance Linked Open Data resource by providing geospatial descriptors. This does not affect the original resource nor does it notify the resource owner of the enhancement.  There is no user system and so data generated here cannot be attributed to you specifically.  However, it will be available to you and other applications to make it your own.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h4> IIIF Resource </h4>
+                <p>
+                    This application is proud to supoort the IIIF Presentation API and encourages you to bring your own IIIF resources.  If your web resource fits this category, there are two main paths to take.
+                </p>
+                <h5>Web Annotation</h5>
+                <p>
+                    The IIIF Presentation API incorporates the W3C Web Annotation for the "Annotation" objects created under its schema.  This Annotations can be embedded directly onto IIIF Defined Types.  It can also target those data types as non-destructive, non-dispruptive independent data assertion.  This process seeks to finish with a real active <span title="Linked Open Usable Data">LOUD</span> Geolocating Web Annotation for the resource you provide.
+                </p>
+                <input class="button primary" type="button" onclick="document.location.href='annotate.html'"
+                        value="Create a Geolocating Web Annotation" />
+
+                <h5>navPlace</h5>
+                <p>
+                    The IIIF Presentation API also incorproates community extensions.  The IIIF Maps groups developed a foundation around GeoJSON-LD as a data format to support within the IIIF APIs and data schemas.  The navPlace Extension formally introduced a `navPlace` property which is designed to house a single GeoJSON Feature Collection thus making a formal and direct connection between the resource and place.
+                </p>
+                <input class="button primary" type="button" onclick="document.location.href='navPlace.html'"
+                        value="Create a navPlace Object" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h4> Other Linked Open Data Resources </h4>
+                <p>
+                    Linked Open Usable Data is a vast expanse of different data classifications and well described taxonomies.  If your URI resolves to JSON, preferably JSON-LD <span title="?"><a href="https://dashjoin.medium.com/json-schema-schema-org-json-ld-whats-the-difference-e30d7315686a">(what's the difference?)</a></span>, then you can provide GeoJSON-LD for that <span title="Linked Open Usable Data">LOUD</span> entity through a non disruptive process using a W3C Web Annotation.  This process seeks to finish with a real active LOUD Geolocating Web Annotation for the resource you provide.
+                </p>
+                <h5>W3C Web Annotation</h5>
+                <input class="button primary" type="button" onclick="document.location.href='annotate.html'"
+                        value="Create a Geolocating Web Annotation" />
+            </div>
+        </div>
     </div>
+
     <footer>
         cubap so below
     </footer>

@@ -1,4 +1,4 @@
-name: Geolocator Test
+name: Rerum Geolocator Test
 on: 
   push:
     branches:

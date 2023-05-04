@@ -8,7 +8,6 @@ on:
       main
 jobs:
     deploy:
-      # Deploy to newprd01 with SSH
       strategy: 
         matrix:
             node-version: [16]
@@ -17,9 +16,9 @@ jobs:
       steps:
         - uses: actions/checkout@v3
         - run: |
-            if [[ ! -e /srv/node/logs/geolocator.txt ]]; then
+            if [[ ! -e /srv/node/logs/tinynode.txt ]]; then
                 mkdir -p /srv/node/logs
-                touch /srv/node/logs/geolocator.txt
+                touch /srv/node/logs/tinynode.txt
             fi
             cd /srv/node/geolocator/
             pm2 stop geolocator

@@ -1,4 +1,4 @@
-name: TinyNode Test
+name: Geolocator Test
 on: 
   push:
     branches:

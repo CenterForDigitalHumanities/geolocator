@@ -17,34 +17,19 @@ and open the template in the editor.
 
 <body>
     <header>
-        <div class="row">
-            <div>
-                <img src="https://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo">
-            </div>
-            <small class="rerum_shimmer">reconditorium eximium rerum universalium mutabiliumque</small>
-            <h1>
-                rerum geolocator
-            </h1>
-        </div>
+        cubap as above
     </header>
     <div class="container">
-        <p>
+        <p class="intro">
             Welcome to the RERUM Geolocator hosted by the Research Computing Group at Saint Louis University.
-            This small application creates GeoJSON-LD Points as Web Annotations. You can target any Linked Open Data
-            resource in the world
-            and provide coordinates as supplementary data. This does not affect the original resource nor does it notify
-            the resource owner of the
-            assertion. A UI is provided to see the Points displayed on a Leaflet map.
+            Here you can enhance Linked Open Data resource by providing geospatial descriptors. This does not affect the original resource nor does it notify the resource owner of the enhancement.  There is no user system and so data generated here cannot be attributed to you specifically.  However, it will be available to you and other applications to make it your own.
         </p>
         <p>
-            This application is intended to work within the scope of IIIF and encourages you to target IIIF resources in
-            order to provide
-            then with supplementary geospatial data. This data is meant to assert the CURRENT location, as a geographic
-            point, of the physical object the
-            resource represents (a painting, a book, etc.). In geospatial terms, this assertion will geolocate the
-            resource.
+            This application is intended to work within the scope of the IIIF Presentation API and encourages you to bring your own IIIF resources.  If your web resource fits this category, there are two main paths to take.
         </p>
-        <p>
+        <h4>Web Annotation</h4>
+        <h4>navPlace</h4>
+        <!-- <p>
             To learn more about the Research Computing Group, <a target="_blank"
                 href="https://www.slu.edu/research/faculty-resources/research-computing.php">visit their
                 website</a>.<br>
@@ -54,7 +39,7 @@ and open the template in the editor.
                 IIIF data object recipes</a>.<br>
             To learn more about GeoJSON-LD <a href="https://geojson.org/geojson-ld/">visit GeoJSON-LD on the
                 web</a>.<br>
-        </p>
+        </p> -->
         <p>
             <b>Use RERUM Geolocator</b><br>
             <input class="button primary" type="button" onclick="document.location.href='annotate.html'"
@@ -65,24 +50,9 @@ and open the template in the editor.
                 value="View Geolocations In MapML" />
         </p>
     </div>
-    <footer class="nav nav-center text-primary is-fixed is-full-width, is-vertical-align">
-        <a target="_blank"
-            href="https://www.slu.edu/research/faculty-resources/research-computing.php"><small>&copy;2022 Research
-                Computing Group</small></a>
-        <a target="_blank" href="https://slu.edu"><img class="brand" alt="SLU logo"
-                src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png"></a>
-        <a target="_blank" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand"
-                alt="SLU RCG logo"
-                src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png"></a>
-        <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
-                src="https://centerfordigitalhumanities.github.io/media-assets/rerum-logo.jpg"><small>RERUM
-                v1</small></a>
+    <footer>
+        cubap so below
     </footer>
 </body>
-<script>
-    window.onbeforeunload = function () {
-        window.scrollTo(0, 0);
-    }
-</script>
 
 </html>

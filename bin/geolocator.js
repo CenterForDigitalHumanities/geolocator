@@ -5,7 +5,7 @@
  */
 
 const app = require('../app');
-const debug = require('debug')('tinynode:server');
+const debug = require('debug')('geolocator:server');
 const http = require('http');
 
 /**

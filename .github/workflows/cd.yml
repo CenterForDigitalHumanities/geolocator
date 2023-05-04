@@ -1,4 +1,4 @@
-name: Geolocator Site Deploy
+name: Rerum Geolocator Site Deploy
 on: 
   push:
     branches:
@@ -8,6 +8,7 @@ on:
       main
 jobs:
     deploy:
+      # Deploy to newprd01 with SSH
       strategy: 
         matrix:
             node-version: [16]
@@ -16,9 +17,9 @@ jobs:
       steps:
         - uses: actions/checkout@v3
         - run: |
-            if [[ ! -e /srv/node/logs/tinynode.txt ]]; then
+            if [[ ! -e /srv/node/logs/rerum_geolocator.txt ]]; then
                 mkdir -p /srv/node/logs
-                touch /srv/node/logs/tinynode.txt
+                touch /srv/node/logs/rerum_geolocator.txt
             fi
             cd /srv/node/geolocator/
             pm2 stop geolocator

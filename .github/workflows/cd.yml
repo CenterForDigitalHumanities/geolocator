@@ -1,4 +1,4 @@
-name: TinyNode Site Deploy
+name: RERUM Geolocator Site Deploy
 on: 
   push:
     branches:
@@ -8,22 +8,21 @@ on:
       main
 jobs:
     deploy:
-      # Deploy to newprd01 with SSH
       strategy: 
         matrix:
             node-version: [16]
-            machines: [vlcdhp02, vlcdhprdp02]
+            machines: [vlcdhp02, vlcdhprdp01]
       runs-on: ${{ matrix.machines }}
       steps:
         - uses: actions/checkout@v3
         - run: |
-            if [[ ! -e /srv/node/logs/tinynode.txt ]]; then
+            if [[ ! -e /srv/node/logs/rerum_geolocator.txt ]]; then
                 mkdir -p /srv/node/logs
-                touch /srv/node/logs/tinynode.txt
+                touch /srv/node/logs/rerum_geolocator.txt
             fi
-            cd /srv/node/tiny-node/
-            pm2 stop tinyNode
+            cd /srv/node/geolocator/
+            pm2 stop geolocator
             git stash
             git pull
             npm install
-            pm2 start -i max bin/tinyNode.js
+            pm2 start -i max bin/geolocator.js

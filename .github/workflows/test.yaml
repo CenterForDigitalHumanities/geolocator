@@ -1,4 +1,4 @@
-name: TinyNode Test
+name: RERUM Geolocator Test
 on: 
   push:
     branches:

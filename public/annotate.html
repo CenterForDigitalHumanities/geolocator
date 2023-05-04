@@ -4,297 +4,262 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<html>
-    <head>
-        <title>GeoJSON-LD Web Annotation Generator</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://unpkg.com/chota@latest">
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
-        <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
-        <!--<script src="https://cdn.osmbuildings.org/classic/0.2.2b/OSMBuildings-Leaflet.js"></script>-->
-        <script src="js/app.js"></script>
-        <style>
-            #leafletPreview {
-                height: 48rem;
-                z-index: 0;
-            }
-            footer{
-                bottom : 0;
-                background-color : #FFF;
-                z-index : 1;
-            }
-            body{
-                margin-bottom: 20rem;
-            }
-            header {
-                background: #222;
-                width: 100%;
-                padding: 1rem;
-                position: relative;
-                box-shadow: 0 0 3rem #001e3c;
-                margin-bottom: 3rem;
-            }
-            header small {
-                position: absolute;
-                bottom: 1rem;
-                line-height: 1;
-                margin-left: 17.1%;
-                color: #dfdfdf;
-            }
-            header h1 {
-                color: #a3d1ff;
-                top: 3rem;
-                letter-spacing: .55rem;
-                position: relative;
-                font-weight: 300;
-                right: 1em;
-            }
-            header img{
-                max-width: 69%;
-                margin-left: 3%;
-            }
-            .card header{
-                background-color: white;
-                box-shadow: none;
-                margin-bottom: 1em;
-                padding: 0px;
-            }
-            
-            #coordinatesCard{
-                visibility: hidden;
-                position: absolute;
-                width: 100%;
-                max-width: var(--grid-maxWidth);
-                top: 0px;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <div class="row">
-                <div class="two columns">
-                    <a href="index.html"><img src="http://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo" class="u-full-width"></a>
-                </div>
-                <small class="rerum_shimmer">reconditorium eximium rerum universalium mutabiliumque</small>
-                <h1 class="ten columns ">
-                    <span>rerum geolocator</span>
-                </h1>
-            </div>
-        </header>
-        <div class="container">
-            <div id="supplyURI" class="card">
-                <header>
-                    Supply an existing Web Resource URI to assert coordinates upon to begin.  
-                    We encourage that your provide your favorite IIIF object that contains a label and/or description. 
-                </header>
-                <div class="card_body">
-                    <label>Object URI</label><input id="objURI" type="text" />
-                </div>
-                <footer>
-                    <input id="uriBtn" type="button" class="button primary" value="Use This URI" onclick="provideTargetID(event)"/>
-                </footer>
-            </div>
+<html lang="en">
 
-            <div id="confirmURI" class="card is-hidden notfirst">
-                <header>Resolved URI</header>
-                <div class="card_body">
-                    <input type="button" class="button primary" value="Confirm URI" onclick="confirmTarget(event)"/>
-                    <div id="URIpreview">
+<head>
+    <title>GeoJSON-LD Web Annotation Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <link rel="stylesheet" href="stylesheets/style.css" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin=""></script>
+    <!--<script src="https://cdn.osmbuildings.org/classic/0.2.2b/OSMBuildings-Leaflet.js"></script>-->
+    <script src="js/app.js"></script>
+</head>
 
-                    </div>
-                </div>
-                <footer>
-                    
-                </footer>
+<body>
+    <header>
+        <div class="row">
+            <div class="two columns">
+                <a href="index.html"><img src="http://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo"
+                        class="u-full-width"></a>
             </div>
-
-            <!-- Get the Lat and Long, allow them to use Leaflet to provide, use Leaflet to preview and confirm -->      
-            <div id="coordinatesCard" class="card notfirst">
-                <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
-                or enter coordinates manually.">
-                    Use the map to select coordinates.  You may also supply coordinates manually.
-                    <br><input type="button" class="button primary" value="Confirm Coordinates" onclick="previewAnnotation(event)"/>
-                </header>
-                <div class="card-body">
-                    <div class="grouped">
-                        <label>Latitude</label>
-                        <input id="leafLat" step=".000000001" type="number"/>
-                        <label>Longitude</label>
-                        <input id="leafLong" step=".000000001" type="number"/>
-                    </div>
-                    <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually." id="leafletPreview" class="col"></div>
-                </div>
-                <footer>
-                    
-                </footer>
-            </div>
-            <script>
-                /**
-                 * Generate a map for a user to select coordinates on.  Have it update and Lat and Long are provided.
-                 * @type type
-                 */
-                var previewMap = L.map('leafletPreview').setView([12, 12], 2)
-                
-                L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
-                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                    maxZoom: 19,
-                    id: 'mapbox.satellite', //mapbox.streets
-                    accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
-                }).addTo(previewMap);
-
-                leafLat.oninput = updateGeometry
-                leafLong.oninput = updateGeometry
-                function updateGeometry(event, clickedLat, clickedLong) {
-                    event.preventDefault()
-                    let lat = clickedLat ? clickedLat : leafLat.value
-                    lat = parseInt(lat * 1000000) / 1000000
-                    let long =  clickedLong ? clickedLong : leafLong.value
-                    long= parseInt(long * 1000000) / 1000000
-                    if (lat && long) {
-                        previewMap.setView([lat, long], 16)
-                    }
-                    leafLat.value = lat
-                    leafLong.value = long
-                }
-                previewMap.on('click', e => L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button class="tag is-small text-primary bd-primary" onclick="updateGeometry(event,${e.latlng.lat},${e.latlng.lng});">Use These</button></div>`).openOn(previewMap))
-            </script>
-
-            <div id="createAnnotation" class="card is-hidden notfirst">
-                <header>
-                    See your new Annotation and decide whether or not to save it.
-                </header>
-                <div class="card_body">
-                    <div id="annoPreview"> </div>
-                </div>
-                <footer>
-                    <input id="createAnnoBtn" type="button" class="button primary" value="Create Annotation" app="RERUM Geolocator" onclick="GEOLOCATOR.submitAnno(event, 'geolocating@rerum.io')" />
-                    <input id="restartBtn" type="button" class="button Primary" value="Start Over" onclick="restart()" />
-                </footer>
-            </div>
+            <small class="rerum_shimmer">reconditorium eximium rerum universalium mutabiliumque</small>
+            <h1 class="ten columns ">
+                <span>rerum geolocator</span>
+            </h1>
         </div>
-        <footer class="nav nav-center text-primary is-fixed is-full-width, is-vertical-align">
-            <a target="_blank" href="https://www.slu.edu/research/faculty-resources/research-computing.php"><small>&copy;2022 Research Computing Group</small></a>
-            <a target="_blank" href="https://slu.edu"><img class="brand" src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png"></a>
-            <a target="_blank" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand" src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png"></a>
-            <a target="_blank" href="http://rerum.io"><img class="brand" src="https://centerfordigitalhumanities.github.io/media-assets/rerum-logo.jpg"><small>RERUM v1</small></a>
-        </footer>
-    </body>
-    <script>
+    </header>
+    <div class="container">
+        <div id="supplyURI" class="card">
+            <header>
+                Supply an existing Web Resource URI to assert coordinates upon to begin.
+                We encourage that your provide your favorite IIIF object that contains a label and/or description.
+            </header>
+            <div class="card_body">
+                <label>Object URI</label><input id="objURI" type="text" />
+            </div>
+            <footer>
+                <input id="uriBtn" type="button" class="button primary" value="Use This URI"
+                    onclick="provideTargetID(event)" />
+            </footer>
+        </div>
 
-        /*
-         * Below are custom UI things for just this page functionality
-         */
-        
-        
-        /**
-         * Get a URI from the UI and check if it is resolvable.  Provide feedback
-         */
-        async function provideTargetID(event){
-            let target = document.getElementById('objURI').value
-            
-            let targetObj = await fetch(target.replace(/^https?:/,location.protocol))
-                .then(resp => resp.json())
-                .catch(err => {
-                    alert("Target URI could not be resolved.  The annotation can still be created"
-                    +" and target the URI provided.  Interfaces that consume this data will not be able to"
-                    +" gather additional information about this targeted resource."
-                    +" Supply a different URI to try again.")
-                    URIpreview.innerHTML=`<pre>{Not Resolvable}</pre>`
-                    return null
-                })
-            if(targetObj){
-                URIpreview.innerHTML=`<pre>${JSON.stringify(targetObj,null,'\t')}</pre>`
-            }
-            confirmURI.classList.remove("is-hidden")
-            window.scrollTo(0,confirmURI.offsetTop)
-        }
-        
-        /**
-         * Given all the information to create an annotation, offer the preview of it in the UI before submission.
-         */
-        function previewAnnotation(event){
-            let geo = {}
-            let lat = parseInt(leafLat.value * 1000000) / 1000000
-            let long = parseInt(leafLong.value * 1000000) / 1000000
-            if (lat && long) {
-                geo = {
-                    type: "Point",
-                    coordinates: [long, lat]
-                }
-            }
-            else{
-                alert("Supply both a latitude and a longitude")
-                return false
-            }
-            if(leafLat.value && leafLong.value){
-                let targetURL = document.getElementById('objURI').value
-                let geoJSON = {
-                    "properties":{},
-                    "geometry": geo,
-                    "type": "Feature"
-                }
-                let demoAnno = 
-                {
-                    "@context":["http://geojson.org/geojson-ld/geojson-context.jsonld", "http://iiif.io/api/presentation/3/context.json"],
-                    "type":"Annotation",
-                    "motivation":"tagging",
-                    "body":geoJSON,
-                    "target":targetURL,   
-                    "creator":"geolocating@rerum.io"
-                }
-                createAnnotation.classList.remove("is-hidden")
-                annoPreview.innerHTML = `<pre>${JSON.stringify(demoAnno,null,'\t')}</pre>`
-                coordinatesCard.style.visibility = "hidden"
-                coordinatesCard.classList.add("is-hidden")
-                window.scrollTo(0,createAnnotation.offsetTop - 5)
-            }
-            else{
-                alert("You must provide a latitude and a longitude to continue")
-            }
-        }
-        
-        /**
-         * Trigger the part of the UI after the user has confirmed their targer
-         * @param {type} event
-         * @return {undefined}
-         */
-        function confirmTarget(event){
-            supplyURI.classList.add("is-hidden")
-            confirmURI.classList.add("is-hidden")
-            coordinatesCard.style.visibility = "visible"
-            coordinatesCard.classList.remove("is-hidden")
-            coordinatesCard.style.top = "auto"
-            coordinatesCard.style.position = "relative"
-            window.scrollTo(0,coordinatesCard.offsetTop-50)
-        }
-        
-        /**
-         * Do not submnit the annotation and start over.  The UI needs to be reset.  
-         * @return {undefined}
-         */
-        function restart(){
-            annoPreview.innerHTML = ""
-            URIpreview.innerHTML = ""
-            supplyURI.classList.remove("is-hidden")
-            for (let el of document.querySelectorAll('.notfirst')){el.classList.add("is-hidden")}
-        }
-        
-        window.onbeforeunload = function () {
-            window.scrollTo(0,0)
-        }
-        
-        objURI.onfocus = function(event){
-            window.scrollTo(0,document.body.scrollHeight)
-        }
-        
-        leafLat.onfocus = function(event){
-            window.scrollTo(0,leafLat.offsetTop - 10)
-        }
-        
-        leafLong.onfocus = function(event){
-            window.scrollTo(0,leafLong.offsetTop - 10)
-        }
+        <div id="confirmURI" class="card is-hidden notfirst">
+            <header>Resolved URI</header>
+            <div class="card_body">
+                <input type="button" class="button primary" value="Confirm URI" onclick="confirmTarget(event)" />
+                <div id="URIpreview">
 
-    </script>
+                </div>
+            </div>
+            <footer>
+
+            </footer>
+        </div>
+
+        <!-- Get the Lat and Long, allow them to use Leaflet to provide, use Leaflet to preview and confirm -->
+        <div id="coordinatesCard" class="card notfirst">
+            <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
+                or enter coordinates manually.">
+                Use the map to select coordinates. You may also supply coordinates manually.
+                <br><input type="button" class="button primary" value="Confirm Coordinates"
+                    onclick="previewAnnotation(event)" />
+            </header>
+            <div class="card-body">
+                <div class="grouped">
+                    <label>Latitude</label>
+                    <input id="leafLat" step=".000000001" type="number" />
+                    <label>Longitude</label>
+                    <input id="leafLong" step=".000000001" type="number" />
+                </div>
+                <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
+                    id="leafletPreview" class="col"></div>
+            </div>
+            <footer>
+
+            </footer>
+        </div>
+        <script>
+            /**
+             * Generate a map for a user to select coordinates on.  Have it update and Lat and Long are provided.
+             * @type type
+             */
+            var previewMap = L.map('leafletPreview').setView([12, 12], 2)
+
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 19,
+                id: 'mapbox.satellite', //mapbox.streets
+                accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
+            }).addTo(previewMap);
+
+            leafLat.oninput = updateGeometry
+            leafLong.oninput = updateGeometry
+            function updateGeometry(event, clickedLat, clickedLong) {
+                event.preventDefault()
+                let lat = clickedLat ? clickedLat : leafLat.value
+                lat = parseInt(lat * 1000000) / 1000000
+                let long = clickedLong ? clickedLong : leafLong.value
+                long = parseInt(long * 1000000) / 1000000
+                if (lat && long) {
+                    previewMap.setView([lat, long], 16)
+                }
+                leafLat.value = lat
+                leafLong.value = long
+            }
+            previewMap.on('click', e => L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button class="tag is-small text-primary bd-primary" onclick="updateGeometry(event,${e.latlng.lat},${e.latlng.lng});">Use These</button></div>`).openOn(previewMap))
+        </script>
+
+        <div id="createAnnotation" class="card is-hidden notfirst">
+            <header>
+                See your new Annotation and decide whether or not to save it.
+            </header>
+            <div class="card_body">
+                <div id="annoPreview"> </div>
+            </div>
+            <footer>
+                <input id="createAnnoBtn" type="button" class="button primary" value="Create Annotation"
+                    app="RERUM Geolocator" onclick="GEOLOCATOR.submitAnno(event, 'geolocating@rerum.io')" />
+                <input id="restartBtn" type="button" class="button Primary" value="Start Over" onclick="restart()" />
+            </footer>
+        </div>
+    </div>
+    <footer class="nav nav-center text-primary is-fixed is-full-width, is-vertical-align">
+        <a target="_blank"
+            href="https://www.slu.edu/research/faculty-resources/research-computing.php"><small>&copy;2022 Research
+                Computing Group</small></a>
+        <a target="_blank" href="https://slu.edu"><img class="brand" alt="SLU logo"
+                src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png"></a>
+        <a target="_blank" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand"
+                alt="SLU RCG logo"
+                src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png"></a>
+        <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
+                src="https://centerfordigitalhumanities.github.io/media-assets/rerum-logo.jpg"><small>RERUM
+                v1</small></a>
+    </footer>
+</body>
+<script>
+
+    /*
+     * Below are custom UI things for just this page functionality
+     */
+
+
+    /**
+     * Get a URI from the UI and check if it is resolvable.  Provide feedback
+     */
+    async function provideTargetID(event) {
+        let target = document.getElementById('objURI').value
+
+        let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
+            .then(resp => resp.json())
+            .catch(err => {
+                alert("Target URI could not be resolved.  The annotation can still be created"
+                    + " and target the URI provided.  Interfaces that consume this data will not be able to"
+                    + " gather additional information about this targeted resource."
+                    + " Supply a different URI to try again.")
+                URIpreview.innerHTML = `<pre>{Not Resolvable}</pre>`
+                return null
+            })
+        if (targetObj) {
+            URIpreview.innerHTML = `<pre>${JSON.stringify(targetObj, null, '\t')}</pre>`
+        }
+        confirmURI.classList.remove("is-hidden")
+        window.scrollTo(0, confirmURI.offsetTop)
+    }
+
+    /**
+     * Given all the information to create an annotation, offer the preview of it in the UI before submission.
+     */
+    function previewAnnotation(event) {
+        let geo = {}
+        let lat = parseInt(leafLat.value * 1000000) / 1000000
+        let long = parseInt(leafLong.value * 1000000) / 1000000
+        if (lat && long) {
+            geo = {
+                type: "Point",
+                coordinates: [long, lat]
+            }
+        }
+        else {
+            alert("Supply both a latitude and a longitude")
+            return false
+        }
+        if (leafLat.value && leafLong.value) {
+            let targetURL = document.getElementById('objURI').value
+            let geoJSON = {
+                "properties": {},
+                "geometry": geo,
+                "type": "Feature"
+            }
+            let demoAnno =
+            {
+                "@context": ["http://geojson.org/geojson-ld/geojson-context.jsonld", "http://iiif.io/api/presentation/3/context.json"],
+                "type": "Annotation",
+                "motivation": "tagging",
+                "body": geoJSON,
+                "target": targetURL,
+                "creator": "geolocating@rerum.io"
+            }
+            createAnnotation.classList.remove("is-hidden")
+            annoPreview.innerHTML = `<pre>${JSON.stringify(demoAnno, null, '\t')}</pre>`
+            coordinatesCard.style.visibility = "hidden"
+            coordinatesCard.classList.add("is-hidden")
+            window.scrollTo(0, createAnnotation.offsetTop - 5)
+        }
+        else {
+            alert("You must provide a latitude and a longitude to continue")
+        }
+    }
+
+    /**
+     * Trigger the part of the UI after the user has confirmed their targer
+     * @param {type} event
+     * @return {undefined}
+     */
+    function confirmTarget(event) {
+        supplyURI.classList.add("is-hidden")
+        confirmURI.classList.add("is-hidden")
+        coordinatesCard.style.visibility = "visible"
+        coordinatesCard.classList.remove("is-hidden")
+        coordinatesCard.style.top = "auto"
+        coordinatesCard.style.position = "relative"
+        window.scrollTo(0, coordinatesCard.offsetTop - 50)
+    }
+
+    /**
+     * Do not submnit the annotation and start over.  The UI needs to be reset.  
+     * @return {undefined}
+     */
+    function restart() {
+        annoPreview.innerHTML = ""
+        URIpreview.innerHTML = ""
+        supplyURI.classList.remove("is-hidden")
+        for (let el of document.querySelectorAll('.notfirst')) { el.classList.add("is-hidden") }
+    }
+
+    window.onbeforeunload = function () {
+        window.scrollTo(0, 0)
+    }
+
+    objURI.onfocus = function (event) {
+        window.scrollTo(0, document.body.scrollHeight)
+    }
+
+    leafLat.onfocus = function (event) {
+        window.scrollTo(0, leafLat.offsetTop - 10)
+    }
+
+    leafLong.onfocus = function (event) {
+        window.scrollTo(0, leafLong.offsetTop - 10)
+    }
+
+</script>
+
 </html>

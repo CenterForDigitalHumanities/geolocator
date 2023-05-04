@@ -5,107 +5,84 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html lang="en">
-    <head>
-        <title>RERUM Geolocator</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://unpkg.com/chota@latest">
-        <script src="js/app.js"></script>  
-    </head>
-    <style>
-        body{
-            margin-bottom: 20rem;
-        }
-        footer{
-            bottom : 0;
-            background-color : #FFF;
-            z-index : 1;
-        }
-        header {
-            background: #222;
-            width: 100%;
-            padding: 1rem;
-            position: relative;
-            box-shadow: 0 0 3rem #001e3c;
-            margin-bottom: 3rem;
-        }
-        header small {
-            position: absolute;
-            bottom: 1rem;
-            line-height: 1;
-            margin-left: 17.1%;
-            color: #dfdfdf;
-        }
-        header h1 {
-            color: #a3d1ff;
-            top: 3rem;
-            letter-spacing: .55rem;
-            position: relative;
-            font-weight: 300;
-            right: 1em;
-        }
-        header img{
-            max-width: 69%;
-            margin-left: 3%;
-        }
-        .card header{
-            background-color: white;
-            box-shadow: none;
-            margin-bottom: 1em;
-            padding: 0px;
-        }
-        .button.primary{
-            display: block;
-            margin: 1rem 0px 0px 0px;
-        }
-    </style>
-    <body>
-        <header>
-            <div class="row">
-                <div class="two columns">
-                    <img src="http://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo" class="u-full-width">
-                </div>
-                <small class="rerum_shimmer">reconditorium eximium rerum universalium mutabiliumque</small>
-                <h1 class="ten columns ">
-                    <span>rerum geolocator</span>
-                </h1>
+
+<head>
+    <title>RERUM Geolocator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="js/app.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="row">
+            <div>
+                <img src="https://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo">
             </div>
-        </header>
-        <div class="container">
-            <p>
-                Welcome to the RERUM Geolocator hosted by the Research Computing Group at Saint Louis University.
-                This small application creates GeoJSON-LD Points as Web Annotations.  You can target any Linked Open Data resource in the world
-                and provide coordinates as supplementary data.  This does not affect the original resource nor does it notify the resource owner of the
-                assertion.  A UI is provided to see the Points displayed on a Leaflet map.  
-            </p>
-            <p>
-                This application is intended to work within the scope of IIIF and encourages you to target IIIF resources in order to provide
-                then with supplementary geospatial data.  This data is meant to assert the CURRENT location, as a geographic point, of the physical object the
-                resource represents (a painting, a book, etc.).  In geospatial terms, this assertion will geolocate the resource.
-            </p>
-            <p>
-                To learn more about the Research Computing Group, <a target="_blank" href="https://www.slu.edu/research/faculty-resources/research-computing.php">visit their website</a>.<br>
-                To learn more about IIIF and Web Annotations <a target="_blank" href="https://iiif.io">visit IIIF on the web</a>.<br>
-                Want to see some IIIF data resource examples? <a target="_blank" href="https://iiif.io/api/cookbook/">See IIIF data object recipes</a>.<br>
-                To learn more about GeoJSON-LD <a href="https://geojson.org/geojson-ld/">visit GeoJSON-LD on the web</a>.<br>
-            </p>
-            <p>
-                <b>Use RERUM Geolocator</b><br>
-                <input class="button primary" type="button" onclick="document.location.href='annotate.html'" value="Geolocate A Web Resource" />
-                <input class="button primary" type="button" onclick="document.location.href='leaflet-view.html'" value="View Geolocations In Leaflet" />
-                <input class="button primary" type="button" onclick="document.location.href='mapML-view.html'" value="View Geolocations In MapML" />
-            </p>
+            <small class="rerum_shimmer">reconditorium eximium rerum universalium mutabiliumque</small>
+            <h1>
+                rerum geolocator
+            </h1>
         </div>
-        <footer class="nav nav-center text-primary is-fixed is-full-width, is-vertical-align">
-            <a target="_blank" href="https://www.slu.edu/research/faculty-resources/research-computing.php"><small>&copy;2022 Research Computing Group</small></a>
-            <a target="_blank" href="https://slu.edu"><img class="brand" src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png"></a>
-            <a target="_blank" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand" src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png"></a>
-            <a target="_blank" href="http://rerum.io"><img class="brand" src="https://centerfordigitalhumanities.github.io/media-assets/rerum-logo.jpg"><small>RERUM v1</small></a>
-        </footer>
-    </body>
-    <script>
-        window.onbeforeunload = function () {
-            window.scrollTo(0,0);
-        }
-    </script>
+    </header>
+    <div class="container">
+        <p>
+            Welcome to the RERUM Geolocator hosted by the Research Computing Group at Saint Louis University.
+            This small application creates GeoJSON-LD Points as Web Annotations. You can target any Linked Open Data
+            resource in the world
+            and provide coordinates as supplementary data. This does not affect the original resource nor does it notify
+            the resource owner of the
+            assertion. A UI is provided to see the Points displayed on a Leaflet map.
+        </p>
+        <p>
+            This application is intended to work within the scope of IIIF and encourages you to target IIIF resources in
+            order to provide
+            then with supplementary geospatial data. This data is meant to assert the CURRENT location, as a geographic
+            point, of the physical object the
+            resource represents (a painting, a book, etc.). In geospatial terms, this assertion will geolocate the
+            resource.
+        </p>
+        <p>
+            To learn more about the Research Computing Group, <a target="_blank"
+                href="https://www.slu.edu/research/faculty-resources/research-computing.php">visit their
+                website</a>.<br>
+            To learn more about IIIF and Web Annotations <a target="_blank" href="https://iiif.io">visit IIIF on the
+                web</a>.<br>
+            Want to see some IIIF data resource examples? <a target="_blank" href="https://iiif.io/api/cookbook/">See
+                IIIF data object recipes</a>.<br>
+            To learn more about GeoJSON-LD <a href="https://geojson.org/geojson-ld/">visit GeoJSON-LD on the
+                web</a>.<br>
+        </p>
+        <p>
+            <b>Use RERUM Geolocator</b><br>
+            <input class="button primary" type="button" onclick="document.location.href='annotate.html'"
+                value="Geolocate A Web Resource" />
+            <input class="button primary" type="button" onclick="document.location.href='leaflet-view.html'"
+                value="View Geolocations In Leaflet" />
+            <input class="button primary" type="button" onclick="document.location.href='mapML-view.html'"
+                value="View Geolocations In MapML" />
+        </p>
+    </div>
+    <footer class="nav nav-center text-primary is-fixed is-full-width, is-vertical-align">
+        <a target="_blank"
+            href="https://www.slu.edu/research/faculty-resources/research-computing.php"><small>&copy;2022 Research
+                Computing Group</small></a>
+        <a target="_blank" href="https://slu.edu"><img class="brand" alt="SLU logo"
+                src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png"></a>
+        <a target="_blank" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand"
+                alt="SLU RCG logo"
+                src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png"></a>
+        <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
+                src="https://centerfordigitalhumanities.github.io/media-assets/rerum-logo.jpg"><small>RERUM
+                v1</small></a>
+    </footer>
+</body>
+<script>
+    window.onbeforeunload = function () {
+        window.scrollTo(0, 0);
+    }
+</script>
+
 </html>

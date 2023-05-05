@@ -45,12 +45,14 @@ header img{
 }
 #leafletPreview {
   height: 48rem;
+  margin-top: 2rem;
   z-index: 0;
 }
 #coordinatesCard{
-  visibility: hidden;
-  position: absolute;
+  position: relative;
   width: 100%;
   max-width: var(--grid-maxWidth);
-  top: 0px;
+}
+.not-visible{
+  visibility: hidden;
 }

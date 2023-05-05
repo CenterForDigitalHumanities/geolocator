@@ -26,30 +26,8 @@ and open the template in the editor.
 <body is="geo-page">
     <div class="container">
         <user-resource></user-resource>
-        <div is="coordinatesCard"></div>
-        <div is="createAnnotation"></div>
-        <!-- Get the Lat and Long, allow them to use Leaflet to provide, use Leaflet to preview and confirm -->
-        <!-- <div id="coordinatesCard" class="card notfirst">
-            <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
-                or enter coordinates manually.">
-                Use the map to select coordinates. You may also supply coordinates manually.
-                <br><input type="button" class="button primary" value="Confirm Coordinates"
-                    onclick="previewAnnotation(event)" />
-            </header>
-            <div class="card-body">
-                <div>
-                    <label>Latitude</label>
-                    <input id="leafLat" step=".000000001" type="number" />
-                    <label>Longitude</label>
-                    <input id="leafLong" step=".000000001" type="number" />
-                </div>
-                <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
-                    id="leafletPreview" class="col"></div>
-            </div>
-            <footer>
-
-            </footer>
-        </div>
+        <point-picker class="not-visible"></point-picker>
+        <!-- 
         <div id="createAnnotation" class="card is-hidden notfirst">
             <header>
                 See your new Annotation and decide whether or not to save it.
@@ -66,9 +44,23 @@ and open the template in the editor.
     </div> -->
 </body>
 <script>    
+    // This helps mobile views
     window.onbeforeunload = function () {
         window.scrollTo(0, 0)
     }
+
+    document.addEventListener("coordinatesConfirmed", (e) => {
+        localStorage.setItem("geoJSON", e.detail)
+        const geo = JSON.stringify(JSON.parse(e.detail), null, 2)
+        coordinatesCard.innerHTML = "<p>Thank you.  Soon, you can turn this into an Annotation</p>"
+        coordinatesCard.innerHTML += `<pre>${geo}</pre>`
+    })
+
+    document.addEventListener("userResourceConfirmed", (e) => {
+        localStorage.setItem("providedURI", e.detail)
+        document.querySelector("user-resource").classList.add("is-hidden")
+        document.querySelector("point-picker").classList.remove("not-visible")
+    })
 </script>
 </body>
 </html>

@@ -5,6 +5,7 @@
 
 class GeoPage extends HTMLBodyElement {
     constructor(){
+        super()
         const header = document.createElement('geo-header')
         const footer = document.createElement('geo-footer')
         this.prepend(header)
@@ -16,6 +17,8 @@ customElements.define("geo-page",GeoPage, {extends:"body"})
 
 class GeoHeader extends HTMLElement {
     #headerTmpl = `
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="stylesheets/style.css">
     <header>
     <div class="row">
         <div>
@@ -29,7 +32,9 @@ class GeoHeader extends HTMLElement {
     </header>
 `
     constructor(){
-
+        super()        
+        this.attachShadow({mode:'open'})
+        this.shadowRoot.innerHTML = this.#headerTmpl
     }
 }
 
@@ -37,6 +42,8 @@ customElements.define("geo-header",GeoHeader)
 
 class GeoFooter extends HTMLElement {
     #footerTmpl = `
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="stylesheets/style.css">
     <footer class="nav nav-center text-primary is-fixed is-full-width is-vertical-align">
         <a target="_blank"
             href="https://www.slu.edu/research/faculty-resources/research-computing.php"><small>&copy;2022 Research

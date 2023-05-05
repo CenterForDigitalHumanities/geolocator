@@ -1,3 +1,4 @@
+// NOTE this is old code from the old "generate and preview an annotation" workflow, and may be deprecated out of existance. 
 
 /**
  * Given all the information to create an annotation, offer the preview of it in the UI before submission.

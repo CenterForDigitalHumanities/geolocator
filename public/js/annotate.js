@@ -28,30 +28,6 @@ function init(){
     previewMap.on('click', e => L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button class="tag is-small text-primary bd-primary" onclick="updateGeometry(event,${e.latlng.lat},${e.latlng.lng});">Use These</button></div>`).openOn(previewMap))
 }
 
-
-/**
- * Get a URI from the UI and check if it is resolvable.  Provide feedback
- */
-async function provideTargetID(event) {
-    let target = document.getElementById('objURI').value
-
-    let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
-        .then(resp => resp.json())
-        .catch(err => {
-            alert("Target URI could not be resolved.  The annotation can still be created"
-                + " and target the URI provided.  Interfaces that consume this data will not be able to"
-                + " gather additional information about this targeted resource."
-                + " Supply a different URI to try again.")
-            URIpreview.innerHTML = `<pre>{Not Resolvable}</pre>`
-            return null
-        })
-    if (targetObj) {
-        URIpreview.innerHTML = `<pre>${JSON.stringify(targetObj, null, '\t')}</pre>`
-    }
-    confirmURI.classList.remove("is-hidden")
-    window.scrollTo(0, confirmURI.offsetTop)
-}
-
 /**
  * Given all the information to create an annotation, offer the preview of it in the UI before submission.
  */
@@ -94,21 +70,6 @@ function previewAnnotation(event) {
     else {
         alert("You must provide a latitude and a longitude to continue")
     }
-}
-
-/**
- * Trigger the part of the UI after the user has confirmed their targer
- * @param {type} event
- * @return {undefined}
- */
-function confirmTarget(event) {
-    supplyURI.classList.add("is-hidden")
-    confirmURI.classList.add("is-hidden")
-    coordinatesCard.style.visibility = "visible"
-    coordinatesCard.classList.remove("is-hidden")
-    coordinatesCard.style.top = "auto"
-    coordinatesCard.style.position = "relative"
-    window.scrollTo(0, coordinatesCard.offsetTop - 50)
 }
 
 /**

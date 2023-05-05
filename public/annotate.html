@@ -25,35 +25,11 @@ and open the template in the editor.
 
 <body is="geo-page">
     <div class="container">
-        <div id="supplyURI" class="card">
-            <header>
-                Supply an existing Web Resource URI to assert coordinates upon to begin.
-                We encourage that your provide your favorite IIIF object that contains a label and/or description.
-            </header>
-            <div>
-                <label>Object URI</label><input id="objURI" type="text" />
-            </div>
-            <footer>
-                <input id="uriBtn" type="button" class="button primary" value="Use This URI"
-                    onclick="provideTargetID(event)" />
-            </footer>
-        </div>
-
-        <div id="confirmURI" class="card is-hidden notfirst">
-            <header>Resolved URI</header>
-            <div>
-                <input type="button" class="button primary" value="Confirm URI" onclick="confirmTarget(event)" />
-                <div id="URIpreview">
-
-                </div>
-            </div>
-            <footer>
-
-            </footer>
-        </div>
-
+        <user-resource></user-resource>
+        <div is="coordinatesCard"></div>
+        <div is="createAnnotation"></div>
         <!-- Get the Lat and Long, allow them to use Leaflet to provide, use Leaflet to preview and confirm -->
-        <div id="coordinatesCard" class="card notfirst">
+        <!-- <div id="coordinatesCard" class="card notfirst">
             <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
                 or enter coordinates manually.">
                 Use the map to select coordinates. You may also supply coordinates manually.
@@ -87,25 +63,11 @@ and open the template in the editor.
                 <input id="restartBtn" type="button" class="button Primary" value="Start Over" onclick="restart()" />
             </footer>
         </div>
-    </div>
+    </div> -->
 </body>
-<script>
-    window.onload = () => init() 
-    
+<script>    
     window.onbeforeunload = function () {
         window.scrollTo(0, 0)
-    }
-
-    document.getElementById("objURI").onfocus = function (event) {
-        window.scrollTo(0, document.body.scrollHeight)
-    }
-
-    document.getElementById("leafLat").onfocus = function (event) {
-        window.scrollTo(0, leafLat.offsetTop - 10)
-    }
-
-    document.getElementById("leafLong").onfocus = function (event) {
-        window.scrollTo(0, leafLong.offsetTop - 10)
     }
 </script>
 </body>

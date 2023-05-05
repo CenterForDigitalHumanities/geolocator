@@ -19,13 +19,11 @@ and open the template in the editor.
      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
      crossorigin=""></script>
     <!--<script src="https://cdn.osmbuildings.org/classic/0.2.2b/OSMBuildings-Leaflet.js"></script>-->
-    <script src="js/annotate.js"></script>
+    <script src="js/annotate.js"></script>   
+    <script src="components/layout.js"></script>
 </head>
 
-<body>
-    <header>
-        cubap as above
-    </header>
+<body is="geo-page">
     <div class="container">
         <div id="supplyURI" class="card">
             <header>
@@ -90,27 +88,25 @@ and open the template in the editor.
             </footer>
         </div>
     </div>
-    <footer>
-        cubap so below
-    </footer>
-    <script>
-        window.onload = () => init() 
-        
-        window.onbeforeunload = function () {
-            window.scrollTo(0, 0)
-        }
+</body>
+<script>
+    window.onload = () => init() 
+    
+    window.onbeforeunload = function () {
+        window.scrollTo(0, 0)
+    }
 
-        document.getElementById("objURI").onfocus = function (event) {
-            window.scrollTo(0, document.body.scrollHeight)
-        }
+    document.getElementById("objURI").onfocus = function (event) {
+        window.scrollTo(0, document.body.scrollHeight)
+    }
 
-        document.getElementById("leafLat").onfocus = function (event) {
-            window.scrollTo(0, leafLat.offsetTop - 10)
-        }
+    document.getElementById("leafLat").onfocus = function (event) {
+        window.scrollTo(0, leafLat.offsetTop - 10)
+    }
 
-        document.getElementById("leafLong").onfocus = function (event) {
-            window.scrollTo(0, leafLong.offsetTop - 10)
-        }
-    </script>
+    document.getElementById("leafLong").onfocus = function (event) {
+        window.scrollTo(0, leafLong.offsetTop - 10)
+    }
+</script>
 </body>
 </html>

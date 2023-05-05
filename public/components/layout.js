@@ -71,8 +71,7 @@ class UserResource extends HTMLElement {
     #uriInputTmpl = `
         <div id="supplyURI" class="card">
             <header>
-                Supply an existing Web Resource URI to assert coordinates upon to begin.
-                We encourage that your provide your favorite IIIF object that contains a label and/or description.
+                Supply an existing Web Resource URI.
             </header>
             <div>
                 <label>Object URI</label><input id="objURI" type="text" />
@@ -97,6 +96,8 @@ class UserResource extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
+        localStorage.removeItem("providedURI")
+        localStorage.removeItem("userResource")
         uriBtn.addEventListener("click", this.provideTargetID)
         confirmUriBtn.addEventListener("click", this.confirmTarget)
     }
@@ -105,18 +106,21 @@ class UserResource extends HTMLElement {
         let target = objURI.value
         let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
             .then(resp => resp.json())
+            .then(obj => {
+                uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
+                confirmURI.classList.remove("is-hidden")
+                localStorage.setItem("userResource", JSON.stringify(obj))
+                return obj
+            })
             .catch(err => {
-                alert("Target URI could not be resolved.  The annotation can still be created"
-                    + " and target the URI provided.  Interfaces that consume this data will not be able to"
-                    + " gather additional information about this targeted resource."
-                    + " Supply a different URI to try again.")
+                alert("Target URI could not be resolved."
+                    + " Certain data previews will not be available."
+                    + " Applications that will use the data you are about to create"
+                    + " will note be able to gather additional information about this targeted resource."
+                    + " You can supply a different URI or continue with this one.")
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
                 return null
             })
-        if (targetObj) {
-            uriPreview.innerHTML = `<pre>${JSON.stringify(targetObj, null, '\t')}</pre>`
-        }
-        confirmURI.classList.remove("is-hidden")
         window.scrollTo(0, confirmURI.offsetTop)
     }
 
@@ -129,6 +133,7 @@ class UserResource extends HTMLElement {
         supplyURI.classList.add("is-hidden")
         confirmURI.classList.add("is-hidden")
         this.closest('user-resource').setAttribute("data-uri", objURI.value)
+        localStorage.setItem("providedURI", objURI.value)
     }
 }
 

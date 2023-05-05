@@ -1,4 +1,4 @@
-name: RERUM Geolocator Site Deploy
+name: Rerum Geolocator Site Deploy
 on: 
   push:
     branches:
@@ -8,6 +8,7 @@ on:
       main
 jobs:
     deploy:
+      # Deploy to newprd01 with SSH
       strategy: 
         matrix:
             node-version: [16]

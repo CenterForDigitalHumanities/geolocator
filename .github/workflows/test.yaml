@@ -1,11 +1,11 @@
-name: RERUM Geolocator Test
+name: Rerum Geolocator Test
 on: 
   push:
     branches:
-      ci-cd
+      main
   pull_request:
     branches:
-      ci-cd
+      main
 jobs:
   test:
     runs-on: ubuntu-latest

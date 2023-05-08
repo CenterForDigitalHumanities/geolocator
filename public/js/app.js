@@ -271,8 +271,7 @@ GEOLOCATOR.consumeForGeoJSON = async function(dataURL){
 }
 
 /**
- * Initialize the application by gathering all GeoJSON-LD Web Annotations from RERUM and 
- * formatting them appropriately for the given open source Web map.  Leaflet and MapML are supported.
+ * Initialize the application viewer.  This may be deprecated.
  * @param {type} view
  * @return {undefined}
  */

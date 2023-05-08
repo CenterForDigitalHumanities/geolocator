@@ -56,3 +56,6 @@ header img{
 .not-visible{
   visibility: hidden;
 }
+.card footer input[type="button"]{
+    display: inline-block;
+}

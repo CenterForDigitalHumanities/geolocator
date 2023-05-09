@@ -59,3 +59,6 @@ header img{
 .card footer input[type="button"]{
     display: inline-block;
 }
+abbr{
+  cursor: default;
+}

@@ -96,6 +96,7 @@ class UserResource extends HTMLElement {
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
         localStorage.removeItem("userResource")
+        localStorage.removeItem("newResource")
         uriBtn.addEventListener("click", this.provideTargetID)
         confirmUriBtn.addEventListener("click", this.confirmTarget)
     }
@@ -106,6 +107,10 @@ class UserResource extends HTMLElement {
      * If not, tell the user and let them choose whether to move forward or not.
      */ 
     async provideTargetID(e){
+        if(!objURI.value){
+            alert("You must provide something to target.")
+            return
+        }
         let target = objURI.value
         confirmURI.classList.remove("is-hidden")
         let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
@@ -290,6 +295,7 @@ class GeolocatorPreview extends HTMLElement {
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
         this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
+        localStorage.setItem("newResource", JSON.stringify(wrapper))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.
         if(Array.from(this.classList).includes("is-hidden")){
@@ -305,7 +311,28 @@ class GeolocatorPreview extends HTMLElement {
      * @return {undefined}
      */
     saveResource(event) {
-        
+        const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
+        if(resourceToSave["@id"] || resourceToSave.id){
+            //You already did this!
+            return
+        }
+        fetch("create", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: localStorage.getItem("newResource")
+        })
+        .then(response => response.json())
+        .then(newObj => {
+            delete newObj.new_obj_state
+            localStorage.setItem("newResource", JSON.stringify(newObj))
+            const e = new CustomEvent("newResourceCreated", {"detail":JSON.stringify(newObj)})
+            document.dispatchEvent(e)
+            return newObj
+        })
+        .catch(err => {return null})
     }
 }
 

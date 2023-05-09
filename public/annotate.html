@@ -27,7 +27,18 @@ and open the template in the editor.
     <div class="container">
         <user-resource></user-resource>
         <point-picker class="not-visible"></point-picker>
-        <geolocator-preview do-save="true" resource-type="" class="is-hidden"></geolocator-preview>   
+        <geolocator-preview do-save="true" resource-type="" class="is-hidden"></geolocator-preview>
+        <div id="finished" class="row is-hidden">
+            <div class="col">
+                <h3> Thank You for Using RERUM Geolocator </h3>
+                <!-- In the case of Web Annotation, we do not have a viewer to send them to the draws GeoJSON from the body -->
+                <p class="intro">
+                    Now you have a new <abbr title="Linked Open Usable Data">LOUD</abbr> W3C Web Annotation, which you can see below.  You can use this Annotation in your own application if you like.  Just keep track of the URI. 
+                    <p id="theuri"></p>
+                </p>
+                <pre id="takeout"> </pre>
+            </div>
+        </div>
     </div>
 </body>
 <script>    
@@ -46,6 +57,16 @@ and open the template in the editor.
         localStorage.setItem("providedURI", e.detail)
         document.querySelector("user-resource").classList.add("is-hidden")
         document.querySelector("point-picker").classList.remove("not-visible")
+    })
+
+    document.addEventListener("newResourceCreated", (e) => {
+        const createdResource = JSON.parse(localStorage.getItem("newResource"))
+        document.querySelector("geolocator-preview").classList.add("is-hidden")
+        finished.classList.remove("is-hidden")
+        delete createdResource.__rerum
+        takeout.innerHTML = JSON.stringify(createdResource, null, '\t')
+        const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
+        theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
     })
 </script>
 </body>

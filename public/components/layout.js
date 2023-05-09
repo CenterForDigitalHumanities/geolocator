@@ -95,8 +95,8 @@ class UserResource extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
+        localStorage.removeItem("providedURI")
         localStorage.removeItem("userResource")
-        localStorage.removeItem("newResource")
         uriBtn.addEventListener("click", this.provideTargetID)
         confirmUriBtn.addEventListener("click", this.confirmTarget)
     }
@@ -253,6 +253,7 @@ class GeolocatorPreview extends HTMLElement {
         </div>`
 
     connectedCallback() {
+        localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
         if(this.getAttribute("do-save")){
             this.querySelector(".createBtn").addEventListener("click", this.saveResource)

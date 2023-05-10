@@ -284,6 +284,7 @@ class GeolocatorPreview extends HTMLElement {
                 wrapper = {
                     "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
                     "type": "Annotation",
+                    "motivation": "tagging",
                     "body": geo,
                     "target": userObj["@id"] ?? userObj.id ?? ""
                 }

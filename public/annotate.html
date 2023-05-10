@@ -19,7 +19,6 @@ and open the template in the editor.
      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
      crossorigin=""></script>
     <!--<script src="https://cdn.osmbuildings.org/classic/0.2.2b/OSMBuildings-Leaflet.js"></script>-->
-    <script src="js/annotate.js"></script>   
     <script src="components/layout.js"></script>
 </head>
 
@@ -27,21 +26,19 @@ and open the template in the editor.
     <div class="container">
         <user-resource></user-resource>
         <point-picker class="not-visible"></point-picker>
-        <!-- 
-        <div id="createAnnotation" class="card is-hidden notfirst">
-            <header>
-                See your new Annotation and decide whether or not to save it.
-            </header>
-            <div>
-                <div id="annoPreview"> </div>
+        <geolocator-preview do-save="true" resource-type="" class="is-hidden"></geolocator-preview>
+        <div id="finished" class="row is-hidden">
+            <div class="col">
+                <h3> Thank You for Using RERUM Geolocator </h3>
+                <!-- In the case of Web Annotation, we do not have a viewer to send them to the draws GeoJSON from the body -->
+                <p class="intro">
+                    Now you have a new <abbr title="Linked Open Usable Data">LOUD</abbr> W3C Web Annotation, which you can see below.  You can use this Annotation in your own application if you like.  Just keep track of the URI. 
+                    <p id="theuri"></p>
+                </p>
+                <pre id="takeout"> </pre>
             </div>
-            <footer>
-                <input id="createAnnoBtn" type="button" class="button primary" value="Create Annotation"
-                    app="RERUM Geolocator" onclick="GEOLOCATOR.submitAnno(event, 'geolocating@rerum.io')" />
-                <input id="restartBtn" type="button" class="button Primary" value="Start Over" onclick="restart()" />
-            </footer>
         </div>
-    </div> -->
+    </div>
 </body>
 <script>    
     // This helps mobile views
@@ -51,15 +48,24 @@ and open the template in the editor.
 
     document.addEventListener("coordinatesConfirmed", (e) => {
         localStorage.setItem("geoJSON", e.detail)
-        const geo = JSON.stringify(JSON.parse(e.detail), null, 2)
-        coordinatesCard.innerHTML = "<p>Thank you.  Soon, you can turn this into an Annotation</p>"
-        coordinatesCard.innerHTML += `<pre>${geo}</pre>`
+        coordinatesCard.classList.add("is-hidden")
+        document.querySelector("geolocator-preview").setAttribute("resource-type", "Annotation")
     })
 
     document.addEventListener("userResourceConfirmed", (e) => {
         localStorage.setItem("providedURI", e.detail)
         document.querySelector("user-resource").classList.add("is-hidden")
         document.querySelector("point-picker").classList.remove("not-visible")
+    })
+
+    document.addEventListener("newResourceCreated", (e) => {
+        const createdResource = JSON.parse(localStorage.getItem("newResource"))
+        document.querySelector("geolocator-preview").classList.add("is-hidden")
+        finished.classList.remove("is-hidden")
+        delete createdResource.__rerum
+        takeout.innerHTML = JSON.stringify(createdResource, null, '\t')
+        const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
+        theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
     })
 </script>
 </body>

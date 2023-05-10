@@ -56,3 +56,12 @@ header img{
 .not-visible{
   visibility: hidden;
 }
+.card footer input[type="button"]{
+    display: inline-block;
+}
+abbr{
+  cursor: default;
+}
+#takeout{
+  border: 1px solid black;
+}

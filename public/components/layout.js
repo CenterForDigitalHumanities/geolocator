@@ -107,6 +107,10 @@ class UserResource extends HTMLElement {
      * If not, tell the user and let them choose whether to move forward or not.
      */ 
     async provideTargetID(e){
+        if(!objURI.value){
+            alert("You must provide something to target.")
+            return
+        }
         let target = objURI.value
         confirmURI.classList.remove("is-hidden")
         let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
@@ -123,6 +127,7 @@ class UserResource extends HTMLElement {
                     + " will note be able to gather additional information about this targeted resource."
                     + " You can supply a different URI or continue with this one.")
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
+                localStorage.setItem("userResource", JSON.stringify({"@id":target})) 
                 return null
             })
         //This might help mobile views
@@ -145,7 +150,7 @@ customElements.define("user-resource", UserResource)
 
 class PointPicker extends HTMLElement {
     #pointPickerTmpl = `
-        <div id="coordinatesCard" class="card notfirst">
+        <div id="coordinatesCard" class="card">
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
              integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
              crossorigin=""/>
@@ -231,3 +236,106 @@ class PointPicker extends HTMLElement {
 }
 
 customElements.define("point-picker", PointPicker)
+
+class GeolocatorPreview extends HTMLElement {
+    #uriInputTmpl = `
+        <div class="card">
+            <header>
+                Here is your resource preview!
+            </header>
+            <div>
+                <div class="resourcePreview"> </div>
+            </div>
+            <footer>
+                <input type="button" class="createBtn button primary" value="Create"/>
+                <input type="button" class="restartBtn button secondary" value="Start Over" />
+            </footer>
+        </div>`
+
+    connectedCallback() {
+        localStorage.removeItem("newResource")
+        this.innerHTML = this.#uriInputTmpl
+        if(this.getAttribute("do-save")){
+            this.querySelector(".createBtn").addEventListener("click", this.saveResource)
+            this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
+        }
+        else{
+            this.querySelector("footer").remove()
+        }
+    }
+
+    // The trigger which lets this element know which type of data is ready for preview
+    static get observedAttributes() { return ['resource-type'] }
+
+    /**
+     * The resource-type changed, letting the element know what kind of data is ready for preview
+     * The geoJSON and userResource must be set, or this cannot build a preview.
+     * */
+    attributeChangedCallback(name, oldValue, newValue) {
+        if(oldValue === newValue) return
+
+        const userObj = JSON.parse(localStorage.getItem("userResource"))
+        const geo = JSON.parse(localStorage.getItem("geoJSON"))
+        if(!geo || !userObj) return
+
+        let wrapper
+        switch(newValue){
+            case "Annotation":
+                wrapper = {
+                    "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
+                    "type": "Annotation",
+                    "motivation": "tagging",
+                    "body": geo,
+                    "target": userObj["@id"] ?? userObj.id ?? ""
+                }
+            break
+            case "navPlace":
+                userObj.navPlace = geo
+                wrapper = JSON.parse(JSON.stringify(userObj))
+            break
+            default: 
+                wrapper = JSON.parse(JSON.stringify(userObj))
+        }
+        this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
+        localStorage.setItem("newResource", JSON.stringify(wrapper))
+        // Typically when this has happened the preview is ready to be seen.
+        // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.
+        if(Array.from(this.classList).includes("is-hidden")){
+            this.classList.remove("is-hidden")
+        }
+    }
+
+    /**
+     * Save the resource the user has generated so it can persist and be used elsewhere.
+     * This is either a Web Annotation or a navPlace object
+     * A Web Annotation can be saved outright.  A navPlace object requires a RERUM import of the provided resource.
+     * @param {type} event
+     * @return {undefined}
+     */
+    saveResource(event) {
+        const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
+        if(resourceToSave["@id"] || resourceToSave.id){
+            //You already did this!
+            return
+        }
+        fetch("create", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: localStorage.getItem("newResource")
+        })
+        .then(response => response.json())
+        .then(newObj => {
+            delete newObj.new_obj_state
+            localStorage.setItem("newResource", JSON.stringify(newObj))
+            const e = new CustomEvent("newResourceCreated", {"detail":JSON.stringify(newObj)})
+            document.dispatchEvent(e)
+            return newObj
+        })
+        .catch(err => {return null})
+    }
+}
+
+customElements.define("geolocator-preview", GeolocatorPreview)

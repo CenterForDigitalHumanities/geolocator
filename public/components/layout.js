@@ -315,7 +315,7 @@ class GeolocatorPreview extends HTMLElement {
                 let context = userObj["@context"]
                 context = Array.isArray(context) ? 
                 context.unshift("https://iiif.io/api/extension/navplace/context.json") :
-                ["https://iiif.io/api/extension/navplace/context.json", userObj["@context"]]
+                ["https://iiif.io/api/extension/navplace/context.json", context]
                 const fc = {
                     "type" : "FeatureCollection",
                     "features" : [geo]

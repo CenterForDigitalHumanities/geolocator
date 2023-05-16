@@ -35,6 +35,9 @@ and open the template in the editor.
                     Now you have a new <abbr title="Linked Open Usable Data">LOUD</abbr> W3C Web Annotation, which you can see below.  You can use this Annotation in your own application if you like.  Just keep track of the URI. 
                     <p id="theuri"></p>
                 </p>
+                <p class="intro">
+                    See your object in an <a target="_blank" id="annoLink">Annotation Viewer!</a>
+                </p>
                 <pre id="takeout"> </pre>
             </div>
         </div>
@@ -66,6 +69,7 @@ and open the template in the editor.
         takeout.innerHTML = JSON.stringify(createdResource, null, '\t')
         const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
         theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
+        annoLink.setAttribute("href", `https://map.rerum.io/?iiif-content=${uri}`)
     })
 </script>
 </body>

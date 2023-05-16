@@ -35,6 +35,9 @@ and open the template in the editor.
                     Now your IIIF resource contains navPlace, which you can see below.  You can take this resource to the different IIIF Viewers or use it within your own application if you like.  Just keep track of the URI. 
                     <p id="theuri"></p>
                 </p>
+                <p class="intro">
+                    See your object in the <a target="_blank" id="navPlaceLink">Navplace Viewer!</a>
+                </p>
                 <pre id="takeout"> </pre>
             </div>
         </div>
@@ -53,25 +56,33 @@ and open the template in the editor.
     })
 
     document.addEventListener("userResourceConfirmed", (e) => {
-        const providedObj = JSON.parse(localStorage.getItem("userResource"))
+        // The resolved resource is already in local storage
+        let providedObj = JSON.parse(localStorage.getItem("userResource"))
         let go = true
         const acceptableContexts = [
             "http://iiif.io/api/presentation/3/context.json", 
             "https://iiif.io/api/presentation/3/context.json"
         ]
+        // Check if object contains the proper context
         if(!(providedObj["@context"] && acceptableContexts.includes(providedObj["@context"]))){
-            go = confirm("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Click 'OK' to add this context to your preview and continue with it.  Click 'Cancel' to provide a different URI.")
+            go = confirm("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Click 'OK' to add this context and continue with it.  Click 'Cancel' to provide a different URI.")
+        }
+        // Check if object already contains navPlace
+        if(providedObj?.navPlace){
+            go = confirm("The object provided already contains `navPlace`.  Click 'OK' to drop the existing `navPlace` and continue.  Click 'Cancel' to provide a different URI.")
         }
         if(go){
+            providedObj["@context"] = "https://iiif.io/api/presentation/3/context.json"
+            delete providedObj.navPlace
+            localStorage.setItem("userResource", JSON.stringify(providedObj))
             localStorage.setItem("providedURI", e.detail)
             document.querySelector("user-resource").classList.add("is-hidden")
             document.querySelector("point-picker").classList.remove("not-visible")  
         }
         else{
             //reset
-            uriPreview.innerHTML = ""
+            uriPreview.innerHTML = `<pre>Awaiting New URI...</pre>`
         }
-        
     })
 
     document.addEventListener("newResourceCreated", (e) => {
@@ -82,6 +93,7 @@ and open the template in the editor.
         takeout.innerHTML = JSON.stringify(createdResource, null, '\t')
         const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
         theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
+        navPlaceLink.setAttribute("href", `https://map.rerum.io/?iiif-content=${uri}`)
     })
 </script>
 </body>

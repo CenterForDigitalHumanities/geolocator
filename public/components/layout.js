@@ -85,7 +85,7 @@ class UserResource extends HTMLElement {
             <div>
                 <input id="confirmUriBtn" type="button" class="button primary" value="Confirm URI" />
                 <div id="uriPreview">
-
+                    <pre>Resolving URI...</pre>
                 </div>
             </div>
             <footer>
@@ -116,6 +116,8 @@ class UserResource extends HTMLElement {
         let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
             .then(resp => resp.json())
             .then(obj => {
+                // The RERUM property is noisy.  Let's remove it from previews.
+                delete obj.__rerum
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj)) 
                 return obj
@@ -241,7 +243,7 @@ class GeolocatorPreview extends HTMLElement {
     #uriInputTmpl = `
         <div class="card">
             <header>
-                Here is your resource preview!
+                Here is your resource preview!.  Scroll to review, then click 'Create'.
             </header>
             <div>
                 <div class="resourcePreview"> </div>
@@ -291,13 +293,15 @@ class GeolocatorPreview extends HTMLElement {
             break
             case "navPlace":
                 this.querySelector(".createBtn").addEventListener("click", this.importResource)
-                const context = Array.isArray(context) ? 
-                context.unshift("http://iiif.io/api/extension/navplace/context.json") :
-                ["http://iiif.io/api/extension/navplace/context.json", userObj["@context"]]
+                let context = userObj["@context"]
+                context = Array.isArray(context) ? 
+                context.unshift("https://iiif.io/api/extension/navplace/context.json") :
+                ["https://iiif.io/api/extension/navplace/context.json", userObj["@context"]]
                 const fc = {
                     "type" : "FeatureCollection",
                     "features" : [geo]
                 }
+                userObj["@context"] = context
                 userObj.navPlace = fc
                 wrapper = JSON.parse(JSON.stringify(userObj))
             break

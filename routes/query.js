@@ -1,8 +1,13 @@
+#!/usr/bin/env node
+/**
+ * POST a query to the thing.
+ * @author cubap@slu.edu
+ */
+
 const express = require('express')
 const router = express.Router()
 const got = require('got')
 
-/* POST a query to the thing. */
 router.post('/', async (req, res, next) => {
   const lim = req.query.limit ?? 10
   const skip = req.query.skip ?? 0

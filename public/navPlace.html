@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
+    @author bryan.j.haberberger@slu.edu
 -->
 <html lang="en">
 
@@ -30,7 +28,6 @@ and open the template in the editor.
         <div id="finished" class="row is-hidden">
             <div class="col">
                 <h3> Thank You for Using RERUM Geolocator </h3>
-                <!-- In the case of Web Annotation, we do not have a viewer to send them to the draws GeoJSON from the body -->
                 <p class="intro">
                     Now your IIIF resource contains navPlace, which you can see below.  You can take this resource to the different IIIF Viewers or use it within your own application if you like.  Just keep track of the URI. 
                     <p id="theuri"></p>
@@ -59,12 +56,13 @@ and open the template in the editor.
         // The resolved resource is already in local storage
         let providedObj = JSON.parse(localStorage.getItem("userResource"))
         let go = true
+        const context = providedObj["@context"]
         const acceptableContexts = [
             "http://iiif.io/api/presentation/3/context.json", 
             "https://iiif.io/api/presentation/3/context.json"
         ]
         // Check if object contains the proper context
-        if(!(providedObj["@context"] && acceptableContexts.includes(providedObj["@context"]))){
+        if(!(context && acceptableContexts.includes(context))){
             go = confirm("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Click 'OK' to add this context and continue with it.  Click 'Cancel' to provide a different URI.")
         }
         // Check if object already contains navPlace
@@ -72,9 +70,12 @@ and open the template in the editor.
             go = confirm("The object provided already contains `navPlace`.  Click 'OK' to drop the existing `navPlace` and continue.  Click 'Cancel' to provide a different URI.")
         }
         if(go){
-            providedObj["@context"] = "https://iiif.io/api/presentation/3/context.json"
+            //Make @context the first property
             delete providedObj.navPlace
-            localStorage.setItem("userResource", JSON.stringify(providedObj))
+            let minted = context ? {"@context":context} : {"@context":"https://iiif.io/api/presentation/3/context.json"}
+            delete providedObj["@context"]
+            minted = Object.assign(minted, providedObj)
+            localStorage.setItem("userResource", JSON.stringify(minted))
             localStorage.setItem("providedURI", e.detail)
             document.querySelector("user-resource").classList.add("is-hidden")
             document.querySelector("point-picker").classList.remove("not-visible")  

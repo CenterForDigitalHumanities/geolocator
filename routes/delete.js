@@ -1,10 +1,13 @@
+#!/usr/bin/env node
+/**
+ * DELETE a delete to the thing.
+ * @author cubap@slu.edu
+ */
 const express = require('express')
 const router = express.Router()
 const got = require('got')
 
 /* Legacy delete pattern w/body */
-
-/* DELETE a delete to the thing. */
 router.delete('/', async (req, res, next) => {
   try {
     const deleteBody = req.body ?? {}
@@ -29,7 +32,7 @@ router.delete('/', async (req, res, next) => {
   }
 })
 
-/* DELETE a delete to the thing. */
+/* Regular DELETE by _id */
 router.delete('/:id', async (req, res, next) => {
   try {
   

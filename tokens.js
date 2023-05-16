@@ -1,3 +1,9 @@
+#!/usr/bin/env node
+/**
+ * App token management
+ * @author cubap@slu.edu
+ */
+
 require('dotenv').config()
 const got = require('got')
 

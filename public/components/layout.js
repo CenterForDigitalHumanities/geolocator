@@ -1,6 +1,10 @@
+#!/usr/bin/env node
 /**
  * Template components like headers and footers for reuse across the site.
  * @author cubap@slu.edu
+ * 
+ * Also components to make shapes on Web Maps and generate data in RERUM
+ * @author bryan.j.haberberger@slu.edu
  */
 
 class GeoPage extends HTMLBodyElement {
@@ -105,6 +109,8 @@ class UserResource extends HTMLElement {
      * Take the user provided URI and check if can be resolved.
      * If so, preview the object it resolves to.  
      * If not, tell the user and let them choose whether to move forward or not.
+     * @param {type} event
+     * @return none
      */ 
     async provideTargetID(e){
         if(!objURI.value){
@@ -139,7 +145,7 @@ class UserResource extends HTMLElement {
     /**
      * Cache the resource the user has confirmed they want to use so it can be used by other app components.
      * @param {type} event
-     * @return {undefined}
+     * @return none
      */
     confirmTarget(event) {
         this.closest('user-resource').setAttribute("data-uri", objURI.value)
@@ -214,6 +220,11 @@ class PointPicker extends HTMLElement {
         })
     }
 
+    /**
+     * Take the coordinates provided by the user and turn them into GeoJSON
+     * @param none
+     * @return none
+     */
     confirmCoordinates() {
         let lat = parseInt(leafLat.value * 1000000) / 1000000
         let long = parseInt(leafLong.value * 1000000) / 1000000
@@ -265,12 +276,20 @@ class GeolocatorPreview extends HTMLElement {
         }
     }
 
-    // The trigger which lets this element know which type of data is ready for preview
+    /**
+     * The trigger which lets this element know which type of data is ready for preview
+     * @param none
+     * @return none
+     */ 
     static get observedAttributes() { return ['resource-type'] }
 
     /**
      * The resource-type changed, letting the element know what kind of data is ready for preview
      * The geoJSON and userResource must be set, or this cannot build a preview.
+     * @param {String} name The name of the attribute that has changed
+     * @param {String} oldValue The original value of the attribute
+     * @param {String} newValue The new value of the attribute
+     * @return none
      * */
     attributeChangedCallback(name, oldValue, newValue) {
         if(oldValue === newValue) return
@@ -322,13 +341,13 @@ class GeolocatorPreview extends HTMLElement {
      * Import the resource the user has generated so it can persist and be used elsewhere.
      * This is an existing IIIF Defined Type which has had the navPlace property added.
      * This requires a RERUM Import. 
-     * @param {type} event
-     * @return {undefined}
+     * @param {Event} event
+     * @return none
      */
     importResource(event) {
         const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
         if(!resourceToSave["@id"] || resourceToSave.id){
-            alert("This object must contain 'id' or '@id' in order to import it into RERUM.")
+            alert("This object must contain 'id' or '@id' in order to continue.")
             return
         }
         fetch("update", {
@@ -351,16 +370,16 @@ class GeolocatorPreview extends HTMLElement {
     }
 
     /**
-     * Save the resource the user has generated so it can persist and be used elsewhere.
-     * This is either a Web Annotation or a navPlace object
-     * A Web Annotation can be saved outright.  A navPlace object requires a RERUM import of the provided resource.
-     * @param {type} event
-     * @return {undefined}
+     * Save the Web Annotation the user has generated so it can persist and be used elsewhere.
+     * @param {Event} event
+     * @return none
      */
     saveResource(event) {
         const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
         if(resourceToSave["@id"] || resourceToSave.id){
-            //You already did this!
+            //You already did this and you have the Annotation URI!
+            const already = resourceToSave["@id"] ?? resourceToSave.id
+            alert(`This Annotation already exists!  See ${already}`)
             return
         }
         fetch("create", {

@@ -256,7 +256,6 @@ class GeolocatorPreview extends HTMLElement {
         localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
         if(this.getAttribute("do-save")){
-            this.querySelector(".createBtn").addEventListener("click", this.saveResource)
             this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
         }
         else{
@@ -281,6 +280,7 @@ class GeolocatorPreview extends HTMLElement {
         let wrapper
         switch(newValue){
             case "Annotation":
+                this.querySelector(".createBtn").addEventListener("click", this.saveResource)
                 wrapper = {
                     "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
                     "type": "Annotation",
@@ -290,10 +290,19 @@ class GeolocatorPreview extends HTMLElement {
                 }
             break
             case "navPlace":
-                userObj.navPlace = geo
+                this.querySelector(".createBtn").addEventListener("click", this.importResource)
+                const context = Array.isArray(context) ? 
+                context.unshift("http://iiif.io/api/extension/navplace/context.json") :
+                ["http://iiif.io/api/extension/navplace/context.json", userObj["@context"]]
+                const fc = {
+                    "type" : "FeatureCollection",
+                    "features" : [geo]
+                }
+                userObj.navPlace = fc
                 wrapper = JSON.parse(JSON.stringify(userObj))
             break
             default: 
+                this.querySelector(".createBtn").addClass("is-hidden")
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
         this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
@@ -303,6 +312,38 @@ class GeolocatorPreview extends HTMLElement {
         if(Array.from(this.classList).includes("is-hidden")){
             this.classList.remove("is-hidden")
         }
+    }
+
+    /**
+     * Import the resource the user has generated so it can persist and be used elsewhere.
+     * This is an existing IIIF Defined Type which has had the navPlace property added.
+     * This requires a RERUM Import. 
+     * @param {type} event
+     * @return {undefined}
+     */
+    importResource(event) {
+        const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
+        if(!resourceToSave["@id"] || resourceToSave.id){
+            alert("This object must contain 'id' or '@id' in order to import it into RERUM.")
+            return
+        }
+        fetch("update", {
+            method: "PUT",
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: localStorage.getItem("newResource")
+        })
+        .then(response => response.json())
+        .then(newObj => {
+            delete newObj.new_obj_state
+            localStorage.setItem("newResource", JSON.stringify(newObj))
+            const e = new CustomEvent("newResourceCreated", {"detail":JSON.stringify(newObj)})
+            document.dispatchEvent(e)
+            return newObj
+        })
+        .catch(err => {return null})
     }
 
     /**

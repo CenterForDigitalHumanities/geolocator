@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html lang="en">
+
+<head>
+    <title>navPlace Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+     integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+     crossorigin=""/>
+    <link rel="stylesheet" href="stylesheets/style.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+     crossorigin=""></script>
+    <!--<script src="https://cdn.osmbuildings.org/classic/0.2.2b/OSMBuildings-Leaflet.js"></script>-->
+    <script src="components/layout.js"></script>
+</head>
+
+<body is="geo-page">
+    <div class="container">
+        <user-resource></user-resource>
+        <point-picker class="not-visible"></point-picker>
+        <geolocator-preview do-save="true" resource-type="" class="is-hidden"></geolocator-preview>
+        <div id="finished" class="row is-hidden">
+            <div class="col">
+                <h3> Thank You for Using RERUM Geolocator </h3>
+                <!-- In the case of Web Annotation, we do not have a viewer to send them to the draws GeoJSON from the body -->
+                <p class="intro">
+                    Now your IIIF resource contains navPlace, which you can see below.  You can take this resource to the different IIIF Viewers or use it within your own application if you like.  Just keep track of the URI. 
+                    <p id="theuri"></p>
+                </p>
+                <pre id="takeout"> </pre>
+            </div>
+        </div>
+    </div>
+</body>
+<script>    
+    // This helps mobile views
+    window.onbeforeunload = function () {
+        window.scrollTo(0, 0)
+    }
+
+    document.addEventListener("coordinatesConfirmed", (e) => {
+        localStorage.setItem("geoJSON", e.detail)
+        coordinatesCard.classList.add("is-hidden")
+        document.querySelector("geolocator-preview").setAttribute("resource-type", "navPlace")
+    })
+
+    document.addEventListener("userResourceConfirmed", (e) => {
+        // We need some @context validation -- this has to be IIIF Presentation API 3 or later
+        // Don't go away from where the user can provide a resource if we know we can't use it?
+        const providedObj = JSON.parse(localStorage.getItem("userResource"))
+        const acceptableContexts = [
+            "http://iiif.io/api/presentation/3/context.json", 
+            "https://iiif.io/api/presentation/3/context.json"
+        ]
+        if(!(providedObj["@context"] && acceptableContexts.includes(providedObj["@context"]))){
+            alert("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Fix your object context or provide a different URI.")
+            return
+        }
+        localStorage.setItem("providedURI", e.detail)
+        document.querySelector("user-resource").classList.add("is-hidden")
+        document.querySelector("point-picker").classList.remove("not-visible")
+    })
+
+    document.addEventListener("newResourceCreated", (e) => {
+        const createdResource = JSON.parse(localStorage.getItem("newResource"))
+        document.querySelector("geolocator-preview").classList.add("is-hidden")
+        finished.classList.remove("is-hidden")
+        delete createdResource.__rerum
+        takeout.innerHTML = JSON.stringify(createdResource, null, '\t')
+        const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
+        theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
+    })
+</script>
+</body>
+</html>

@@ -279,7 +279,7 @@ class GeolocatorPreview extends HTMLElement {
     /**
      * The trigger which lets this element know which type of data is ready for preview
      * @param none
-     * @return none
+     * @return {Array The names of the attributes to observe}
      */ 
     static get observedAttributes() { return ['resource-type'] }
 

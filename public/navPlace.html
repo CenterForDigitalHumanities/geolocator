@@ -53,20 +53,25 @@ and open the template in the editor.
     })
 
     document.addEventListener("userResourceConfirmed", (e) => {
-        // We need some @context validation -- this has to be IIIF Presentation API 3 or later
-        // Don't go away from where the user can provide a resource if we know we can't use it?
         const providedObj = JSON.parse(localStorage.getItem("userResource"))
+        let go = true
         const acceptableContexts = [
             "http://iiif.io/api/presentation/3/context.json", 
             "https://iiif.io/api/presentation/3/context.json"
         ]
         if(!(providedObj["@context"] && acceptableContexts.includes(providedObj["@context"]))){
-            alert("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Fix your object context or provide a different URI.")
-            return
+            go = confirm("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Click 'OK' to add this context to your preview and continue with it.  Click 'Cancel' to provide a different URI.")
         }
-        localStorage.setItem("providedURI", e.detail)
-        document.querySelector("user-resource").classList.add("is-hidden")
-        document.querySelector("point-picker").classList.remove("not-visible")
+        if(go){
+            localStorage.setItem("providedURI", e.detail)
+            document.querySelector("user-resource").classList.add("is-hidden")
+            document.querySelector("point-picker").classList.remove("not-visible")  
+        }
+        else{
+            //reset
+            uriPreview.innerHTML = ""
+        }
+        
     })
 
     document.addEventListener("newResourceCreated", (e) => {

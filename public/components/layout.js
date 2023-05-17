@@ -1,6 +1,10 @@
+#!/usr/bin/env node
 /**
  * Template components like headers and footers for reuse across the site.
  * @author cubap@slu.edu
+ * 
+ * Also components to make shapes on Web Maps and generate data in RERUM
+ * @author bryan.j.haberberger@slu.edu
  */
 
 class GeoPage extends HTMLBodyElement {
@@ -85,7 +89,7 @@ class UserResource extends HTMLElement {
             <div>
                 <input id="confirmUriBtn" type="button" class="button primary" value="Confirm URI" />
                 <div id="uriPreview">
-
+                    <pre>Resolving URI...</pre>
                 </div>
             </div>
             <footer>
@@ -105,6 +109,8 @@ class UserResource extends HTMLElement {
      * Take the user provided URI and check if can be resolved.
      * If so, preview the object it resolves to.  
      * If not, tell the user and let them choose whether to move forward or not.
+     * @param {type} event
+     * @return none
      */ 
     async provideTargetID(e){
         if(!objURI.value){
@@ -116,6 +122,8 @@ class UserResource extends HTMLElement {
         let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
             .then(resp => resp.json())
             .then(obj => {
+                // The RERUM property is noisy.  Let's remove it from previews.
+                delete obj.__rerum
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj)) 
                 return obj
@@ -137,7 +145,7 @@ class UserResource extends HTMLElement {
     /**
      * Cache the resource the user has confirmed they want to use so it can be used by other app components.
      * @param {type} event
-     * @return {undefined}
+     * @return none
      */
     confirmTarget(event) {
         this.closest('user-resource').setAttribute("data-uri", objURI.value)
@@ -212,6 +220,11 @@ class PointPicker extends HTMLElement {
         })
     }
 
+    /**
+     * Take the coordinates provided by the user and turn them into GeoJSON
+     * @param none
+     * @return none
+     */
     confirmCoordinates() {
         let lat = parseInt(leafLat.value * 1000000) / 1000000
         let long = parseInt(leafLong.value * 1000000) / 1000000
@@ -241,7 +254,7 @@ class GeolocatorPreview extends HTMLElement {
     #uriInputTmpl = `
         <div class="card">
             <header>
-                Here is your resource preview!
+                Here is your resource preview!.  Scroll to review, then click 'Create'.
             </header>
             <div>
                 <div class="resourcePreview"> </div>
@@ -256,7 +269,6 @@ class GeolocatorPreview extends HTMLElement {
         localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
         if(this.getAttribute("do-save")){
-            this.querySelector(".createBtn").addEventListener("click", this.saveResource)
             this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
         }
         else{
@@ -264,12 +276,20 @@ class GeolocatorPreview extends HTMLElement {
         }
     }
 
-    // The trigger which lets this element know which type of data is ready for preview
+    /**
+     * The trigger which lets this element know which type of data is ready for preview
+     * @param none
+     * @return {Array The names of the attributes to observe}
+     */ 
     static get observedAttributes() { return ['resource-type'] }
 
     /**
      * The resource-type changed, letting the element know what kind of data is ready for preview
      * The geoJSON and userResource must be set, or this cannot build a preview.
+     * @param {String} name The name of the attribute that has changed
+     * @param {String} oldValue The original value of the attribute
+     * @param {String} newValue The new value of the attribute
+     * @return none
      * */
     attributeChangedCallback(name, oldValue, newValue) {
         if(oldValue === newValue) return
@@ -281,6 +301,7 @@ class GeolocatorPreview extends HTMLElement {
         let wrapper
         switch(newValue){
             case "Annotation":
+                this.querySelector(".createBtn").addEventListener("click", this.saveResource)
                 wrapper = {
                     "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
                     "type": "Annotation",
@@ -290,10 +311,21 @@ class GeolocatorPreview extends HTMLElement {
                 }
             break
             case "navPlace":
-                userObj.navPlace = geo
+                this.querySelector(".createBtn").addEventListener("click", this.importResource)
+                let context = userObj["@context"]
+                context = Array.isArray(context) ? 
+                context.unshift("https://iiif.io/api/extension/navplace/context.json") :
+                ["https://iiif.io/api/extension/navplace/context.json", userObj["@context"]]
+                const fc = {
+                    "type" : "FeatureCollection",
+                    "features" : [geo]
+                }
+                userObj["@context"] = context
+                userObj.navPlace = fc
                 wrapper = JSON.parse(JSON.stringify(userObj))
             break
             default: 
+                this.querySelector(".createBtn").addClass("is-hidden")
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
         this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
@@ -306,16 +338,48 @@ class GeolocatorPreview extends HTMLElement {
     }
 
     /**
-     * Save the resource the user has generated so it can persist and be used elsewhere.
-     * This is either a Web Annotation or a navPlace object
-     * A Web Annotation can be saved outright.  A navPlace object requires a RERUM import of the provided resource.
-     * @param {type} event
-     * @return {undefined}
+     * Import the resource the user has generated so it can persist and be used elsewhere.
+     * This is an existing IIIF Defined Type which has had the navPlace property added.
+     * This requires a RERUM Import. 
+     * @param {Event} event
+     * @return none
+     */
+    importResource(event) {
+        const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
+        if(!resourceToSave["@id"] || resourceToSave.id){
+            alert("This object must contain 'id' or '@id' in order to continue.")
+            return
+        }
+        fetch("update", {
+            method: "PUT",
+            mode: "cors",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: localStorage.getItem("newResource")
+        })
+        .then(response => response.json())
+        .then(newObj => {
+            delete newObj.new_obj_state
+            localStorage.setItem("newResource", JSON.stringify(newObj))
+            const e = new CustomEvent("newResourceCreated", {"detail":JSON.stringify(newObj)})
+            document.dispatchEvent(e)
+            return newObj
+        })
+        .catch(err => {return null})
+    }
+
+    /**
+     * Save the Web Annotation the user has generated so it can persist and be used elsewhere.
+     * @param {Event} event
+     * @return none
      */
     saveResource(event) {
         const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
         if(resourceToSave["@id"] || resourceToSave.id){
-            //You already did this!
+            //You already did this and you have the Annotation URI!
+            const already = resourceToSave["@id"] ?? resourceToSave.id
+            alert(`This Annotation already exists!  See ${already}`)
             return
         }
         fetch("create", {

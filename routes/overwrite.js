@@ -1,8 +1,13 @@
+#!/usr/bin/env node
+/**
+ * PUT an overwrite to the thing.
+ * @author cubap@slu.edu
+ */
+
 const express = require('express')
 const router = express.Router()
 const got = require('got')
 
-/* PUT an overwrite to the thing. */
 router.put('/', async (req, res, next) => {
 
   try {

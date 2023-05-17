@@ -1,8 +1,13 @@
+#!/usr/bin/env node
+/**
+ * POST a create to the thing.
+ * @author cubap@slu.edu
+ */
+
 const express = require('express')
 const router = express.Router()
 const got = require('got')
 
-/* POST a create to the thing. */
 router.post('/', async (req, res, next) => {
 
   try {

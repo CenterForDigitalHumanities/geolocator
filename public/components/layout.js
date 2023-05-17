@@ -346,7 +346,8 @@ class GeolocatorPreview extends HTMLElement {
      */
     importResource(event) {
         const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
-        if(!resourceToSave["@id"] || resourceToSave.id){
+        const id = resourceToSave["@id"] ?? resourceToSave.id
+        if(!id){
             alert("This object must contain 'id' or '@id' in order to continue.")
             return
         }
@@ -376,10 +377,10 @@ class GeolocatorPreview extends HTMLElement {
      */
     saveResource(event) {
         const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
-        if(resourceToSave["@id"] || resourceToSave.id){
+        const id = resourceToSave["@id"] ?? resourceToSave.id
+        if(id){
             //You already did this and you have the Annotation URI!
-            const already = resourceToSave["@id"] ?? resourceToSave.id
-            alert(`This Annotation already exists!  See ${already}`)
+            alert(`This Annotation already exists!  See ${id}`)
             return
         }
         fetch("create", {

@@ -70,14 +70,6 @@ app.use('/update', updateRouter)
 app.use('/delete', deleteRouter)
 app.use('/overwrite', overwriteRouter)
 
-//Legacy support for /app
-app.use('/app', indexRouter)
-app.use('/app/query', queryRouter)
-app.use('/app/create', createRouter)
-app.use('/app/update', updateRouter)
-app.use('/app/delete', deleteRouter)
-app.use('/app/overwrite', overwriteRouter)
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404))

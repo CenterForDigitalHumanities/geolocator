@@ -18,6 +18,7 @@ router.post('/', async (req, res, next) => {
       json: createBody,
       headers: {
         'user-agent': 'Tiny-Node',
+        'Content-Type' : "application/json; charset=utf-8",
         'Authorization': `Bearer ${process.env.ACCESS_TOKEN}` // not required for query
       }
     }

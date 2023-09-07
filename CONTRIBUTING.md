@@ -22,7 +22,7 @@ Also make sure Git is installed on your machine.  For download and installation 
 
 The following is a git shell example for installing the app on your local machine.
 
-shell```
+```
 cd /code_folder
 git clone https://github.com/CenterForDigitalHumanities/geolocator.git geolocator
 npm install
@@ -55,7 +55,7 @@ To stop the service, kill or exit the process via your shell (CTRL + c or CTRL +
 
 Excellent, way to get there.  First, make a new branch through the GitHub Interface or through your shell.  Make sure you 'checkout' that branch.
 
-shell```
+```
 cd /code_folder/geolocator
 git checkout my_new_branch
 ```

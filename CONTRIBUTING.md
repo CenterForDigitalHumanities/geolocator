@@ -51,7 +51,7 @@ Your geolocator will attempt to run at `http://localhost:3005`.  If port `3005` 
 
 To stop the service, kill or exit the process via your shell (CTRL + c or CTRL + x).
 
-## Ready to code!
+## 🎉 Ready to code!
 
 Excellent, way to get there.  First, make a new branch through the GitHub Interface or through your shell.  Make sure you 'checkout' that branch.
 

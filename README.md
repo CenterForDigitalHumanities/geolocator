@@ -1,8 +1,8 @@
-# geolocator
-Thank you for you interest in the RERUM Geolocator by the Research Computing Group at Saint Louis University.  Here you can bring your own resource and generate Geolocating Web Annotations to place them on a web map.  You can also add a `navPlace` property to IIIF Defined Types and import them into RERUM, which will make them viewable in the [Navplace Viewer](https://map.rerum.io).
+# RERUM Geolocator
+Thank you for you interest in the RERUM Geolocator by the Research Computing Group at Saint Louis University.  Here you can bring your own resource and generate Geolocating Web Annotations to place them on a web map.  You can also add a `navPlace` property to [IIIF Defined Types](https://iiif.io/api/presentation/3.0/#21-defined-types) and import them into [RERUM](httos://rerum.io), which will make them viewable in the [Navplace Viewer](https://map.rerum.io).
 
 ## 🌟👍 Contributors 👍🌟
-To contribute (you will want to run this on localhost), read the [RERUM Geolocator Contributors Guide](#CONTRIBUTING.md).  You will need to contact the site admins for the token information.  If you are looking to fork and run your own geolocator, continue reading.
+To contribute (you will want to run this on localhost), read the [RERUM Geolocator Contributors Guide](CONTRIBUTING.md).  You will need to contact the site admins for the token information.  If you are looking to fork and run your own geolocator, continue reading.
 
 ## Installation
 The geolocator is a NodeJS app.  It can run through a standard GitHub Pages set up for a NodeJS app.

@@ -1,6 +1,6 @@
 # Contribute to the RERUM Geolocator
 
-## :heart: Thank You
+## ❤️ Thank You
 Thank you for considering a contribution to this application!  The `main` branch is protected and you cannot push to it. 
 
 ## localhost / I Need Tokens!
@@ -27,7 +27,7 @@ cd /code_folder
 git clone https://github.com/CenterForDigitalHumanities/geolocator.git geolocator
 npm install
 ```
-<b>Note: do not run `npm audit fix`.</b>  We will do that upstream in the `main` branch.
+**Note: do not run** `npm audit fix`.  We will do that upstream in the `main` branch.
 
 Create your a file named `.env` in the root folder.  In the above example, the root is `/code_folder/geolocator`.  `/code_folder/geolocator/.env` looks like this:
 

@@ -31,7 +31,7 @@ npm install
 
 Create your a file named `.env` in the root folder.  In the above example, the root is `/code_folder/geolocator`.  `/code_folder/geolocator/.env` looks like this:
 
-```JSON
+```
 ACCESS_TOKEN = OBTAINED_FROM_ADMINS
 REFRESH_TOKEN = OBTAINED_FROM_ADMINS
 RERUM_REGISTRATION_URL = https://devstore.rerum.io/v1/

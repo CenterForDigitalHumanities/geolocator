@@ -8,9 +8,9 @@ If you want to contribute, it is imortant you are able to deploy the code and ru
 
 Contact the developers for the required development secrets!
 
-Bryan Haberberger -- bryan.j.haberberger@slu.edu
-Patrick Cuba -- patrick.m.cuba@slu.edu
-Research Computing Group at Saint Louis Univsersity -- research.computing@slu.edu
+Bryan Haberberger -- bryan.j.haberberger@slu.edu  
+Patrick Cuba -- patrick.m.cuba@slu.edu  
+Research Computing Group at Saint Louis Univsersity -- research.computing@slu.edu  
 
 ## Ready to Install It And Run It!
 

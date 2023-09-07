@@ -4,7 +4,7 @@
 Thank you for considering a contribution to this application!  The `main` branch is protected and you cannot push to it. 
 
 ## localhost / I Need Tokens!
-If you want to contribute, it is imortant you are able to deploy the code and run tests locally.  To do so, you will need to create and `.env` file which contains secrets for developers.  Once you have the secrets, you can continue.
+If you want to contribute, it is imortant you are able to deploy the code and run tests locally.  To do so, you will need to create a `.env` file which contains secrets for developers.  Once you have the secrets, you can continue.
 
 Contact the developers for the required development secrets!
 

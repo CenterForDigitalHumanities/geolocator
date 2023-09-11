@@ -18,7 +18,7 @@ Research Computing Group at Saint Louis Univsersity -- research.computing@slu.ed
 
 First, make sure NodeJS is installed on your machine.  For download and installation instructions [head to the NodeJS guide][https://nodejs.org/en/download].
 
-Also make sure Git is installed on your machine.  For download and installation instruction, [head to the Git guide](https://git-scm.com/downloads).  Note this can also be achieved by install [GitHub for Desktop](https://desktop.github.com/).  
+Also make sure Git is installed on your machine.  For download and installation instruction, [head to the Git guide](https://git-scm.com/downloads).  Note this can also be achieved by installing [GitHub for Desktop](https://desktop.github.com/).  
 
 The following is a git shell example for installing the app on your local machine.
 

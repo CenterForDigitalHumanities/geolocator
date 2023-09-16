@@ -29,7 +29,7 @@ npm install
 ```
 **Note: do not run** `npm audit fix`.  We will do that upstream in the `main` branch.
 
-Create your a file named `.env` in the root folder.  In the above example, the root is `/code_folder/geolocator`.  `/code_folder/geolocator/.env` looks like this:
+Create a file named `.env` in the root folder.  In the above example, the root is `/code_folder/geolocator`.  `/code_folder/geolocator/.env` looks like this:
 
 ```
 ACCESS_TOKEN = OBTAINED_FROM_ADMINS

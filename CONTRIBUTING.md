@@ -16,7 +16,7 @@ Research Computing Group at Saint Louis Univsersity -- research.computing@slu.ed
 
 ## Ready to Install It And Run It!
 
-First, make sure NodeJS is installed on your machine.  For download and installation instructions [head to the NodeJS guide][https://nodejs.org/en/download].
+First, make sure NodeJS is installed on your machine.  For download and installation instructions [head to the NodeJS guide](https://nodejs.org/en/download).
 
 Also make sure Git is installed on your machine.  For download and installation instruction, [head to the Git guide](https://git-scm.com/downloads).  Note this can also be achieved by installing [GitHub for Desktop](https://desktop.github.com/).  
 

@@ -148,7 +148,7 @@ class UserResource extends HTMLElement {
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
                 localStorage.setItem("userResource", JSON.stringify({"@id":target, "creator":objCreator.value}))
                 return null
-            }) 
+            })
         //This might help mobile views
         //window.scrollTo(0, confirmURI.offsetTop)
     }

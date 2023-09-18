@@ -107,7 +107,6 @@ class UserResource extends HTMLElement {
         </div>`
         // bug: only saves creator if first button is clicked of the URI. how to get it set regardless which button is clicked before
 
-        
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
         localStorage.removeItem("providedURI")
@@ -137,7 +136,7 @@ class UserResource extends HTMLElement {
                 delete obj.__rerum
                 obj.creator = objCreator.value;
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
-                localStorage.setItem("userResource", JSON.stringify(obj)) //how to do here?
+                localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
             })
             .catch(err => {

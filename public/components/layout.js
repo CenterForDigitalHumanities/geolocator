@@ -95,8 +95,19 @@ class UserResource extends HTMLElement {
             <footer>
 
             </footer>
+        </div>
+        
+        <div id="supplyCreator" class="card">
+            <header>
+                Supply a name, email, or URI to represent the creator of this data point.
+            </header>
+            <div>
+                <input id="objCreator" type="text" /> 
+            </div>
         </div>`
+        // bug: only saves creator if first button is clicked of the URI. how to get it set regardless which button is clicked before
 
+        
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
         localStorage.removeItem("providedURI")
@@ -124,8 +135,9 @@ class UserResource extends HTMLElement {
             .then(obj => {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
+                obj.creator = objCreator.value;
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
-                localStorage.setItem("userResource", JSON.stringify(obj)) 
+                localStorage.setItem("userResource", JSON.stringify(obj)) //how to do here?
                 return obj
             })
             .catch(err => {
@@ -135,9 +147,10 @@ class UserResource extends HTMLElement {
                     + " will note be able to gather additional information about this targeted resource."
                     + " You can supply a different URI or continue with this one.")
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
-                localStorage.setItem("userResource", JSON.stringify({"@id":target})) 
+                localStorage.setItem("userResource", JSON.stringify({"@id":target, "creator":objCreator.value}))
                 return null
             })
+            
         //This might help mobile views
         //window.scrollTo(0, confirmURI.offsetTop)
     }
@@ -155,6 +168,7 @@ class UserResource extends HTMLElement {
 }
 
 customElements.define("user-resource", UserResource)
+
 
 class PointPicker extends HTMLElement {
     #pointPickerTmpl = `
@@ -254,7 +268,7 @@ class GeolocatorPreview extends HTMLElement {
     #uriInputTmpl = `
         <div class="card">
             <header>
-                Here is your resource preview!.  Scroll to review, then click 'Create'.
+                Here is your resource preview!  Scroll to review, then click 'Create'.
             </header>
             <div>
                 <div class="resourcePreview"> </div>

@@ -79,10 +79,19 @@ class UserResource extends HTMLElement {
             <div>
                 <label>Object URI</label><input id="objURI" type="text" />
             </div>
+
+            <header>
+                Name or email:
+            </header>
+            <div>
+                <input id="objCreator" type="text" /> 
+            </div>
+
             <footer>
                 <input id="uriBtn" type="button" class="button primary" value="Use This URI" />
             </footer>
         </div>
+
 
         <div id="confirmURI" class="card is-hidden notfirst">
             <header>Resolved URI</header>
@@ -96,17 +105,7 @@ class UserResource extends HTMLElement {
 
             </footer>
         </div>
-        
-        <div id="supplyCreator" class="card">
-            <header>
-                Supply a name, email, or URI to represent the creator of this data point.
-            </header>
-            <div>
-                <input id="objCreator" type="text" /> 
-            </div>
-        </div>`
-        // bug: only saves creator if first button is clicked of the URI. how to get it set regardless which button is clicked before
-
+        `
         
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
@@ -160,8 +159,10 @@ class UserResource extends HTMLElement {
      * @param {type} event
      * @return none
      */
+    //user provided creator to end up as detial of this funciton
     confirmTarget(event) {
         this.closest('user-resource').setAttribute("data-uri", objURI.value)
+        //this.closest('user-resource').setAttribute("creator", objcreator.value)
         const e = new CustomEvent("userResourceConfirmed", {"detail":objURI.value})
         document.dispatchEvent(e)
     }
@@ -319,9 +320,10 @@ class GeolocatorPreview extends HTMLElement {
                 wrapper = {
                     "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
                     "type": "Annotation",
+                    "creator": userObj["creator"],
                     "motivation": "tagging",
                     "body": geo,
-                    "target": userObj["@id"] ?? userObj.id ?? ""
+                    "target": userObj["@id"] ?? userObj.id ?? ""                    
                 }
             break
             case "navPlace":

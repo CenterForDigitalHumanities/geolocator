@@ -105,8 +105,17 @@ class UserResource extends HTMLElement {
 
             </footer>
         </div>
-        `
         
+        <div id="supplyCreator" class="card">
+            <header>
+                Supply a name, email, or URI to represent the creator of this data point.
+            </header>
+            <div>
+                <input id="objCreator" type="text" /> 
+            </div>
+        </div>`
+        // bug: only saves creator if first button is clicked of the URI. how to get it set regardless which button is clicked before
+
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
         localStorage.removeItem("providedURI")
@@ -136,7 +145,7 @@ class UserResource extends HTMLElement {
                 delete obj.__rerum
                 obj.creator = objCreator.value;
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
-                localStorage.setItem("userResource", JSON.stringify(obj)) //how to do here?
+                localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
             })
             .catch(err => {
@@ -149,7 +158,6 @@ class UserResource extends HTMLElement {
                 localStorage.setItem("userResource", JSON.stringify({"@id":target, "creator":objCreator.value}))
                 return null
             })
-            
         //This might help mobile views
         //window.scrollTo(0, confirmURI.offsetTop)
     }
@@ -169,7 +177,6 @@ class UserResource extends HTMLElement {
 }
 
 customElements.define("user-resource", UserResource)
-
 
 class PointPicker extends HTMLElement {
     #pointPickerTmpl = `

@@ -104,17 +104,7 @@ class UserResource extends HTMLElement {
             <footer>
 
             </footer>
-        </div>
-        
-        <div id="supplyCreator" class="card">
-            <header>
-                Supply a name, email, or URI to represent the creator of this data point.
-            </header>
-            <div>
-                <input id="objCreator" type="text" /> 
-            </div>
         </div>`
-        // bug: only saves creator if first button is clicked of the URI. how to get it set regardless which button is clicked before
 
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl

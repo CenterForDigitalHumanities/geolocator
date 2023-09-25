@@ -133,7 +133,7 @@ class UserResource extends HTMLElement {
             .then(obj => {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
-                obj.creator = objCreator.value;
+                obj.creator = objCreator.value? objCreator.value : undefined;
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
@@ -145,7 +145,7 @@ class UserResource extends HTMLElement {
                     + " will note be able to gather additional information about this targeted resource."
                     + " You can supply a different URI or continue with this one.")
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
-                localStorage.setItem("userResource", JSON.stringify({"@id":target, "creator":objCreator.value}))
+                localStorage.setItem('userResource', objCreator.value? JSON.stringify({'@id':target, 'creator':objCreator.value}): JSON.stringify({'@id':target}))
                 return null
             })
         //This might help mobile views
@@ -157,10 +157,8 @@ class UserResource extends HTMLElement {
      * @param {type} event
      * @return none
      */
-    //user provided creator to end up as detial of this funciton
     confirmTarget(event) {
         this.closest('user-resource').setAttribute("data-uri", objURI.value)
-        //this.closest('user-resource').setAttribute("creator", objcreator.value)
         const e = new CustomEvent("userResourceConfirmed", {"detail":objURI.value})
         document.dispatchEvent(e)
     }
@@ -317,10 +315,10 @@ class GeolocatorPreview extends HTMLElement {
                 wrapper = {
                     "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
                     "type": "Annotation",
-                    "creator": userObj["creator"],
+                    "creator": userObj.creator,
                     "motivation": "tagging",
                     "body": geo,
-                    "target": userObj["@id"] ?? userObj.id ?? ""                    
+                    "target": userObj["@id"] ?? userObj.id ?? ""  
                 }
             break
             case "navPlace":
@@ -336,6 +334,7 @@ class GeolocatorPreview extends HTMLElement {
                 userObj["@context"] = context
                 userObj.navPlace = fc
                 wrapper = JSON.parse(JSON.stringify(userObj))
+                
             break
             default: 
                 this.querySelector(".createBtn").addClass("is-hidden")

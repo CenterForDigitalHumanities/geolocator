@@ -79,11 +79,9 @@ class UserResource extends HTMLElement {
             <div>
             <label>Name or Email</label><input id="objCreator" type="text" /> 
             </div>
-        </div>
 
-        <br></br>
-
-        <div id="supplyURI" class="card">
+            <br></br>
+            
             <header>
                 Supply an existing Web Resource URI.
             </header>

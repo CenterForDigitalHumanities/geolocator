@@ -74,23 +74,18 @@ class UserResource extends HTMLElement {
     #uriInputTmpl = `
         <div id="supplyCreator" class="card">
             <header>
-                Enter a name or email to give this resource. It will be assigned as the resource's creator (optional)
+            Supply an existing Web Resource URI.  You also have the option to provide a name or E-mail to serve as the creator of this resource.  Use your own name or E-mail to take ownership of the data created!
             </header>
             <div>
             <label>Name or Email</label><input id="objCreator" type="text" /> 
             </div>
 
-            <br></br>
-            
-            <header>
-                Supply an existing Web Resource URI.
-            </header>
             <div>
                 <label>Object URI</label><input id="objURI" type="text" />
             </div>
 
             <footer>
-                <input id="uriBtn" type="button" class="button primary" value="Use This URI" />
+                <input id="uriBtn" type="button" class="button primary" value="Next" />
             </footer>
         </div>
 

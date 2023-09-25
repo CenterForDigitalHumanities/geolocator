@@ -77,7 +77,7 @@ class UserResource extends HTMLElement {
                 Enter a name or email to give this resource. It will be assigned as the resource's creator (optional)
             </header>
             <div>
-                <input id="objCreator" type="text" /> 
+            <label>Name or Email</label><input id="objCreator" type="text" /> 
             </div>
         </div>
 

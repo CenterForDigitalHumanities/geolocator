@@ -72,19 +72,23 @@ customElements.define("geo-footer",GeoFooter)
 
 class UserResource extends HTMLElement {
     #uriInputTmpl = `
+        <div id="supplyCreator" class="card">
+            <header>
+                Enter a name or email to give this resource. It will be assigned as the resource's creator (optional)
+            </header>
+            <div>
+                <input id="objCreator" type="text" /> 
+            </div>
+        </div>
+
+        <br></br>
+
         <div id="supplyURI" class="card">
             <header>
                 Supply an existing Web Resource URI.
             </header>
             <div>
                 <label>Object URI</label><input id="objURI" type="text" />
-            </div>
-
-            <header>
-                Name or email:
-            </header>
-            <div>
-                <input id="objCreator" type="text" /> 
             </div>
 
             <footer>

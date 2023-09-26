@@ -72,17 +72,23 @@ customElements.define("geo-footer",GeoFooter)
 
 class UserResource extends HTMLElement {
     #uriInputTmpl = `
-        <div id="supplyURI" class="card">
+        <div id="supplyCreator" class="card">
             <header>
-                Supply an existing Web Resource URI.
+            Supply an existing Web Resource URI.  You also have the option to provide a name or E-mail to serve as the creator of this resource.  Use your own name or E-mail to take ownership of the data created!
             </header>
+            <div>
+            <label>Name or E-mail (optional)</label><input id="objCreator" type="text" /> 
+            </div>
+
             <div>
                 <label>Object URI</label><input id="objURI" type="text" />
             </div>
+
             <footer>
-                <input id="uriBtn" type="button" class="button primary" value="Use This URI" />
+                <input id="uriBtn" type="button" class="button primary" value="Next" />
             </footer>
         </div>
+
 
         <div id="confirmURI" class="card is-hidden notfirst">
             <header>Resolved URI</header>
@@ -124,8 +130,9 @@ class UserResource extends HTMLElement {
             .then(obj => {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
+                obj.creator = objCreator.value? objCreator.value : undefined;
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
-                localStorage.setItem("userResource", JSON.stringify(obj)) 
+                localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
             })
             .catch(err => {
@@ -135,7 +142,7 @@ class UserResource extends HTMLElement {
                     + " will note be able to gather additional information about this targeted resource."
                     + " You can supply a different URI or continue with this one.")
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
-                localStorage.setItem("userResource", JSON.stringify({"@id":target})) 
+                localStorage.setItem('userResource', objCreator.value? JSON.stringify({'@id':target, 'creator':objCreator.value}): JSON.stringify({'@id':target}))
                 return null
             })
         //This might help mobile views
@@ -254,7 +261,7 @@ class GeolocatorPreview extends HTMLElement {
     #uriInputTmpl = `
         <div class="card">
             <header>
-                Here is your resource preview!.  Scroll to review, then click 'Create'.
+                Here is your resource preview!  Scroll to review, then click 'Create'.
             </header>
             <div>
                 <div class="resourcePreview"> </div>
@@ -305,9 +312,10 @@ class GeolocatorPreview extends HTMLElement {
                 wrapper = {
                     "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
                     "type": "Annotation",
+                    "creator": userObj.creator,
                     "motivation": "tagging",
                     "body": geo,
-                    "target": userObj["@id"] ?? userObj.id ?? ""
+                    "target": userObj["@id"] ?? userObj.id ?? ""  
                 }
             break
             case "navPlace":
@@ -323,6 +331,7 @@ class GeolocatorPreview extends HTMLElement {
                 userObj["@context"] = context
                 userObj.navPlace = fc
                 wrapper = JSON.parse(JSON.stringify(userObj))
+                
             break
             default: 
                 this.querySelector(".createBtn").addClass("is-hidden")

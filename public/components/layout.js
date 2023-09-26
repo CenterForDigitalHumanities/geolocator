@@ -77,7 +77,7 @@ class UserResource extends HTMLElement {
             Supply an existing Web Resource URI.  You also have the option to provide a name or E-mail to serve as the creator of this resource.  Use your own name or E-mail to take ownership of the data created!
             </header>
             <div>
-            <label>Name or E-mail</label><input id="objCreator" type="text" /> 
+            <label>Name or E-mail (optional)</label><input id="objCreator" type="text" /> 
             </div>
 
             <div>

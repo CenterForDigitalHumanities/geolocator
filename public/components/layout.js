@@ -175,7 +175,7 @@ class PointPicker extends HTMLElement {
             <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
                 or enter coordinates manually.">
                 Use the map to select coordinates. You may also supply coordinates manually.
-                <br><input id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
+                <br><input disabled id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
             </header>
             <div class="card-body">
                 <div>
@@ -195,8 +195,13 @@ class PointPicker extends HTMLElement {
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
-        leafLat.addEventListener("input", this.updateGeometry)
-        leafLong.addEventListener("input", this.updateGeometry)
+        const leafLat = document.getElementById("leafLat"); // Get the input element
+        const leafLong = document.getElementById("leafLong"); // Get the input element
+        const confirmCoords = document.getElementById("confirmCoords"); // Get the button element
+
+        // Add input event listeners to leafLat and leafLong
+        leafLat.addEventListener("input", () => this.updateGeometry());
+        leafLong.addEventListener("input", () => this.updateGeometry());
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -213,6 +218,10 @@ class PointPicker extends HTMLElement {
             long = parseInt(long * 1000000) / 1000000
             leafLat.value = lat
             leafLong.value = long
+            if (leafLat.value !== "" && leafLong.value !== "") {
+                confirmCoords.disabled = false
+            }
+            else { confirmCoords.disabled = true}
             if(clickedLat || clickedLong){
                 event.preventDefault()
                 event.stopPropagation()

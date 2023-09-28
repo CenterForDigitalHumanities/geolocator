@@ -65,3 +65,9 @@ abbr{
 #takeout{
   border: 1px solid black;
 }
+.invalid {
+  border: 2px solid yellow;
+}
+.hidden {
+  display: none;
+}

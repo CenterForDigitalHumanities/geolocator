@@ -65,7 +65,7 @@ abbr{
 #takeout{
   border: 1px solid black;
 }
-.invalid {
+.input.invalid {
   border: 2px solid yellow;
 }
 .hidden {

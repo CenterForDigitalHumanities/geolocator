@@ -85,6 +85,12 @@ class UserResource extends HTMLElement {
             </div>
 
             <footer>
+                <p id="badTargetError" class="hidden">
+                    Target URI could not be resolved. Certain data previews will not be available.<br>Applications that will use the data you are about to create will not <br>be able to gather additional information about this targeted resource.<br>You can supply a different URI or continue with this one.
+                </p>
+                <p id="noTargetError" class="hidden">
+                    You must provide something to target
+                </p>
                 <input id="uriBtn" type="button" class="button primary" value="Next" />
             </footer>
         </div>
@@ -95,6 +101,12 @@ class UserResource extends HTMLElement {
             <div>
                 <input id="confirmUriBtn" type="button" class="button primary" value="Confirm URI" />
                 <div id="uriPreview">
+                    <p id="outdatedIIIFerror" class="hidden">
+                        The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.<br> Provide a different URI or click 'Confirm URI' to add this context and continue with it.
+                    </p>
+                    <p  id="navPlaceError" class="hidden>
+                        The object provided already contains \`navPlace\`.<br> Provide a different URI or click 'Confirm URI' to drop the existing \`navPlace\` and continue.
+                    </p>
                     <pre>Resolving URI...</pre>
                 </div>
             </div>
@@ -107,7 +119,9 @@ class UserResource extends HTMLElement {
         this.innerHTML = this.#uriInputTmpl
         localStorage.removeItem("providedURI")
         localStorage.removeItem("userResource")
-        uriBtn.addEventListener("click", this.provideTargetID)
+        objCreator.addEventListener("input", this.provideTargetID)
+        objURI.addEventListener("input",this.provideTargetID)
+        uriBtn.addEventListener("click", () => this.validateContext())
         confirmUriBtn.addEventListener("click", this.confirmTarget)
     }
 
@@ -120,11 +134,14 @@ class UserResource extends HTMLElement {
      */ 
     async provideTargetID(e){
         if(!objURI.value){
-            alert("You must provide something to target.")
+            noTargetError.classList.remove("hidden")
+            confirmURI.classList.add("is-hidden")
+            badTargetError.classList.add("hidden")
             return
         }
+        noTargetError.classList.add("hidden")
+        badTargetError.classList.add("hidden")
         let target = objURI.value
-        confirmURI.classList.remove("is-hidden")
         let targetObj = await fetch(target.replace(/^https?:/, location.protocol))
             .then(resp => resp.json())
             .then(obj => {
@@ -136,17 +153,33 @@ class UserResource extends HTMLElement {
                 return obj
             })
             .catch(err => {
-                alert("Target URI could not be resolved."
-                    + " Certain data previews will not be available."
-                    + " Applications that will use the data you are about to create"
-                    + " will note be able to gather additional information about this targeted resource."
-                    + " You can supply a different URI or continue with this one.")
+                badTargetError.classList.remove("hidden")
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
                 localStorage.setItem('userResource', objCreator.value? JSON.stringify({'@id':target, 'creator':objCreator.value}): JSON.stringify({'@id':target}))
                 return null
             })
         //This might help mobile views
         //window.scrollTo(0, confirmURI.offsetTop)
+    }
+
+    validateContext() {
+        outdatedIIIFerror.classList.add("hidden")
+        navPlaceError.classList.add("hidden")
+        confirmURI.classList.remove("is-hidden")
+        let providedObj = JSON.parse(localStorage.getItem("userResource"))
+        const context = providedObj["@context"]
+        const acceptableContexts = [
+            "http://iiif.io/api/presentation/3/context.json", 
+            "https://iiif.io/api/presentation/3/context.json"
+        ]
+        // Check if object contains the proper context
+        if(!(context && acceptableContexts.includes(context))){
+            outdatedIIIFerror.classList.remove("hidden")
+        }
+        // Check if object already contains navPlace
+        if(providedObj?.navPlace){
+            navPlaceError.classList.remove("hidden")
+        }
     }
 
     /**
@@ -156,6 +189,19 @@ class UserResource extends HTMLElement {
      */
     confirmTarget(event) {
         this.closest('user-resource').setAttribute("data-uri", objURI.value)
+        let providedObj = JSON.parse(localStorage.getItem("userResource"))
+        const context = providedObj["@context"]
+        if((outdatedIIIFerror.classList.contains("hidden") && navPlaceError.classList.remove("hidden"))){
+            //Make @context the first property
+            delete providedObj.navPlace
+            let minted = context ? {"@context":context} : {"@context":"https://iiif.io/api/presentation/3/context.json"}
+            delete providedObj["@context"]
+            minted = Object.assign(minted, providedObj)
+            localStorage.setItem("userResource", JSON.stringify(minted))
+            localStorage.setItem("providedURI", e.detail)
+            document.querySelector("user-resource").classList.add("is-hidden")
+            document.querySelector("point-picker").classList.remove("not-visible")  
+        }
         const e = new CustomEvent("userResourceConfirmed", {"detail":objURI.value})
         document.dispatchEvent(e)
     }
@@ -175,7 +221,7 @@ class PointPicker extends HTMLElement {
             <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
                 or enter coordinates manually.">
                 Use the map to select coordinates. You may also supply coordinates manually.
-                <br><input disabled id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
+                <br><input id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
             </header>
             <div class="card-body">
                 <div>
@@ -195,13 +241,8 @@ class PointPicker extends HTMLElement {
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
-        const leafLat = document.getElementById("leafLat"); // Get the input element
-        const leafLong = document.getElementById("leafLong"); // Get the input element
-        const confirmCoords = document.getElementById("confirmCoords"); // Get the button element
-
-        // Add input event listeners to leafLat and leafLong
-        leafLat.addEventListener("input", () => this.updateGeometry());
-        leafLong.addEventListener("input", () => this.updateGeometry());
+        leafLat.addEventListener("input", this.updateGeometry)
+        leafLong.addEventListener("input", this.updateGeometry)
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -218,10 +259,6 @@ class PointPicker extends HTMLElement {
             long = parseInt(long * 1000000) / 1000000
             leafLat.value = lat
             leafLong.value = long
-            if (leafLat.value !== "" && leafLong.value !== "") {
-                confirmCoords.disabled = false
-            }
-            else { confirmCoords.disabled = true}
             if(clickedLat || clickedLong){
                 event.preventDefault()
                 event.stopPropagation()

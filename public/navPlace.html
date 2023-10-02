@@ -53,39 +53,39 @@
         document.querySelector("geolocator-preview").setAttribute("resource-type", "navPlace")
     })
 
-    document.addEventListener("userResourceConfirmed", (e) => {
-        // The resolved resource is already in local storage
-        let providedObj = JSON.parse(localStorage.getItem("userResource"))
-        let go = true
-        const context = providedObj["@context"]
-        const acceptableContexts = [
-            "http://iiif.io/api/presentation/3/context.json", 
-            "https://iiif.io/api/presentation/3/context.json"
-        ]
-        // Check if object contains the proper context
-        if(!(context && acceptableContexts.includes(context))){
-            go = confirm("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Click 'OK' to add this context and continue with it.  Click 'Cancel' to provide a different URI.")
-        }
-        // Check if object already contains navPlace
-        if(providedObj?.navPlace){
-            go = confirm("The object provided already contains `navPlace`.  Click 'OK' to drop the existing `navPlace` and continue.  Click 'Cancel' to provide a different URI.")
-        }
-        if(go){
-            //Make @context the first property
-            delete providedObj.navPlace
-            let minted = context ? {"@context":context} : {"@context":"https://iiif.io/api/presentation/3/context.json"}
-            delete providedObj["@context"]
-            minted = Object.assign(minted, providedObj)
-            localStorage.setItem("userResource", JSON.stringify(minted))
-            localStorage.setItem("providedURI", e.detail)
-            document.querySelector("user-resource").classList.add("is-hidden")
-            document.querySelector("point-picker").classList.remove("not-visible")  
-        }
-        else{
-            //reset
-            uriPreview.innerHTML = `<pre>Awaiting New URI...</pre>`
-        }
-    })
+    // document.addEventListener("userResourceConfirmed", (e) => {
+    //     // The resolved resource is already in local storage
+    //     let providedObj = JSON.parse(localStorage.getItem("userResource"))
+    //     let go = true
+    //     const context = providedObj["@context"]
+    //     const acceptableContexts = [
+    //         "http://iiif.io/api/presentation/3/context.json", 
+    //         "https://iiif.io/api/presentation/3/context.json"
+    //     ]
+    //     // Check if object contains the proper context
+    //     if(!(context && acceptableContexts.includes(context))){
+    //         go = confirm("The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.  Click 'OK' to add this context and continue with it.  Click 'Cancel' to provide a different URI.")
+    //     }
+    //     // Check if object already contains navPlace
+    //     if(providedObj?.navPlace){
+    //         go = confirm("The object provided already contains `navPlace`.  Click 'OK' to drop the existing `navPlace` and continue.  Click 'Cancel' to provide a different URI.")
+    //     }
+    //     if(go){
+    //         //Make @context the first property
+    //         delete providedObj.navPlace
+    //         let minted = context ? {"@context":context} : {"@context":"https://iiif.io/api/presentation/3/context.json"}
+    //         delete providedObj["@context"]
+    //         minted = Object.assign(minted, providedObj)
+    //         localStorage.setItem("userResource", JSON.stringify(minted))
+    //         localStorage.setItem("providedURI", e.detail)
+    //         document.querySelector("user-resource").classList.add("is-hidden")
+    //         document.querySelector("point-picker").classList.remove("not-visible")  
+    //     }
+    //     else{
+    //         //reset
+    //         uriPreview.innerHTML = `<pre>Awaiting New URI...</pre>`
+    //     }
+    // })
 
     document.addEventListener("newResourceCreated", (e) => {
         const createdResource = JSON.parse(localStorage.getItem("newResource"))

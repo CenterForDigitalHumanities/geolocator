@@ -262,10 +262,13 @@ class GeolocatorPreview extends HTMLElement {
         <div class="card">
             <header>
                 Here is your resource preview!  Scroll to review, then click 'Create'.
+                <input type="button" class="downloadBtn download-button" style="float: right;" />
             </header>
+            
             <div>
                 <div class="resourcePreview"> </div>
             </div>
+
             <footer>
                 <input type="button" class="createBtn button primary" value="Create"/>
                 <input type="button" class="restartBtn button secondary" value="Start Over" />
@@ -275,6 +278,8 @@ class GeolocatorPreview extends HTMLElement {
     connectedCallback() {
         localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
+        //this.querySelector(".downloadBtn").addEventListener("click", this.downloadLocally)
+        //this.downloadBtn.addEventListener("click", this.downloadLocally)
         if(this.getAttribute("do-save")){
             this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
         }
@@ -282,6 +287,18 @@ class GeolocatorPreview extends HTMLElement {
             this.querySelector("footer").remove()
         }
     }
+
+    /*
+    downloadLocally(event) {
+        console.log('hi')
+        obj = localStorage.getItem("newResource")
+        const downloadLink = document.createElement('a');
+        const blob = new Blob([obj], { type: 'application/json' });
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = 'iiifResource.json';
+        downloadLink.click();
+    }
+    */
 
     /**
      * The trigger which lets this element know which type of data is ready for preview

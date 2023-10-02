@@ -101,10 +101,10 @@ class UserResource extends HTMLElement {
             <div>
                 <input id="confirmUriBtn" type="button" class="button primary" value="Confirm URI" />
                 <div id="uriPreview">
-                    <p id="outdatedIIIFerror" class="hidden">
+                    <p id="outdatedIIIFerror" class="is-hidden">
                         The object provided must contain the IIIF Presentation API 3.0 (or later) context.json.<br> Provide a different URI or click 'Confirm URI' to add this context and continue with it.
                     </p>
-                    <p  id="navPlaceError" class="hidden>
+                    <p  id="navPlaceError" class="is-hidden>
                         The object provided already contains \`navPlace\`.<br> Provide a different URI or click 'Confirm URI' to drop the existing \`navPlace\` and continue.
                     </p>
                     <pre>Resolving URI...</pre>
@@ -121,7 +121,7 @@ class UserResource extends HTMLElement {
         localStorage.removeItem("userResource")
         objCreator.addEventListener("input", this.provideTargetID)
         objURI.addEventListener("input",this.provideTargetID)
-        uriBtn.addEventListener("click", () => this.validateContext())
+        uriBtn.addEventListener("click", this.provideTargetID)
         confirmUriBtn.addEventListener("click", this.confirmTarget)
     }
 
@@ -133,6 +133,7 @@ class UserResource extends HTMLElement {
      * @return none
      */ 
     async provideTargetID(e){
+        confirmURI.classList.remove("is-hidden")
         if(!objURI.value){
             noTargetError.classList.remove("hidden")
             confirmURI.classList.add("is-hidden")
@@ -158,28 +159,26 @@ class UserResource extends HTMLElement {
                 localStorage.setItem('userResource', objCreator.value? JSON.stringify({'@id':target, 'creator':objCreator.value}): JSON.stringify({'@id':target}))
                 return null
             })
+        try{
+            const providedObj = targetObj
+            const context = providedObj["@context"]
+            const acceptableContexts = [
+                "http://iiif.io/api/presentation/3/context.json", 
+                "https://iiif.io/api/presentation/3/context.json"
+            ]
+            // Check if object contains the proper context
+            if(!(context && acceptableContexts.includes(context))){
+                console.log("IF_1")
+                outdatedIIIFerror.classList.remove('is-hidden')
+            }
+            // Check if object already contains navPlace
+            if(providedObj?.navPlace){
+                console.log("IF_2")
+                navPlaceError.classList.remove('is-hidden')
+            }
+        } catch (TypeError){ console.log(TypeError) }
         //This might help mobile views
         //window.scrollTo(0, confirmURI.offsetTop)
-    }
-
-    validateContext() {
-        outdatedIIIFerror.classList.add("hidden")
-        navPlaceError.classList.add("hidden")
-        confirmURI.classList.remove("is-hidden")
-        let providedObj = JSON.parse(localStorage.getItem("userResource"))
-        const context = providedObj["@context"]
-        const acceptableContexts = [
-            "http://iiif.io/api/presentation/3/context.json", 
-            "https://iiif.io/api/presentation/3/context.json"
-        ]
-        // Check if object contains the proper context
-        if(!(context && acceptableContexts.includes(context))){
-            outdatedIIIFerror.classList.remove("hidden")
-        }
-        // Check if object already contains navPlace
-        if(providedObj?.navPlace){
-            navPlaceError.classList.remove("hidden")
-        }
     }
 
     /**
@@ -188,20 +187,18 @@ class UserResource extends HTMLElement {
      * @return none
      */
     confirmTarget(event) {
+        // if(go){
+        //     //Make @context the first property
+        //     delete providedObj.navPlace
+        //     let minted = context ? {"@context":context} : {"@context":"https://iiif.io/api/presentation/3/context.json"}
+        //     delete providedObj["@context"]
+        //     minted = Object.assign(minted, providedObj)
+        //     localStorage.setItem("userResource", JSON.stringify(minted))
+        //     localStorage.setItem("providedURI", e.detail)
+        //     document.querySelector("user-resource").classList.add("is-hidden")
+        //     document.querySelector("point-picker").classList.remove("not-visible")  
+        // }
         this.closest('user-resource').setAttribute("data-uri", objURI.value)
-        let providedObj = JSON.parse(localStorage.getItem("userResource"))
-        const context = providedObj["@context"]
-        if((outdatedIIIFerror.classList.contains("hidden") && navPlaceError.classList.remove("hidden"))){
-            //Make @context the first property
-            delete providedObj.navPlace
-            let minted = context ? {"@context":context} : {"@context":"https://iiif.io/api/presentation/3/context.json"}
-            delete providedObj["@context"]
-            minted = Object.assign(minted, providedObj)
-            localStorage.setItem("userResource", JSON.stringify(minted))
-            localStorage.setItem("providedURI", e.detail)
-            document.querySelector("user-resource").classList.add("is-hidden")
-            document.querySelector("point-picker").classList.remove("not-visible")  
-        }
         const e = new CustomEvent("userResourceConfirmed", {"detail":objURI.value})
         document.dispatchEvent(e)
     }

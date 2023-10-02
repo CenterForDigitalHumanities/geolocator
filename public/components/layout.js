@@ -288,8 +288,8 @@ class GeolocatorPreview extends HTMLElement {
         }
     }
 
-    /*
-    downloadLocally(event) {
+    
+    downloadLocally(event) {  //Not working correctly yet. make changes in next week
         console.log('hi')
         obj = localStorage.getItem("newResource")
         const downloadLink = document.createElement('a');
@@ -298,7 +298,7 @@ class GeolocatorPreview extends HTMLElement {
         downloadLink.download = 'iiifResource.json';
         downloadLink.click();
     }
-    */
+    
 
     /**
      * The trigger which lets this element know which type of data is ready for preview

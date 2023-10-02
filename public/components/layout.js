@@ -290,7 +290,6 @@ class GeolocatorPreview extends HTMLElement {
 
     
     downloadLocally(event) {  //Not working correctly yet. make changes in next week
-        console.log('hi')
         obj = localStorage.getItem("newResource")
         const downloadLink = document.createElement('a');
         const blob = new Blob([obj], { type: 'application/json' });

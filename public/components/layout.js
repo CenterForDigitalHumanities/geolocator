@@ -276,10 +276,13 @@ class GeolocatorPreview extends HTMLElement {
         </div>`
 
     connectedCallback() {
+        //obj = localStorage.getItem("newResource")
         localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
-        //this.querySelector(".downloadBtn").addEventListener("click", this.downloadLocally)
-        //this.downloadBtn.addEventListener("click", this.downloadLocally)
+
+        this.querySelector(".downloadBtn").addEventListener("click", this.downloadLocally)
+        this.downloadBtn.addEventListener("click", this.downloadLocally())
+        
         if(this.getAttribute("do-save")){
             this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
         }
@@ -290,10 +293,11 @@ class GeolocatorPreview extends HTMLElement {
 
     
     downloadLocally(event) {  //Not working correctly yet. make changes in next week
-        obj = localStorage.getItem("newResource")
+        //obj = localStorage.getItem("newResource") //this leads to an error. how to get json object here?
+        console.log('hi')
         const downloadLink = document.createElement('a');
-        const blob = new Blob([obj], { type: 'application/json' });
-        downloadLink.href = URL.createObjectURL(blob);
+        //const blob = new Blob([obj], { type: 'application/json' });
+        //downloadLink.href = URL.createObjectURL(blob);
         downloadLink.download = 'iiifResource.json';
         downloadLink.click();
     }

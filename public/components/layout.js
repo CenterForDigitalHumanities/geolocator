@@ -276,13 +276,10 @@ class GeolocatorPreview extends HTMLElement {
         </div>`
 
     connectedCallback() {
-        //obj = localStorage.getItem("newResource")
         localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
-
         this.querySelector(".downloadBtn").addEventListener("click", this.downloadLocally)
         this.downloadBtn.addEventListener("click", this.downloadLocally())
-        
         if(this.getAttribute("do-save")){
             this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
         }
@@ -291,15 +288,19 @@ class GeolocatorPreview extends HTMLElement {
         }
     }
 
-    
-    downloadLocally(event) {  //Not working correctly yet. make changes in next week
-        //obj = localStorage.getItem("newResource") //this leads to an error. how to get json object here?
-        console.log('hi')
-        const downloadLink = document.createElement('a');
-        //const blob = new Blob([obj], { type: 'application/json' });
-        //downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = 'iiifResource.json';
-        downloadLink.click();
+    /**
+     * When download icon is clicked on the resource preview page, the JSON object is sent to
+     * the user's local machine's Downloads folder. It is saved with a filename of 'iiif_resource.json'.
+     */
+    downloadLocally(event) {
+        const objectToSave = localStorage.getItem("newResource")
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(objectToSave));
+        element.setAttribute('download', 'iiif_resource.json');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
     }
     
 

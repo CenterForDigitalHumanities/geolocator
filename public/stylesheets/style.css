@@ -44,6 +44,7 @@ header img{
   margin: 1rem 0px 0px 0px;
 }
 .download-button{
+  background-color: transparent;
   background-image: url("https://icongr.am/feather/download.svg?size=24");
   background-repeat: no-repeat;
   background-size: 100% 100%;

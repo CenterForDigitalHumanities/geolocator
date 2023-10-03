@@ -262,7 +262,7 @@ class GeolocatorPreview extends HTMLElement {
         <div class="card">
             <header>
                 Here is your resource preview!  Scroll to review, then click 'Create'.
-                <input type="button" class="downloadBtn download-button" style="float: right;" />
+                <input type="button" class="downloadBtn download-button" style="float: right;" title="Download object as a .json file"/>
             </header>
             
             <div>
@@ -291,6 +291,7 @@ class GeolocatorPreview extends HTMLElement {
     /**
      * When download icon is clicked on the resource preview page, the JSON object is sent to
      * the user's local machine's Downloads folder. It is saved with a filename of 'iiif_resource.json'.
+     * @return none
      */
     downloadLocally(event) {
         const objectToSave = localStorage.getItem("newResource")

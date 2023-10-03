@@ -51,6 +51,10 @@ header img{
   width: 25px;
   height: 25px;
 }
+.download-button:hover{
+  width: 23px;
+  height: 23px;
+}
 #leafletPreview {
   height: 48rem;
   margin-top: 2rem;

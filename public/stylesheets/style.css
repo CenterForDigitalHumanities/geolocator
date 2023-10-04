@@ -65,9 +65,32 @@ abbr{
 #takeout{
   border: 1px solid black;
 }
-.input.invalid {
-  border: 2px solid yellow;
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: text;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
-.hidden {
-  display: none;
+.popup .popuptext {
+  visibility: hidden;
+  width: 500px;
+  background-color: #f7f099;
+  color: #383838;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #383838;
+  padding: 8px 0;
+  position: fixed;
+  z-index: 1;
+  top: 2%; 
+  left: 50%;
+  transform: translateX(-50%); 
+}
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
 }

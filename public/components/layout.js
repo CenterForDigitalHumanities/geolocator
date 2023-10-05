@@ -75,7 +75,7 @@ class UserResource extends HTMLElement {
         <div id="supplyCreator" class="card">
             <header>
                 <div class="popup"> Supply an existing Web Resource URI.  You also have the option to provide a name or E-mail to serve as the creator of this resource.  Use your own name or E-mail to take ownership of the data created!
-                    <span class="popuptext" id="notResolvedMessage">Target URI could not be resolved. Certain data previews will not be available. Applications that will use the data you are about to create will not be able to gather additional information about this targeted resource. You can supply a different URI or continue with this one.</span>
+                    <span class="popuptext" id="notResolvedMessage"><strong>Target URI could not be resolved.</strong> <br>Certain data previews will not be available. Applications that will use the data you are about to create will not be able to gather additional information about this targeted resource. You can supply a different URI or continue with this one.</span>
                     <span class="popuptext" id="outdatedIIIFmessage">The object provided must contain the IIIF Presentation API 3.0 (or later) context.json. Provide a different URI or click 'Confirm URI' to add this context and continue.</span>
                     <span class="popuptext" id="navPlaceMessage">The object provided already contains 'navPlace'. Provide a different URI or click 'Confirm URI' to drop the existing 'navPlace' and continue.</span>
                 </div>
@@ -89,7 +89,7 @@ class UserResource extends HTMLElement {
             </div>
 
             <footer>
-                <p id="noTargetMessage" class="is-hidden" style="color: red">You must provide something to target.</p>
+                <p id="noTargetMessage" class="is-hidden" style="color: red"> <strong>You must provide something to target. </strong></p>
                 <input id="uriBtn" type="button" class="button primary" value="Next" />
             </footer>
         </div>

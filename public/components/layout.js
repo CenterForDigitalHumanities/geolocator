@@ -279,7 +279,6 @@ class GeolocatorPreview extends HTMLElement {
         localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
         this.querySelector(".downloadBtn").addEventListener("click", this.downloadLocally)
-        this.downloadBtn.addEventListener("click", this.downloadLocally())
         if(this.getAttribute("do-save")){
             this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
         }

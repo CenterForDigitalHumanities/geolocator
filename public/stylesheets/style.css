@@ -87,7 +87,19 @@ abbr{
   z-index: 1;
   top: 2%; 
   left: 98%;
-  transform: translateX(-98%); 
+  transform: translateX(-98%);
+  padding-right: 30px
+}
+.close-button {
+  background-color: #ffffcc;
+  color: #996633;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  position: absolute;
+  top: 2px; 
+  right: 2px; 
 }
 .popup .show {
   visibility: visible;

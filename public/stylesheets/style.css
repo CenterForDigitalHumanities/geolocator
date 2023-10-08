@@ -86,8 +86,8 @@ abbr{
   position: fixed;
   z-index: 1;
   top: 2%; 
-  left: 98%;
-  transform: translateX(-98%);
+  left: 50%;
+  transform: translateX(-50%);
   padding-right: 30px
 }
 .close-button {

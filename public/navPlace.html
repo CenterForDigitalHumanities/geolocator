@@ -53,6 +53,32 @@
         document.querySelector("geolocator-preview").setAttribute("resource-type", "navPlace")
     })
 
+    document.addEventListener("validateContext", (e) => {
+        let providedObj = JSON.parse(localStorage.getItem("userResource"))
+        const context = providedObj["@context"]
+        const acceptableContexts = [
+            "http://iiif.io/api/presentation/3/context.json", 
+            "https://iiif.io/api/presentation/3/context.json"
+        ]
+        let validContext = false
+        for (let c of context) {
+            if (acceptableContexts.includes(c)) {
+                validContext = true
+                break
+            }
+        }
+        // Check if object contains the proper context
+        if(!validContext){
+            document.getElementById("outdatedIIIFmessage").classList.toggle("show")
+            return
+        }
+        // Check if object already contains navPlace
+        else if(providedObj?.navPlace){
+            document.getElementById("navPlaceMessage").classList.toggle("show")
+            return
+        }
+    })
+
     document.addEventListener("userResourceConfirmed", (e) => {
         //Make @context the first property
         let providedObj = JSON.parse(localStorage.getItem("userResource"))

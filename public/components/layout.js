@@ -165,31 +165,13 @@ class UserResource extends HTMLElement {
                 localStorage.setItem('userResource', objCreator.value? JSON.stringify({'@id':target, 'creator':objCreator.value}): JSON.stringify({'@id':target}))
                 return null
             })
-        this.validateContext(targetObj)
+        confirmURI.classList.remove("is-hidden")
+        if (targetObj) {
+            const e = new CustomEvent("validateContext", {"detail":targetObj})
+            document.dispatchEvent(e)
+        }
         //This might help mobile views
         //window.scrollTo(0, confirmURI.offsetTop)
-    }
-
-    validateContext(target_object){
-        confirmURI.classList.remove("is-hidden")
-        if(target_object){
-            let providedObj = JSON.parse(localStorage.getItem("userResource"))
-            const context = providedObj["@context"]
-            const acceptableContexts = [
-                "http://iiif.io/api/presentation/3/context.json", 
-                "https://iiif.io/api/presentation/3/context.json"
-            ]
-            // Check if object contains the proper context
-            if(!(context && acceptableContexts.includes(context))){
-                document.getElementById("outdatedIIIFmessage").classList.toggle("show")
-                return
-            }
-            // Check if object already contains navPlace
-            else if(providedObj?.navPlace){
-                document.getElementById("navPlaceMessage").classList.toggle("show")
-                return
-            }
-        }
     }
 
     /**

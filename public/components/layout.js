@@ -262,10 +262,13 @@ class GeolocatorPreview extends HTMLElement {
         <div class="card">
             <header>
                 Here is your resource preview!  Scroll to review, then click 'Create'.
+                <input type="button" class="downloadBtn download-button" style="float: right;" title="Download object as a .json file"/>
             </header>
+            
             <div>
                 <div class="resourcePreview"> </div>
             </div>
+
             <footer>
                 <input type="button" class="createBtn button primary" value="Create"/>
                 <input type="button" class="restartBtn button secondary" value="Start Over" />
@@ -275,6 +278,7 @@ class GeolocatorPreview extends HTMLElement {
     connectedCallback() {
         localStorage.removeItem("newResource")
         this.innerHTML = this.#uriInputTmpl
+        this.querySelector(".downloadBtn").addEventListener("click", this.downloadLocally)
         if(this.getAttribute("do-save")){
             this.querySelector(".restartBtn").addEventListener("click", () => document.location.reload())
         }
@@ -282,6 +286,23 @@ class GeolocatorPreview extends HTMLElement {
             this.querySelector("footer").remove()
         }
     }
+
+    /**
+     * When download icon is clicked on the resource preview page, the JSON object is sent to
+     * the user's local machine's Downloads folder. It is saved with a filename of 'iiif_resource.json'.
+     * @return none
+     */
+    downloadLocally(event) {
+        const objectToSave = localStorage.getItem("newResource")
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(objectToSave));
+        element.setAttribute('download', 'iiif_resource.json');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+    
 
     /**
      * The trigger which lets this element know which type of data is ready for preview
@@ -338,7 +359,7 @@ class GeolocatorPreview extends HTMLElement {
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
         this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
-        localStorage.setItem("newResource", JSON.stringify(wrapper))
+        localStorage.setItem("newResource", JSON.stringify(wrapper, undefined, 4))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.
         if(Array.from(this.classList).includes("is-hidden")){

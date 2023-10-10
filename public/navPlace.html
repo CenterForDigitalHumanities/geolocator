@@ -61,11 +61,16 @@
             "https://iiif.io/api/presentation/3/context.json"
         ]
         let validContext = false
-        for (let c of context) {
-            if (acceptableContexts.includes(c)) {
-                validContext = true
-                break
+        if (context instanceof Array) {
+            for (let c of context) {
+                if (acceptableContexts.includes(c)) {
+                    validContext = true
+                    break
+                }
             }
+        }
+        else {
+            validContext = acceptableContexts.includes(context)
         }
         // Check if object contains the proper context
         if(!validContext){

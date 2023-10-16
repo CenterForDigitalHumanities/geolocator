@@ -24,7 +24,7 @@ class GeoHeader extends HTMLElement {
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
     <link rel="stylesheet" href="stylesheets/style.css">
     <header>
-    <div class="row">
+    <div class="row" style="display: flex; justify-content: flex-start;">
         <div>
             <img src="https://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo">
         </div>
@@ -32,6 +32,15 @@ class GeoHeader extends HTMLElement {
         <h1>
             rerum geolocator
         </h1>
+    </div>
+
+    <div class="row" style="position: absolute; top: 0; right: 0;">
+        <div class="col">
+            <input type="button" class="aboutBtn button clear" value="About Us"/>
+            <input type="button" class="navPlaceBtn button clear" value="navPlace Viewer"/>
+            <input type="button" class="iiifInfoBtn button clear" value="IIIF Home"/>
+            
+        </div>
     </div>
     </header>
 `
@@ -359,6 +368,7 @@ class GeolocatorPreview extends HTMLElement {
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
         this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
+        
         localStorage.setItem("newResource", JSON.stringify(wrapper, undefined, 4))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.

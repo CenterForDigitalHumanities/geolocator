@@ -360,8 +360,16 @@ class GeolocatorPreview extends HTMLElement {
         switch(newValue){
             case "Annotation":
                 this.querySelector(".createBtn").addEventListener("click", this.saveResource)
+                let a_context = userObj["@context"]
+                if (!Array.isArray(a_context)){
+                    a_context = [a_context]
+                }
+                a_context = a_context.concat(["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"])
+                const unique_context = a_context.filter((value, index, self) => {
+                    return self.indexOf(value) === index;
+                });
                 wrapper = {
-                    "@context": ["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"],
+                    "@context": unique_context,
                     "type": "Annotation",
                     "creator": userObj.creator,
                     "motivation": "tagging",
@@ -372,9 +380,22 @@ class GeolocatorPreview extends HTMLElement {
             case "navPlace":
                 this.querySelector(".createBtn").addEventListener("click", this.importResource)
                 let context = userObj["@context"]
-                context = Array.isArray(context) ? 
-                context.unshift("https://iiif.io/api/extension/navplace/context.json") :
-                ["https://iiif.io/api/extension/navplace/context.json", userObj["@context"]]
+                let navPlaceURI = "http://iiif.io/api/extension/navplace/context.json"
+                let APIuri = "http://iiif.io/api/presentation/3/context.json"
+                if (!Array.isArray(context)) {
+                    context = [context]
+                }
+                context = context.concat([navPlaceURI, APIuri])
+                const new_context = context.filter((value, index, self) => {
+                    return self.indexOf(value) === index;
+                });
+                context = new_context
+                const navIndex = context.indexOf(navPlaceURI)
+                const APIindex = context.indexOf(APIuri)
+                if (navIndex > APIindex) {
+                    context[navIndex] = APIuri
+                    context[APIindex] = navPlaceURI
+                }
                 const fc = {
                     "type" : "FeatureCollection",
                     "features" : [geo]

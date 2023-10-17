@@ -24,7 +24,7 @@ class GeoHeader extends HTMLElement {
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
     <link rel="stylesheet" href="stylesheets/style.css">
     <header>
-    <div class="row">
+    <div class="row" style="display: flex; justify-content: flex-start;">
         <div>
             <img src="https://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo">
         </div>
@@ -32,6 +32,12 @@ class GeoHeader extends HTMLElement {
         <h1>
             rerum geolocator
         </h1>
+    </div>
+
+    <div class="row" style="position: absolute; top: 0; right: 0;">
+        <div class="col">
+            <input type="button" class="button clear"  href="about.html" value="About Us"/>    
+        </div>
     </div>
     </header>
 `

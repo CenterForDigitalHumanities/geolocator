@@ -356,20 +356,57 @@ class GeolocatorPreview extends HTMLElement {
         const geo = JSON.parse(localStorage.getItem("geoJSON"))
         if(!geo || !userObj) return
 
+        function createNewContext(context, uri1, uri2){
+            /*
+            * Create new context by updating context param with uri1 and uri2.
+            * Order of uri1 and uri2 matters. 
+            * uri1 will come before uri2 in final context.
+            */
+            let uri1_index = 0
+            let uri2_index = 0
+            if (!Array.isArray(context)) {
+                context = [context]
+            }
+            //find if context contains variation of uri1
+            if (!(context.includes("http"+uri1) || context.includes("https"+uri1))) {
+                uri1 = "http"+uri1
+                context = context.concat([uri1])
+                uri1_index = context.length -1
+            } else {
+                const index1 = context.indexOf("http"+uri1)
+                const index2 = context.indexOf("https"+uri1)
+                uri1_index = Math.max(index1, index2) //get whichever variation is present
+                uri1 = context[uri1_index]
+            }
+            //find if context contains variation of uri2
+            if (!(context.includes("http"+uri2) || context.includes("https"+uri2))) {
+                uri2 = "http"+uri2
+                context = context.concat([uri2])
+                uri2_index = context.length-1
+            } else {
+                const index1 = context.indexOf("http"+uri2)
+                const index2 = context.indexOf("https"+uri2)
+                uri2_index = Math.max(index1, index2) //get whichever variation is present
+                uri2 = context[uri2_index]
+            }
+            //switch position of uri1 and uri2 if w3 comes after geo - for consistency
+            if (uri1_index > uri2_index) {
+                context[uri1_index] = uri2
+                context[uri2_index] = uri1
+            } 
+            return context
+        }
+
         let wrapper
         switch(newValue){
             case "Annotation":
                 this.querySelector(".createBtn").addEventListener("click", this.saveResource)
                 let a_context = userObj["@context"]
-                if (!Array.isArray(a_context)){
-                    a_context = [a_context]
-                }
-                a_context = a_context.concat(["http://www.w3.org/ns/anno.jsonld", "https://geojson.org/geojson-ld/geojson-context.jsonld"])
-                const unique_context = a_context.filter((value, index, self) => {
-                    return self.indexOf(value) === index;
-                });
+                let w3URI = "://www.w3.org/ns/anno.jsonld"
+                let geoURI = "://geojson.org/geojson-ld/geojson-context.jsonld"
+                a_context = createNewContext(a_context, w3URI, geoURI)             
                 wrapper = {
-                    "@context": unique_context,
+                    "@context": a_context,
                     "type": "Annotation",
                     "creator": userObj.creator,
                     "motivation": "tagging",
@@ -379,28 +416,17 @@ class GeolocatorPreview extends HTMLElement {
             break
             case "navPlace":
                 this.querySelector(".createBtn").addEventListener("click", this.importResource)
-                let context = userObj["@context"]
-                let navPlaceURI = "http://iiif.io/api/extension/navplace/context.json"
-                let APIuri = "http://iiif.io/api/presentation/3/context.json"
-                if (!Array.isArray(context)) {
-                    context = [context]
-                }
-                context = context.concat([navPlaceURI, APIuri])
-                const new_context = context.filter((value, index, self) => {
-                    return self.indexOf(value) === index;
-                });
-                context = new_context
-                const navIndex = context.indexOf(navPlaceURI)
-                const APIindex = context.indexOf(APIuri)
-                if (navIndex > APIindex) {
-                    context[navIndex] = APIuri
-                    context[APIindex] = navPlaceURI
-                }
+                let n_context = userObj["@context"]
+                let navPlaceURI = "://iiif.io/api/extension/navplace/context.json"
+                let APIuri = "://iiif.io/api/presentation/3/context.json"
+                n_context = createNewContext(n_context, navPlaceURI, APIuri)
+                //remove api/2 URI if present
+                n_context = n_context.filter(url => url !== "http://iiif.io/api/presentation/2/context.json");
                 const fc = {
                     "type" : "FeatureCollection",
                     "features" : [geo]
                 }
-                userObj["@context"] = context
+                userObj["@context"] = n_context
                 userObj.navPlace = fc
                 wrapper = JSON.parse(JSON.stringify(userObj))
                 

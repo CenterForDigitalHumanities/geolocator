@@ -359,7 +359,9 @@ class GeolocatorPreview extends HTMLElement {
         function createNewContext(context, uri){
             /* Create new context by updating context param with uri1. */
             let uri_index = 0
-            if (!Array.isArray(context)) {
+            if (context == null) {
+                context = []
+            } else if (!Array.isArray(context)) {
                 context = [context]
             }
             //find if context contains variation of uri

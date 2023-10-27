@@ -33,6 +33,14 @@ class GeoHeader extends HTMLElement {
             rerum geolocator
         </h1>
     </div>
+    <div class="row" style="position: absolute; top: 0; right:0;">
+        <div class="col">
+            <input type="button" class="button clear"  href="about.html" value="About Us"/>
+            <input type="button" class="button clear"  href="about.html" value="Learn More"/>   
+            <input type="button" class="button clear"  href="about.html" value="Another Button?"/>   
+        </div>
+    </div>
+
     </header>
 `
     constructor(){

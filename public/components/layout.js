@@ -47,13 +47,6 @@ class GeoHeader extends HTMLElement {
         this.attachShadow({mode:'open'})
         this.shadowRoot.innerHTML = this.#headerTmpl
     }
-
-    connectedCallback() {
-
-        aboutBtn.addEventListener("click",)
-        moreLinksBtn.addEventListener("click",)
-        extraBtn.addEventListener("click",)
-    }
 }
 
 customElements.define("geo-header",GeoHeader)

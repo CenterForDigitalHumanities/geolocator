@@ -72,7 +72,6 @@ header img{
   border: 0px;
   color: #000;
   display: inline-flex;
-  
   font-family: Eina01,sans-serif;
   font-size: 13px;
   font-weight: 550;
@@ -89,7 +88,6 @@ header img{
   color: #e3e9ef;
   fill: #e3e9ef;
 }
-
 #leafletPreview {
   height: 48rem;
   margin-top: 2rem;

@@ -33,11 +33,12 @@ class GeoHeader extends HTMLElement {
             rerum geolocator
         </h1>
     </div>
-    <div class="row" style="position: absolute; top: 0; right:0;">
+    <div class="navBar">
         <div class="col">
-            <input type="button" class="button clear"  href="about.html" value="About Us"/>
-            <input type="button" class="button clear"  href="about.html" value="Learn More"/>   
-            <input type="button" class="button clear"  href="about.html" value="Another Button?"/>   
+            <a class="navBar-button"  href="about.html" value="About Us"> About Us </a>
+            <a class="navBar-button"  href="moreLinks.html" value="About Us"> Learn More </a>
+            <a class="navBar-button"  href="extra.html" value="About Us"> Another Button? </a>
+
         </div>
     </div>
 
@@ -47,6 +48,13 @@ class GeoHeader extends HTMLElement {
         super()        
         this.attachShadow({mode:'open'})
         this.shadowRoot.innerHTML = this.#headerTmpl
+    }
+
+    connectedCallback() {
+
+        aboutBtn.addEventListener("click",)
+        moreLinksBtn.addEventListener("click",)
+        extraBtn.addEventListener("click",)
     }
 }
 

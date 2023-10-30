@@ -35,10 +35,8 @@ class GeoHeader extends HTMLElement {
     </div>
     <div class="navBar">
         <div class="col">
-            <a class="navBar-button"  href="about.html" value="About Us"> About Us </a>
-            <a class="navBar-button"  href="moreLinks.html" value="About Us"> Learn More </a>
-            <a class="navBar-button"  href="extra.html" value="About Us"> Another Button? </a>
-
+            <a class="navBar-button"  href="about.html"> About Geolocator </a>
+            <a class="navBar-button"  href="moreLinks.html"> Additional Links </a>
         </div>
     </div>
 

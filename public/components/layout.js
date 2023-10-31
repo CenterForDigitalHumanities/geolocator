@@ -33,12 +33,6 @@ class GeoHeader extends HTMLElement {
             rerum geolocator
         </h1>
     </div>
-    <div class="navBar">
-        <div class="col">
-            <a class="navBar-button"  href="about.html"> About Geolocator </a>
-            <a class="navBar-button"  href="moreLinks.html"> Additional Links </a>
-        </div>
-    </div>
 
     </header>
 `

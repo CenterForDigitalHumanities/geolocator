@@ -59,34 +59,9 @@ header img{
   width: 25px;
   height: 25px;
 }
-.navBar{
-  position: absolute;
-  top: 0;
-  padding-top: 10px;
-  right:0;
-}
-.navBar-button{
-  align-items: center;
-  background-color: #bdd5bd;
-  border-radius: 10px;
-  border: 0px;
-  color: #000;
-  display: inline-flex;
-  font-family: Eina01,sans-serif;
-  font-size: 13px;
-  font-weight: 550;
-  height: 35px;
+.navLinks{
+  display: flex;
   justify-content: center;
-  min-width: 140px;
-  text-align: center;
-  transition: .4s;
-}
-.navBar-button:hover {
-  background-color: #288d28;
-  border-color: #e3e9ef;
-  border: 0px;
-  color: #e3e9ef;
-  fill: #e3e9ef;
 }
 #leafletPreview {
   height: 48rem;

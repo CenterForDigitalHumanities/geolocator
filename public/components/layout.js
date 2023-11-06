@@ -60,6 +60,7 @@ class GeoFooter extends HTMLElement {
         <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
                 src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg"><small>RERUM
                 v1</small></a>
+	<p>"This site is open source." </p><a target="_blank" href="https://github.com/CenterForDigitalHumanities/geolocator.git">Improve this page</a>
     </footer>`
     constructor(){
         super()

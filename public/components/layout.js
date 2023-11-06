@@ -11,8 +11,10 @@ class GeoPage extends HTMLBodyElement {
     constructor(){
         super()
         const header = document.createElement('geo-header')
+        const navbar = document.createElement('geo-nav')
         const footer = document.createElement('geo-footer')
         this.prepend(header)
+        this.append(navbar)
         this.append(footer)
     }
 }
@@ -34,7 +36,7 @@ class GeoHeader extends HTMLElement {
         </h1>
     </div>
     </header>
-`
+    `
     constructor(){
         super()        
         this.attachShadow({mode:'open'})
@@ -43,6 +45,26 @@ class GeoHeader extends HTMLElement {
 }
 
 customElements.define("geo-header",GeoHeader)
+
+class GeoNav extends HTMLElement {
+    #navTmpl = `
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="stylesheets/style.css">
+
+    <nav class="nav-center" style="justify-content: center; position: relative;"}>
+        <a style="margin: 0 10px;" class="active" href="index.html"> Home </a>
+        <a style="margin: 0 10px;" class="active" href="about.html"> About Geolocator </a>
+        <a style="margin: 0 10px;" class="active" href="moreLinks.html"> Additional Links </a>
+    </nav>
+    `
+    constructor(){
+        super()
+        this.attachShadow({mode:'open'})
+        this.shadowRoot.innerHTML = this.#navTmpl
+    }
+}
+
+customElements.define("geo-nav",GeoNav)
 
 class GeoFooter extends HTMLElement {
     #footerTmpl = `

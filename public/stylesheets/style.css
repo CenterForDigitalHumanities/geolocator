@@ -115,3 +115,9 @@ abbr{
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 }
+.github{
+	right:30px;
+	position:absolute;
+	top: 200px;
+}
+

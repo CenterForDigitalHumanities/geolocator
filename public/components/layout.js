@@ -51,12 +51,10 @@ class GeoNav extends HTMLElement {
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
     <link rel="stylesheet" href="stylesheets/style.css">
 
-    <nav class="nav" style="margin: 0 auto; left:50%; transform: translateX(-50%); position: fixed; bottom: 10%;"}>
-        <div class="nav-center">
-            <a style="margin: 0 10px;" class="active" href="index.html"> Home </a>
-            <a style="margin: 0 10px;" class="active" href="about.html"> About Geolocator </a>
-            <a style="margin: 0 10px;" class="active" href="moreLinks.html"> Additional Links </a>
-        </div>
+    <nav class="nav-center" style="justify-content: center; position: relative;"}>
+        <a style="margin: 0 10px;" class="active" href="index.html"> Home </a>
+        <a style="margin: 0 10px;" class="active" href="about.html"> About Geolocator </a>
+        <a style="margin: 0 10px;" class="active" href="moreLinks.html"> Additional Links </a>
     </nav>
     `
     constructor(){

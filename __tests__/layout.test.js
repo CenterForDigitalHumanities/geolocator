@@ -44,7 +44,7 @@ describe('NavPlace attributeChangedCallback', () => {
         ]
         localStorageMock.getItem.mockReturnValue(JSON.stringify(userObj));
         attributeChangedCallback(null, null, 'navPlace');
-        const actualOutput = localStorageMock.getItem('newResource');
+        const actualOutput = JSON.parse(localStorageMock.getItem('newResource'))['@context'];
         expect(actualOutput).toEqual(expectedOutput);
     })
 
@@ -58,7 +58,7 @@ describe('NavPlace attributeChangedCallback', () => {
         ]
         localStorageMock.getItem.mockReturnValue(JSON.stringify(userObj));
         attributeChangedCallback(null, null, 'navPlace');
-        const actualOutput = localStorageMock.getItem('newResource');
+        const actualOutput = JSON.parse(localStorageMock.getItem('newResource'))['@context'];
         expect(actualOutput).toEqual(expectedOutput);
     })
 

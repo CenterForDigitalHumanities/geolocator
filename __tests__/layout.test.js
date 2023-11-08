@@ -2,13 +2,9 @@
  * @jest-environment jsdom
  */
 
-const attributeChangedCallback = require('../public/components/layout')
+function attributeChangedCallback(name, oldValue, newValue) { require('../public/components/layout') }
 
-function attributeChangedCallbackMock(name, oldValue, newValue) {
-    attributeChangedCallback(name, oldValue, newValue)
-}
-
-const localStorageMock = {
+localStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
     removeItem: jest.fn(),
@@ -17,7 +13,6 @@ const localStorageMock = {
 
 //Assign the mock to the global object
 global.localStorage = localStorageMock;
-global.attributeChangedCallback = attributeChangedCallbackMock;
 
 describe('NavPlace attributeChangedCallback', () => {
 
@@ -33,7 +28,7 @@ describe('NavPlace attributeChangedCallback', () => {
             "http://iiif.io/api/presentation/3/context.json"
         ]}
         localStorageMock.getItem.mockReturnValue(JSON.stringify(userObj));
-        attributeChangedCallbackMock(null, null, 'navPlace');
+        attributeChangedCallback(null, null, 'navPlace');
         const actualOutput = JSON.parse(localStorageMock.getItem('newResource'))['@context'];
         expect(actualOutput).toEqual(userObj["@context"]);
     })
@@ -48,7 +43,7 @@ describe('NavPlace attributeChangedCallback', () => {
             "http://iiif.io/api/presentation/3/context.json"
         ]
         localStorageMock.getItem.mockReturnValue(JSON.stringify(userObj));
-        attributeChangedCallbackMock(null, null, 'navPlace');
+        attributeChangedCallback(null, null, 'navPlace');
         const actualOutput = localStorageMock.getItem('newResource');
         expect(actualOutput).toEqual(expectedOutput);
     })
@@ -62,7 +57,7 @@ describe('NavPlace attributeChangedCallback', () => {
             "http://iiif.io/api/presentation/3/context.json"
         ]
         localStorageMock.getItem.mockReturnValue(JSON.stringify(userObj));
-        attributeChangedCallbackMock(null, null, 'navPlace');
+        attributeChangedCallback(null, null, 'navPlace');
         const actualOutput = localStorageMock.getItem('newResource');
         expect(actualOutput).toEqual(expectedOutput);
     })

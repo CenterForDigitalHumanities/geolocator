@@ -59,6 +59,13 @@ header img{
   width: 25px;
   height: 25px;
 }
+.geometry-type-button{
+  background-color: #d0d6d0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 10px;
+  height: 10px;
+}
 .navLinks{
   display: flex;
   justify-content: center;

@@ -225,12 +225,27 @@ class PointPicker extends HTMLElement {
                 <br><input disabled id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
             </header>
             <div class="card-body">
-                <div>
-                    <label>Latitude</label>
-                    <input id="leafLat" step=".000000001" type="number" />
-                    <label>Longitude</label>
-                    <input id="leafLong" step=".000000001" type="number" />
+                <table id="coordinateTable">
+                    <tr>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="leafLat" step=".000000001" type="number" /> 
+                        </td>
+                        <td>   
+                            <input id="leafLong" step=".000000001" type="number" />
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="row">
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn"> </button>
                 </div>
+
                 <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
                     id="leafletPreview" class="col"></div>
             </div>
@@ -244,6 +259,11 @@ class PointPicker extends HTMLElement {
         this.innerHTML = this.#pointPickerTmpl
         leafLat.addEventListener("input", (event) => updateGeometry(event))
         leafLong.addEventListener("input", (event) => updateGeometry(event))
+
+        pointBtn.addEventListener("click", this.chooseGeometry('Point'))
+        polylineBtn.addEventListener("click", this.chooseGeometry('Polyline'))
+        polygonBtn.addEventListener("click", this.chooseGeometry('Polygon'))
+
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -252,7 +272,7 @@ class PointPicker extends HTMLElement {
             id: 'mapbox.satellite', //mapbox.streets
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
-
+        
         function updateGeometry(event, clickedLat, clickedLong) {
             let lat = clickedLat ? clickedLat : leafLat.value
             let long = clickedLong ? clickedLong : leafLong.value
@@ -278,6 +298,30 @@ class PointPicker extends HTMLElement {
             leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng)})
         })
     }
+
+    chooseGeometry(geomType, clickedLat, clickedLong) {
+        //let geomType = geomType ? geomType : "Point"
+        if (geomType === 'Point'){
+            console.log('here')
+            //updateGeometry(clickedLat, clickedLong)
+            return
+        } else {
+            console.log('polygon')
+            //updateGeometry(clickedLat, clickedLong)
+            this.addRow()
+        }
+    }
+    addRow(event) {
+        var table = document.getElementById("coordinateTable");
+        var newRow = table.insertRow();
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+
+        cell1.innerHTML = '<input type="number" step=".000000001" />';
+        cell2.innerHTML = '<input type="number" step=".000000001" />';
+        //let leafLat = cell2
+    }
+    
 
     /**
      * Take the coordinates provided by the user and turn them into GeoJSON
@@ -305,6 +349,8 @@ class PointPicker extends HTMLElement {
         const e = new CustomEvent("coordinatesConfirmed", {"detail":JSON.stringify(geoJSON)})
         document.dispatchEvent(e)
     }
+
+
 }
 
 customElements.define("point-picker", PointPicker)

@@ -260,9 +260,9 @@ class PointPicker extends HTMLElement {
         leafLat.addEventListener("input", (event) => updateGeometry(event))
         leafLong.addEventListener("input", (event) => updateGeometry(event))
 
-        pointBtn.addEventListener("click", this.chooseGeometry('Point'))
-        polylineBtn.addEventListener("click", this.chooseGeometry('Polyline'))
-        polygonBtn.addEventListener("click", this.chooseGeometry('Polygon'))
+        pointBtn.addEventListener("click", () => this.chooseGeometry('Point'))
+        polylineBtn.addEventListener("click", () => this.chooseGeometry('Polyline'))
+        polygonBtn.addEventListener("click", () => this.chooseGeometry('Polygon'))
 
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)

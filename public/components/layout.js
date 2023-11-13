@@ -305,6 +305,21 @@ class PointPicker extends HTMLElement {
         const e = new CustomEvent("coordinatesConfirmed", {"detail":JSON.stringify(geoJSON)})
         document.dispatchEvent(e)
     }
+	//Coordinates of a LineString are an array of positions
+	LineString(){
+		let geo = {}
+		let coord1 = [long, lat]
+		geo.coordinates = coord1
+	}
+	
+	//Coordinates of a Polygon are an array of linear ring coordinate arrays
+	//The first element in the array represents the exterior ring
+	//any subsequent elements represent interior rings or holes
+	polygon(){
+		let geo = {}
+		let exterior = []
+		let interior = []
+	}
 }
 
 customElements.define("point-picker", PointPicker)

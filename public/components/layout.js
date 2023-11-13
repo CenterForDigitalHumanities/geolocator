@@ -285,16 +285,21 @@ class PointPicker extends HTMLElement {
      * @return none
      */
     confirmCoordinates() {
-        let lat = parseInt(leafLat.value * 1000000) / 1000000
-        let long = parseInt(leafLong.value * 1000000) / 1000000
         let geo = {}
-        if (lat && long) {
-            geo.type = "Point"
-            geo.coordinates = [long, lat]
+        // GOING TO NEED SOME SORT OF WAY TO READ HOW MANY LAT LONGS THERE ARE AND WHAT GEOMETRY-TYPE WAS CHOSEN
+        const userShapeAndCoords = JSON.parse(localStorage.getItem('userMapShape'))
+        const geometry_type = userShapeAndCoords['type']
+        const coords = userShapeAndCoords['coordinates']
+        geo.type = geometry_type
+        geo.coordinates = []
+        for (let index = 0; index < coords.length; i += 2) {
+            let lat = parseInt(coords[index] * 1000000) / 1000000
+            let long = parseInt(coords[index+1] * 1000000) / 1000000
+            geo.coordinates.push([lat, long])
         }
-        else {
-            alert("Supply both a latitude and a longitude")
-            return false
+        // Every geo type is an Array of arrays. Point is just an array.
+        if (geometry_type == 'Point') {
+            geo.coordinates = geo.coordinates[0]
         }
         let targetURL = document.getElementById('objURI').value
         let geoJSON = {

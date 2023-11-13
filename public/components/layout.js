@@ -225,25 +225,29 @@ class PointPicker extends HTMLElement {
                 <br><input disabled id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
             </header>
             <div class="card-body">
-                <table id="coordinateTable">
-                    <tr>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <input id="leafLat" step=".000000001" type="number" /> 
-                        </td>
-                        <td>   
-                            <input id="leafLong" step=".000000001" type="number" />
-                        </td>
-                    </tr>
-                </table>
+                <div style="height: 200px; overflow: auto;">
+                    <table id="coordinateTable">
+                        <tr>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="leafLat" step=".000000001" type="number" /> 
+                            </td>
+                            <td>   
+                                <input id="leafLong" step=".000000001" type="number" />
+                            </td>
+                        </tr>
+                    </table>
+
+                    <button id="addRowBtn" class="button secondary" style="display: none; margin: 0 auto;"> + Add Row </button>
+                </div>
 
                 <div class="row">
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn"> </button>
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn"> </button>
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Point"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Polyline"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Polygon"> </button>
                 </div>
 
                 <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
@@ -263,6 +267,8 @@ class PointPicker extends HTMLElement {
         pointBtn.addEventListener("click", () => this.chooseGeometry('Point'))
         polylineBtn.addEventListener("click", () => this.chooseGeometry('Polyline'))
         polygonBtn.addEventListener("click", () => this.chooseGeometry('Polygon'))
+        addRowBtn.addEventListener("click", () => this.addRow())
+        
 
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
@@ -299,19 +305,19 @@ class PointPicker extends HTMLElement {
         })
     }
 
-    chooseGeometry(geomType, clickedLat, clickedLong) {
-        //let geomType = geomType ? geomType : "Point"
+    chooseGeometry(geomType) {
+        localStorage.setItem("geometryType", geomType)
+
+        var addRow = document.getElementById("addRowBtn")
         if (geomType === 'Point'){
-            console.log('here')
-            //updateGeometry(clickedLat, clickedLong)
-            return
+            this.removeAllRows()
+            addRow.style.display = "none";
         } else {
-            console.log('polygon')
-            //updateGeometry(clickedLat, clickedLong)
-            this.addRow()
+            addRow.style.display = "block";
         }
     }
-    addRow(event) {
+
+    addRow() {
         var table = document.getElementById("coordinateTable");
         var newRow = table.insertRow();
         var cell1 = newRow.insertCell(0);
@@ -319,10 +325,17 @@ class PointPicker extends HTMLElement {
 
         cell1.innerHTML = '<input type="number" step=".000000001" />';
         cell2.innerHTML = '<input type="number" step=".000000001" />';
-        //let leafLat = cell2
+        //redefine leaflat? see how Kyla saves the points
+    }
+    removeAllRows() {
+        var table = document.getElementById("coordinateTable");
+        var rowCount = table.getElementsByTagName('tr').length;
+        for (var i = rowCount-2; i > 0; i--) {
+            table.deleteRow(i);
+        }
+        //redefine leaflat? see how Kyla saves the points
     }
     
-
     /**
      * Take the coordinates provided by the user and turn them into GeoJSON
      * @param none

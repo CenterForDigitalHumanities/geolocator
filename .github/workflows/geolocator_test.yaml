@@ -10,9 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@master
       - name: Create .env from secrets
-        uses: SpicyPizza/create-envfile@v1.3
+        uses: SpicyPizza/create-envfile@v2
         with:
           envkey_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           envkey_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
@@ -21,13 +21,13 @@ jobs:
           envkey_RERUM_ID_PATTERN: ${{ secrets.RERUM_ID_PATTERN }}
           envkey_RERUM_ACCESS_TOKEN_URL: ${{ secrets.RERUM_ACCESS_TOKEN_URL }}
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@master
         with:
-          node-version: "16"
+          node-version: "21"
 
       # Speed up subsequent runs with caching
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@master
         env:
           cache-name: cache-node-modules
         with:

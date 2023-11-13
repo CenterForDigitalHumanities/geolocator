@@ -5,14 +5,13 @@ on:
       main
 jobs:
     deploy:
-      # Deploy to newprd01 with SSH
       strategy: 
         matrix:
-            node-version: [16]
+            node-version: [21]
             machines: [vlcdhprdp01]
       runs-on: ${{ matrix.machines }}
       steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@master
         - run: |
             if [[ ! -e /srv/node/logs/rerum_geolocator.txt ]]; then
                 mkdir -p /srv/node/logs

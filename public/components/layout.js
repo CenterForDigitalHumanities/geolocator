@@ -241,7 +241,6 @@ class PointPicker extends HTMLElement {
                         </tr>
                     </table>
 
-                    <button id="addRowBtn" class="button secondary" style="display: none; margin: 0 auto;"> + Add Row </button>
                 </div>
 
                 <div class="row">
@@ -266,9 +265,7 @@ class PointPicker extends HTMLElement {
 
         pointBtn.addEventListener("click", () => this.chooseGeometry('Point'))
         polylineBtn.addEventListener("click", () => this.chooseGeometry('Polyline'))
-        polygonBtn.addEventListener("click", () => this.chooseGeometry('Polygon'))
-        addRowBtn.addEventListener("click", () => this.addRow())
-        
+        polygonBtn.addEventListener("click", () => this.chooseGeometry('Polygon'))        
 
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
@@ -308,32 +305,34 @@ class PointPicker extends HTMLElement {
     chooseGeometry(geomType) {
         localStorage.setItem("geometryType", geomType)
 
-        var addRow = document.getElementById("addRowBtn")
-        if (geomType === 'Point'){
-            this.removeAllRows()
-            addRow.style.display = "none";
-        } else {
-            addRow.style.display = "block";
+        // filler, change this later
+        if (geomType === "Polyline") {
+            this.constructTable( [['2', '3'], ['2', '3'],['2', '3']] ) 
         }
     }
 
-    addRow() {
+    constructTable(coordinateArray) {
         var table = document.getElementById("coordinateTable");
-        var newRow = table.insertRow();
-        var cell1 = newRow.insertCell(0);
-        var cell2 = newRow.insertCell(1);
+        leafLat.style.display = 'none'
+        leafLong.style.display = 'none'
 
-        cell1.innerHTML = '<input type="number" step=".000000001" />';
-        cell2.innerHTML = '<input type="number" step=".000000001" />';
-        //redefine leaflat? see how Kyla saves the points
+        for (let i=0; i<coordinateArray.length; i++) {
+            var lat = coordinateArray[i][0]
+            var long = coordinateArray[i][1]
+            var newRow = table.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            cell1.innerHTML = '<p>' + lat + '</p>'
+            cell2.innerHTML = '<p>' + long + '</p>'
+        }
     }
+
     removeAllRows() {
         var table = document.getElementById("coordinateTable");
         var rowCount = table.getElementsByTagName('tr').length;
         for (var i = rowCount-2; i > 0; i--) {
             table.deleteRow(i);
         }
-        //redefine leaflat? see how Kyla saves the points
     }
     
     /**

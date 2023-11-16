@@ -392,7 +392,7 @@ class GeolocatorPreview extends HTMLElement {
         let wrapper
         switch(newValue){
             case "Annotation":
-                this.querySelector(".createBtn").addEventListener("click", this.saveResource)
+                //this.querySelector(".createBtn").addEventListener("click", this.saveResource)
                 let a_context = userObj["@context"]
                 let w3URI = "://www.w3.org/ns/anno.jsonld"
                 let geoURI = "://geojson.org/geojson-ld/geojson-context.jsonld"
@@ -411,7 +411,7 @@ class GeolocatorPreview extends HTMLElement {
                 }
             break
             case "navPlace":
-                this.querySelector(".createBtn").addEventListener("click", this.importResource)
+                //this.querySelector(".createBtn").addEventListener("click", this.importResource)
                 let n_context = userObj["@context"]
                 let navPlaceURI = "://iiif.io/api/extension/navplace/context.json"
                 let APIuri = "://iiif.io/api/presentation/3/context.json"
@@ -434,8 +434,8 @@ class GeolocatorPreview extends HTMLElement {
                 this.querySelector(".createBtn").addClass("is-hidden")
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
-        this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
-        localStorage.setItem("newResource", "JSON.stringify(wrapper, undefined, 4)")
+        //this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
+        localStorage.setItem("newResource", JSON.stringify(wrapper, undefined, 4))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.
         if(Array.from(this.classList).includes("is-hidden")){
@@ -510,4 +510,4 @@ class GeolocatorPreview extends HTMLElement {
 }
 
 customElements.define("geolocator-preview", GeolocatorPreview)
-module.exports = GeolocatorPreview.attributeChangedCallback
+module.exports = GeolocatorPreview

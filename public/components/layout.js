@@ -276,38 +276,83 @@ class PointPicker extends HTMLElement {
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
         
-        function updateGeometry(event, clickedLat, clickedLong) {
-            let lat = clickedLat ? clickedLat : leafLat.value
-            let long = clickedLong ? clickedLong : leafLong.value
+        
+        previewMap.on('click', (e) => {
+            previewMap.setView(e.latlng, 16)
+            L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
+            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {this.updateGeometry(clickEvent, [e.latlng.lat, e.latlng.lng])})
+        })
+    }
+
+    updateGeometry(clickEvent, coordsList) {
+        if (localStorage.getItem("geometryType") === "Point") {
+            this.updatePointGeometry(clickEvent, coordsList[0], coordsList[1])
+        } else {
+            this.updateMultiPointGeometry(clickEvent, coordsList)
+        }
+    }
+
+    updatePointGeometry(event, clickedLat, clickedLong) {
+        let lat = clickedLat ? clickedLat : leafLat.value
+        let long = clickedLong ? clickedLong : leafLong.value
+        if (lat == "" || long == "") {
+            document.getElementById("confirmCoords").disabled = true
+            return
+        }
+        lat = parseInt(lat * 1000000) / 1000000
+        long = parseInt(long * 1000000) / 1000000
+        leafLat.value = lat
+        leafLong.value = long
+        document.getElementById("confirmCoords").disabled = false
+        if(clickedLat || clickedLong){
+            event.preventDefault()
+            event.stopPropagation()
+            event.target.closest(".leaflet-popup").remove()
+        }
+    }
+
+    updateMultiPointGeometry(event, coordsList) {
+        //Get
+
+        for (let i=0; i<length(coordsList); i++) {
+            coords = coordsList[i]
+            let lat = coords[0] ? coords[0] : leafLat.value //???
+            let long = coords[1] ? coords[1] : leafLong.value
+
             if (lat == "" || long == "") {
                 document.getElementById("confirmCoords").disabled = true
                 return
             }
             lat = parseInt(lat * 1000000) / 1000000
             long = parseInt(long * 1000000) / 1000000
-            leafLat.value = lat
-            leafLong.value = long
-            document.getElementById("confirmCoords").disabled = false
-            if(clickedLat || clickedLong){
-                event.preventDefault()
-                event.stopPropagation()
-                event.target.closest(".leaflet-popup").remove()
-            }
+            leafLat.value[i] = lat
+            leafLong.value[i] = long
         }
-        
-        previewMap.on('click', (e) => {
-            previewMap.setView(e.latlng, 16)
-            L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng)})
-        })
+        document.getElementById("confirmCoords").disabled = false
+        if(clickedLat || clickedLong){
+            event.preventDefault()
+            event.stopPropagation()
+            event.target.closest(".leaflet-popup").remove()
+        }
     }
 
     chooseGeometry(geomType) {
         localStorage.setItem("geometryType", geomType)
-
-        // filler, change this later
+        this.highlightGeomType(geomType)
+        if (geomType === "Point") {
+            this.removeAllRows()
+            var table = document.getElementById("coordinateTable");
+            var newRow = table.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            cell1.innerHTML = '<input id="leafLat" step=".000000001" type="number" />'
+            cell2.innerHTML = '<input id="leafLong" step=".000000001" type="number" />'
+        }
+        // filler, change this later ->
         if (geomType === "Polyline") {
             this.constructTable( [['2', '3'], ['2', '3'],['2', '3']] ) 
+        } else if(geomType === "Polygon"){
+            this.constructTable( [['3', '3'], ['3', '3'],['3', '3']] ) 
         }
     }
 
@@ -330,8 +375,24 @@ class PointPicker extends HTMLElement {
     removeAllRows() {
         var table = document.getElementById("coordinateTable");
         var rowCount = table.getElementsByTagName('tr').length;
-        for (var i = rowCount-2; i > 0; i--) {
+        for (var i = rowCount-1; i > 0; i--) {
             table.deleteRow(i);
+        }
+    }
+
+    highlightGeomType(newGeomChoice) {
+        if (newGeomChoice === "Point") {
+            pointBtn.style.border = "3px solid black";
+            polygonBtn.style.border = "0px solid black";
+            polylineBtn.style.border = "0px solid black";
+        } else if (newGeomChoice === "Polyline") {
+            pointBtn.style.border = "0px solid black";
+            polygonBtn.style.border = "0px solid black";
+            polylineBtn.style.border = "3px solid black";
+        } else if (newGeomChoice === "Polygon") {
+            pointBtn.style.border = "0px solid black";
+            polygonBtn.style.border = "3px solid black";
+            polylineBtn.style.border = "0px solid black";
         }
     }
     

@@ -312,9 +312,8 @@ class PointPicker extends HTMLElement {
     }
 
     updateMultiPointGeometry(event, coordsList) {
-        //Get
-
-        for (let i=0; i<length(coordsList); i++) {
+        // get list how?
+        for (let i=0; i<(coordsList.length); i++) {
             coords = coordsList[i]
             let lat = coords[0] ? coords[0] : leafLat.value //???
             let long = coords[1] ? coords[1] : leafLong.value
@@ -350,9 +349,9 @@ class PointPicker extends HTMLElement {
         }
         // filler, change this later ->
         if (geomType === "Polyline") {
-            this.constructTable( [['2', '3'], ['2', '3'],['2', '3']] ) 
+            this.constructTable( [['not implemented', 'not implemented'], ['not implemented', 'not implemented']] ) 
         } else if(geomType === "Polygon"){
-            this.constructTable( [['3', '3'], ['3', '3'],['3', '3']] ) 
+            this.constructTable( [['not implemented', 'note implemented'], ['not implemented', 'not implemented']] ) 
         }
     }
 
@@ -394,6 +393,17 @@ class PointPicker extends HTMLElement {
             polygonBtn.style.border = "3px solid black";
             polylineBtn.style.border = "0px solid black";
         }
+    }
+
+    // list is undefined, not implemented yet
+    previewPoints(coordsList) {
+        let body = ""
+        for (let i=0; i<coordsList.length; i++) {
+            console.log(coordsList)
+            body += "<row> P", i, ": " ,coordsList[i][0], coordsList[i][0], "</row>";
+        }
+        console.log(body)
+        return body
     }
     
     /**

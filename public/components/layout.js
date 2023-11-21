@@ -276,23 +276,23 @@ class PointPicker extends HTMLElement {
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
         
-        
+        let marker;
+        let markerGroup = L.layerGroup().addTo(previewMap);
         previewMap.on('click', (e) => {
             previewMap.setView(e.latlng, 16)
             L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {this.updateGeometry(clickEvent, [e.latlng.lat, e.latlng.lng])})
+            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
+                this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
+                if (marker && localStorage.getItem("geometryType") === "Point") {
+                    markerGroup.clearLayers();
+                } 
+                marker = L.marker(e.latlng);
+                markerGroup.addLayer(marker);
+            })
         })
     }
 
-    updateGeometry(clickEvent, coordsList) {
-        if (localStorage.getItem("geometryType") === "Point") {
-            this.updatePointGeometry(clickEvent, coordsList[0], coordsList[1])
-        } else {
-            this.updateMultiPointGeometry(clickEvent, coordsList)
-        }
-    }
-
-    updatePointGeometry(event, clickedLat, clickedLong) {
+    updateGeometry(event, clickedLat, clickedLong) {
         let lat = clickedLat ? clickedLat : leafLat.value
         let long = clickedLong ? clickedLong : leafLong.value
         if (lat == "" || long == "") {
@@ -301,31 +301,13 @@ class PointPicker extends HTMLElement {
         }
         lat = parseInt(lat * 1000000) / 1000000
         long = parseInt(long * 1000000) / 1000000
-        leafLat.value = lat
-        leafLong.value = long
-        document.getElementById("confirmCoords").disabled = false
-        if(clickedLat || clickedLong){
-            event.preventDefault()
-            event.stopPropagation()
-            event.target.closest(".leaflet-popup").remove()
-        }
-    }
-
-    updateMultiPointGeometry(event, coordsList) {
-        // get list how?
-        for (let i=0; i<(coordsList.length); i++) {
-            coords = coordsList[i]
-            let lat = coords[0] ? coords[0] : leafLat.value //???
-            let long = coords[1] ? coords[1] : leafLong.value
-
-            if (lat == "" || long == "") {
-                document.getElementById("confirmCoords").disabled = true
-                return
-            }
-            lat = parseInt(lat * 1000000) / 1000000
-            long = parseInt(long * 1000000) / 1000000
-            leafLat.value[i] = lat
-            leafLong.value[i] = long
+        if (localStorage.getItem("geometryType") === "Point") {
+            leafLat.value = lat
+            leafLong.value = long
+        } else {
+            this.insertTableRow(lat, long)
+            //leafLat.value = lat
+            //leafLong.value = long
         }
         document.getElementById("confirmCoords").disabled = false
         if(clickedLat || clickedLong){
@@ -338,45 +320,31 @@ class PointPicker extends HTMLElement {
     chooseGeometry(geomType) {
         localStorage.setItem("geometryType", geomType)
         this.highlightGeomType(geomType)
+        
+        //clear markers somehow?
+        
+        //remove all rows:
+        var table = document.getElementById("coordinateTable");
+        var rowCount = table.getElementsByTagName('tr').length;
+        for (var i = rowCount-1; i > 0; i--) {
+            table.deleteRow(i);
+        }
         if (geomType === "Point") {
-            this.removeAllRows()
-            var table = document.getElementById("coordinateTable");
             var newRow = table.insertRow();
             var cell1 = newRow.insertCell(0);
             var cell2 = newRow.insertCell(1);
             cell1.innerHTML = '<input id="leafLat" step=".000000001" type="number" />'
             cell2.innerHTML = '<input id="leafLong" step=".000000001" type="number" />'
         }
-        // filler, change this later ->
-        if (geomType === "Polyline") {
-            this.constructTable( [['not implemented', 'not implemented'], ['not implemented', 'not implemented']] ) 
-        } else if(geomType === "Polygon"){
-            this.constructTable( [['not implemented', 'note implemented'], ['not implemented', 'not implemented']] ) 
-        }
     }
 
-    constructTable(coordinateArray) {
+    insertTableRow(lat, long) {
         var table = document.getElementById("coordinateTable");
-        leafLat.style.display = 'none'
-        leafLong.style.display = 'none'
-
-        for (let i=0; i<coordinateArray.length; i++) {
-            var lat = coordinateArray[i][0]
-            var long = coordinateArray[i][1]
-            var newRow = table.insertRow();
-            var cell1 = newRow.insertCell(0);
-            var cell2 = newRow.insertCell(1);
-            cell1.innerHTML = '<p>' + lat + '</p>'
-            cell2.innerHTML = '<p>' + long + '</p>'
-        }
-    }
-
-    removeAllRows() {
-        var table = document.getElementById("coordinateTable");
-        var rowCount = table.getElementsByTagName('tr').length;
-        for (var i = rowCount-1; i > 0; i--) {
-            table.deleteRow(i);
-        }
+        var newRow = table.insertRow();
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        cell1.innerHTML = '<p>' + lat + '</p>'
+        cell2.innerHTML = '<p>' + long + '</p>'
     }
 
     highlightGeomType(newGeomChoice) {
@@ -393,17 +361,6 @@ class PointPicker extends HTMLElement {
             polygonBtn.style.border = "3px solid black";
             polylineBtn.style.border = "0px solid black";
         }
-    }
-
-    // list is undefined, not implemented yet
-    previewPoints(coordsList) {
-        let body = ""
-        for (let i=0; i<coordsList.length; i++) {
-            console.log(coordsList)
-            body += "<row> P", i, ": " ,coordsList[i][0], coordsList[i][0], "</row>";
-        }
-        console.log(body)
-        return body
     }
     
     /**
@@ -432,8 +389,6 @@ class PointPicker extends HTMLElement {
         const e = new CustomEvent("coordinatesConfirmed", {"detail":JSON.stringify(geoJSON)})
         document.dispatchEvent(e)
     }
-
-
 }
 
 customElements.define("point-picker", PointPicker)

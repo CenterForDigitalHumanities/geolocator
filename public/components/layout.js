@@ -209,6 +209,19 @@ class UserResource extends HTMLElement {
 }
 
 customElements.define("user-resource", UserResource)
+function Linestring(event){
+	var coords[]
+	var coord= {"x" : event.x, "y" : event.y}
+	coords.push(coord)
+	var max = coords.length - 1
+	if(typeof coords[max-1] !== "undefined"){
+		var curr = coords[max] = coords.length - 1
+		//context.beginPath();
+		//context.moveTo(prev.x, prev.y)
+		//context.lineTo(curr x, curr.y)
+		//context.stroke()
+	}
+}
 
 class PointPicker extends HTMLElement {
     #pointPickerTmpl = `
@@ -305,21 +318,7 @@ class PointPicker extends HTMLElement {
         const e = new CustomEvent("coordinatesConfirmed", {"detail":JSON.stringify(geoJSON)})
         document.dispatchEvent(e)
     }
-	//Coordinates of a LineString are an array of positions
-	LineString(){
-		let geo = {}
-		let coord1 = [long, lat]
-		geo.coordinates = coord1
-	}
 	
-	//Coordinates of a Polygon are an array of linear ring coordinate arrays
-	//The first element in the array represents the exterior ring
-	//any subsequent elements represent interior rings or holes
-	polygon(){
-		let geo = {}
-		let exterior = []
-		let interior = []
-	}
 }
 
 customElements.define("point-picker", PointPicker)
@@ -425,6 +424,8 @@ class GeolocatorPreview extends HTMLElement {
             }             
             return context
         }
+	
+
 
         let wrapper
         switch(newValue){

@@ -263,10 +263,6 @@ class PointPicker extends HTMLElement {
         leafLat.addEventListener("input", (event) => updateGeometry(event))
         leafLong.addEventListener("input", (event) => updateGeometry(event))
 
-        pointBtn.addEventListener("click", () => this.chooseGeometry('Point'))
-        polylineBtn.addEventListener("click", () => this.chooseGeometry('Polyline'))
-        polygonBtn.addEventListener("click", () => this.chooseGeometry('Polygon'))        
-
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -275,9 +271,14 @@ class PointPicker extends HTMLElement {
             id: 'mapbox.satellite', //mapbox.streets
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
-        
+
         let marker;
         let markerGroup = L.layerGroup().addTo(previewMap);
+
+        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point'); markerGroup.clearLayers()})
+        polylineBtn.addEventListener("click", () => {this.chooseGeometry('Polyline'); markerGroup.clearLayers()})
+        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon'); markerGroup.clearLayers()})   
+        
         previewMap.on('click', (e) => {
             previewMap.setView(e.latlng, 16)
             L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
@@ -320,8 +321,6 @@ class PointPicker extends HTMLElement {
     chooseGeometry(geomType) {
         localStorage.setItem("geometryType", geomType)
         this.highlightGeomType(geomType)
-        
-        //clear markers somehow?
         
         //remove all rows:
         var table = document.getElementById("coordinateTable");

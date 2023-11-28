@@ -262,7 +262,6 @@ class PointPicker extends HTMLElement {
         this.innerHTML = this.#pointPickerTmpl
         leafLat.addEventListener("input", (event) => updateGeometry(event))
         leafLong.addEventListener("input", (event) => updateGeometry(event))
-
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -274,17 +273,19 @@ class PointPicker extends HTMLElement {
 
         let marker;
         let markerGroup = L.layerGroup().addTo(previewMap);
+        this.chooseGeometry(localStorage.getItem("geometryType"), true); 
 
-        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point'); markerGroup.clearLayers()})
-        polylineBtn.addEventListener("click", () => {this.chooseGeometry('Polyline'); markerGroup.clearLayers()})
-        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon'); markerGroup.clearLayers()})   
+        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point', false); markerGroup.clearLayers()})
+        polylineBtn.addEventListener("click", () => {this.chooseGeometry('Polyline', false); markerGroup.clearLayers()})
+        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon', false); markerGroup.clearLayers()})   
         
         previewMap.on('click', (e) => {
+            let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
             L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
             leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
                 this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
-                if (marker && localStorage.getItem("geometryType") === "Point") {
+                if (marker && storedGeomType === "Point") {
                     markerGroup.clearLayers();
                 } 
                 marker = L.marker(e.latlng);
@@ -318,10 +319,11 @@ class PointPicker extends HTMLElement {
         }
     }
 
-    chooseGeometry(geomType) {
+    chooseGeometry(geomType, init) {
         localStorage.setItem("geometryType", geomType)
-        this.highlightGeomType(geomType)
-        
+        if (!init) {
+            this.highlightGeomType(geomType)
+        }
         //remove all rows:
         var table = document.getElementById("coordinateTable");
         var rowCount = table.getElementsByTagName('tr').length;
@@ -361,6 +363,7 @@ class PointPicker extends HTMLElement {
             polylineBtn.style.border = "0px solid black";
         }
     }
+
     
     /**
      * Take the coordinates provided by the user and turn them into GeoJSON

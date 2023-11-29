@@ -219,18 +219,18 @@ class PointPicker extends HTMLElement {
             <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
              integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
              crossorigin=""></script>
-            <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
-                or enter coordinates manually.">
-                Use the map to select coordinates. You may also supply coordinates manually.
-                <br><input disabled id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
+            <header title="Use the map below to pan around">
+                Use the map to draw a geometry, or upload a GeoJSON. 
+                <br><input disabled id="confirmCoords" type="button" class="button primary" value="See Preview" />
             </header>
             <div class="card-body">
-                <div>
-                    <label>Latitude</label>
-                    <input id="leafLat" step=".000000001" type="number" />
-                    <label>Longitude</label>
-                    <input id="leafLong" step=".000000001" type="number" />
+
+                <div class="row">
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Point"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Polyline"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Polygon"> </button>
                 </div>
+
                 <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
                     id="leafletPreview" class="col"></div>
             </div>
@@ -242,8 +242,8 @@ class PointPicker extends HTMLElement {
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
-        leafLat.addEventListener("input", (event) => updateGeometry(event))
-        leafLong.addEventListener("input", (event) => updateGeometry(event))
+        //leafLat.addEventListener("input", (event) => updateGeometry(event))
+        //leafLong.addEventListener("input", (event) => updateGeometry(event))
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -253,32 +253,79 @@ class PointPicker extends HTMLElement {
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
 
-        function updateGeometry(event, clickedLat, clickedLong) {
-            let lat = clickedLat ? clickedLat : leafLat.value
-            let long = clickedLong ? clickedLong : leafLong.value
-            if (lat == "" || long == "") {
-                document.getElementById("confirmCoords").disabled = true
-                return
-            }
-            lat = parseInt(lat * 1000000) / 1000000
-            long = parseInt(long * 1000000) / 1000000
-            leafLat.value = lat
-            leafLong.value = long
-            document.getElementById("confirmCoords").disabled = false
-            if(clickedLat || clickedLong){
-                event.preventDefault()
-                event.stopPropagation()
-                event.target.closest(".leaflet-popup").remove()
-            }
-        }
+        let marker;
+        let markerGroup = L.layerGroup().addTo(previewMap);
+        this.chooseGeometry(localStorage.getItem("geometryType"), true); 
+
+        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point', false); markerGroup.clearLayers()})
+        polylineBtn.addEventListener("click", () => {this.chooseGeometry('Polyline', false); markerGroup.clearLayers()})
+        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon', false); markerGroup.clearLayers()})   
         
         previewMap.on('click', (e) => {
+            let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
             L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng)})
+            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
+                //this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
+                if (marker && storedGeomType === "Point") {
+                    markerGroup.clearLayers();
+                } 
+                marker = L.marker(e.latlng);
+                markerGroup.addLayer(marker);
+            })
         })
     }
 
+    updateGeometry(event, clickedLat, clickedLong) {
+        let lat = clickedLat ? clickedLat : leafLat.value
+        let long = clickedLong ? clickedLong : leafLong.value
+        if (lat == "" || long == "") {
+            document.getElementById("confirmCoords").disabled = true
+            return
+        }
+        lat = parseInt(lat * 1000000) / 1000000
+        long = parseInt(long * 1000000) / 1000000
+        if (localStorage.getItem("geometryType") === "Point") {
+            leafLat.value = lat
+            leafLong.value = long
+        } else {
+            this.insertTableRow(lat, long)
+            //leafLat.value = lat
+            //leafLong.value = long
+        }
+        document.getElementById("confirmCoords").disabled = false
+        if(clickedLat || clickedLong){
+            event.preventDefault()
+            event.stopPropagation()
+            event.target.closest(".leaflet-popup").remove()
+        }
+    }
+
+    chooseGeometry(geomType, init) {
+        localStorage.setItem("geometryType", geomType)
+        if (!init) {
+            this.highlightGeomType(geomType)
+        }
+    }
+
+
+    highlightGeomType(newGeomChoice) {
+        if (newGeomChoice === "Point") {
+            pointBtn.style.border = "3px solid black";
+            polygonBtn.style.border = "0px solid black";
+            polylineBtn.style.border = "0px solid black";
+        } else if (newGeomChoice === "Polyline") {
+            pointBtn.style.border = "0px solid black";
+            polygonBtn.style.border = "0px solid black";
+            polylineBtn.style.border = "3px solid black";
+        } else if (newGeomChoice === "Polygon") {
+            pointBtn.style.border = "0px solid black";
+            polygonBtn.style.border = "3px solid black";
+            polylineBtn.style.border = "0px solid black";
+        }
+    }
+
+    
     /**
      * Take the coordinates provided by the user and turn them into GeoJSON
      * @param none

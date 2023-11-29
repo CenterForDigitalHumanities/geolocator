@@ -219,29 +219,11 @@ class PointPicker extends HTMLElement {
             <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
              integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
              crossorigin=""></script>
-            <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
-                or enter coordinates manually.">
-                Use the map to select coordinates. You may also supply coordinates manually.
-                <br><input disabled id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
+            <header title="Use the map below to pan around">
+                Use the map to draw a geometry, or upload a GeoJSON. 
+                <br><input disabled id="confirmCoords" type="button" class="button primary" value="See Preview" />
             </header>
             <div class="card-body">
-                <div style="height: 200px; overflow: auto;">
-                    <table id="coordinateTable">
-                        <tr>
-                            <th>Latitude</th>
-                            <th>Longitude</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input id="leafLat" step=".000000001" type="number" /> 
-                            </td>
-                            <td>   
-                                <input id="leafLong" step=".000000001" type="number" />
-                            </td>
-                        </tr>
-                    </table>
-
-                </div>
 
                 <div class="row">
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Point"> </button>
@@ -260,8 +242,8 @@ class PointPicker extends HTMLElement {
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
-        leafLat.addEventListener("input", (event) => updateGeometry(event))
-        leafLong.addEventListener("input", (event) => updateGeometry(event))
+        //leafLat.addEventListener("input", (event) => updateGeometry(event))
+        //leafLong.addEventListener("input", (event) => updateGeometry(event))
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -284,7 +266,7 @@ class PointPicker extends HTMLElement {
             previewMap.setView(e.latlng, 16)
             L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
             leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
-                this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
+                //this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
                 if (marker && storedGeomType === "Point") {
                     markerGroup.clearLayers();
                 } 
@@ -324,29 +306,8 @@ class PointPicker extends HTMLElement {
         if (!init) {
             this.highlightGeomType(geomType)
         }
-        //remove all rows:
-        var table = document.getElementById("coordinateTable");
-        var rowCount = table.getElementsByTagName('tr').length;
-        for (var i = rowCount-1; i > 0; i--) {
-            table.deleteRow(i);
-        }
-        if (geomType === "Point") {
-            var newRow = table.insertRow();
-            var cell1 = newRow.insertCell(0);
-            var cell2 = newRow.insertCell(1);
-            cell1.innerHTML = '<input id="leafLat" step=".000000001" type="number" />'
-            cell2.innerHTML = '<input id="leafLong" step=".000000001" type="number" />'
-        }
     }
 
-    insertTableRow(lat, long) {
-        var table = document.getElementById("coordinateTable");
-        var newRow = table.insertRow();
-        var cell1 = newRow.insertCell(0);
-        var cell2 = newRow.insertCell(1);
-        cell1.innerHTML = '<p>' + lat + '</p>'
-        cell2.innerHTML = '<p>' + long + '</p>'
-    }
 
     highlightGeomType(newGeomChoice) {
         if (newGeomChoice === "Point") {

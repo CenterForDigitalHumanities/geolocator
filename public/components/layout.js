@@ -284,11 +284,22 @@ class PointPicker extends HTMLElement {
                 event.target.closest(".leaflet-popup").remove()
             }
         }
-        
+       	
+	    let pointList = [];
         previewMap.on('click', (e) => {
             previewMap.setView(e.latlng, 16)
-            L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng)})
+		
+		if(storedGeomType === "Polyline"){
+			markerGroup.clearLayers();
+			pointList.push(e.latlng);
+			L.polyline(pointList).addTo(previewMap);
+		}
+
+		if(storedGeoType === "Polygon"){
+			makerGroup.clearLayers();
+			pointList.push(e.latlng);
+			L.polygon(pointList).addTo(previewMap);
+		}
         })
     }
 

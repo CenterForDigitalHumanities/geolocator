@@ -265,17 +265,18 @@ class PointPicker extends HTMLElement {
             let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
             //L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
-                //this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
-                if (marker && storedGeomType === "Point") {
-                    markerGroup.clearLayers();
-                } 
-                marker = L.marker(e.latlng);
-                markerGroup.addLayer(marker);
-            })
+            //leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
+            //this.updateGeometry(e, e.latlng.lat, e.latlng.lng);
+            document.getElementById("confirmCoords").disabled = false
+            if (marker && storedGeomType === "Point") {
+                markerGroup.clearLayers();
+            } 
+            marker = L.marker(e.latlng);
+            markerGroup.addLayer(marker);
+            
         })
     }
-
+    /*
     updateGeometry(event, clickedLat, clickedLong) {
         let lat = clickedLat ? clickedLat : leafLat.value
         let long = clickedLong ? clickedLong : leafLong.value
@@ -300,6 +301,8 @@ class PointPicker extends HTMLElement {
             event.target.closest(".leaflet-popup").remove()
         }
     }
+    */
+    
 
     chooseGeometry(geomType, init) {
         localStorage.setItem("geometryType", geomType)

@@ -287,7 +287,6 @@ class PointPicker extends HTMLElement {
        	
 	    let pointList = [];
         previewMap.on('click', (e) => {
-            previewMap.setView(e.latlng, 16)
 		
 		if(storedGeomType === "Polyline"){
 			markerGroup.clearLayers();

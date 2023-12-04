@@ -209,19 +209,6 @@ class UserResource extends HTMLElement {
 }
 
 customElements.define("user-resource", UserResource)
-function Linestring(event){
-	var coords[]
-	var coord= {"x" : event.x, "y" : event.y}
-	coords.push(coord)
-	var max = coords.length - 1
-	if(typeof coords[max-1] !== "undefined"){
-		var curr = coords[max] = coords.length - 1
-		//context.beginPath();
-		//context.moveTo(prev.x, prev.y)
-		//context.lineTo(curr x, curr.y)
-		//context.stroke()
-	}
-}
 
 class PointPicker extends HTMLElement {
     #pointPickerTmpl = `
@@ -266,7 +253,6 @@ class PointPicker extends HTMLElement {
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
 
-<<<<<<< HEAD
         function updateGeometry(event, clickedLat, clickedLong) {
             let lat = clickedLat ? clickedLat : leafLat.value
             let long = clickedLong ? clickedLong : leafLong.value
@@ -287,20 +273,7 @@ class PointPicker extends HTMLElement {
         }
        	
 	    let pointList = [];
-        previewMap.on('click', (e) => {
-		
-		if(storedGeomType === "Polyline"){
-			markerGroup.clearLayers();
-			pointList.push(e.latlng);
-			L.polyline(pointList).addTo(previewMap);
-		}
-
-		if(storedGeoType === "Polygon"){
-			makerGroup.clearLayers();
-			pointList.push(e.latlng);
-			L.polygon(pointList).addTo(previewMap);
-		}
-=======
+	let polygonList = [];	
         let marker;
         let markerGroup = L.layerGroup().addTo(previewMap);
         this.chooseGeometry(localStorage.getItem("geometryType"), true); 
@@ -312,16 +285,24 @@ class PointPicker extends HTMLElement {
         previewMap.on('click', (e) => {
             let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
-            L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
-                //this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
                 if (marker && storedGeomType === "Point") {
                     markerGroup.clearLayers();
                 } 
                 marker = L.marker(e.latlng);
                 markerGroup.addLayer(marker);
-            })
->>>>>>> drawShapes_layout
+
+		if(storedGeomType === "Polyline") {
+			//markerGroup.clearLayers();
+			pointList.push(e.latlng);
+			L.polyline(pointList).addTo(previewMap);
+		}
+
+		if(storedGeomType === "Polygon") {
+			//markerGroup.clearLayers();
+			polygonList.push(e.latlng);
+			L.polygon(polygonList).addTo(previewMap);
+		}
+            
         })
     }
 

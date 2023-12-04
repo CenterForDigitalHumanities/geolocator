@@ -264,7 +264,7 @@ class PointPicker extends HTMLElement {
         previewMap.on('click', (e) => {
             let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
-            L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
+            //L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
             leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
                 //this.updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng);
                 if (marker && storedGeomType === "Point") {

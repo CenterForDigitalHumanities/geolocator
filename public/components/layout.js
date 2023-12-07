@@ -242,8 +242,6 @@ class PointPicker extends HTMLElement {
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
-        //leafLat.addEventListener("input", (event) => updateGeometry(event))
-        //leafLong.addEventListener("input", (event) => updateGeometry(event))
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         let previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
@@ -264,9 +262,16 @@ class PointPicker extends HTMLElement {
         previewMap.on('click', (e) => {
             let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
-            //L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            //leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {
-            //this.updateGeometry(e, e.latlng.lat, e.latlng.lng);
+
+            //get previously selected coords if they exist. If not, create an empty Array
+            let previouslySelectedCoords = localStorage.getItem('coordinates')
+            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
+            //add new coords to the selectedCoords Array
+            previouslySelectedCoords.push(e.latlng.lat)
+            previouslySelectedCoords.push(e.latlng.lng)
+            //save new coordinates
+            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
+
             document.getElementById("confirmCoords").disabled = false
             if (marker && storedGeomType === "Point") {
                 markerGroup.clearLayers();
@@ -275,42 +280,19 @@ class PointPicker extends HTMLElement {
             markerGroup.addLayer(marker);
             
         })
-    }
-    /*
-    updateGeometry(event, clickedLat, clickedLong) {
-        let lat = clickedLat ? clickedLat : leafLat.value
-        let long = clickedLong ? clickedLong : leafLong.value
-        if (lat == "" || long == "") {
-            document.getElementById("confirmCoords").disabled = true
-            return
-        }
-        lat = parseInt(lat * 1000000) / 1000000
-        long = parseInt(long * 1000000) / 1000000
-        if (localStorage.getItem("geometryType") === "Point") {
-            leafLat.value = lat
-            leafLong.value = long
-        } else {
-            this.insertTableRow(lat, long)
-            //leafLat.value = lat
-            //leafLong.value = long
-        }
-        document.getElementById("confirmCoords").disabled = false
-        if(clickedLat || clickedLong){
-            event.preventDefault()
-            event.stopPropagation()
-            event.target.closest(".leaflet-popup").remove()
-        }
-    }
-    */
-    
+    }    
 
     chooseGeometry(geomType, init) {
+        // disable confirm button since no coords are selected
+        document.getElementById("confirmCoords").disabled = true
+        // remove all previously selected coordinates to start clean with new geom type
+        localStorage.removeItem('coordinates')
+        // reset geometry type to new selected type
         localStorage.setItem("geometryType", geomType)
         if (!init) {
             this.highlightGeomType(geomType)
         }
     }
-
 
     highlightGeomType(newGeomChoice) {
         if (newGeomChoice === "Point") {
@@ -328,25 +310,26 @@ class PointPicker extends HTMLElement {
         }
     }
 
-    
     /**
      * Take the coordinates provided by the user and turn them into GeoJSON
      * @param none
      * @return none
      */
     confirmCoordinates() {
-        let lat = parseInt(leafLat.value * 1000000) / 1000000
-        let long = parseInt(leafLong.value * 1000000) / 1000000
         let geo = {}
-        if (lat && long) {
-            geo.type = "Point"
-            geo.coordinates = [long, lat]
+        const geometry_type = localStorage.getItem('geometryType') ?? 'Point'
+        const coords = JSON.parse(localStorage.getItem('coordinates'))
+        geo.type = geometry_type
+        geo.coordinates = []
+        for (let index = 0; index < coords.length; index += 2) {
+            let lat = parseInt(coords[index] * 1000000) / 1000000
+            let long = parseInt(coords[index+1] * 1000000) / 1000000
+            geo.coordinates.push([lat, long])
         }
-        else {
-            alert("Supply both a latitude and a longitude")
-            return false
+        // Every geo type is an Array of arrays. Point is just an array.
+        if (geometry_type == 'Point') {
+            geo.coordinates = geo.coordinates[0]
         }
-        let targetURL = document.getElementById('objURI').value
         let geoJSON = {
             "type": "Feature",
             "geometry": geo,

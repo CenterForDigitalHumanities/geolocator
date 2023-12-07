@@ -263,13 +263,10 @@ class PointPicker extends HTMLElement {
             let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
 
-            //get previously selected coords if they exist. If not, create an empty Array
             let previouslySelectedCoords = localStorage.getItem('coordinates')
             previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
-            //add new coords to the selectedCoords Array
             previouslySelectedCoords.push(e.latlng.lat)
             previouslySelectedCoords.push(e.latlng.lng)
-            //save new coordinates
             localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
 
             document.getElementById("confirmCoords").disabled = false
@@ -280,20 +277,29 @@ class PointPicker extends HTMLElement {
             markerGroup.addLayer(marker);
             
         })
-    }    
+    }
 
+    /**
+     * chooseGeometry is called when the user clicks on geometry type button.
+     * Serves to disable the Confirm button until new coords are selected and to clear the previous selected coordinates
+     * @param geomType A string indicated the geometry type selected by the user 
+     * @param init Indicates if this is called when the page loads(true) or when a new geometry type button is clicked(false) 
+     * @return None 
+    */
     chooseGeometry(geomType, init) {
-        // disable confirm button since no coords are selected
         document.getElementById("confirmCoords").disabled = true
-        // remove all previously selected coordinates to start clean with new geom type
         localStorage.removeItem('coordinates')
-        // reset geometry type to new selected type
         localStorage.setItem("geometryType", geomType)
         if (!init) {
             this.highlightGeomType(geomType)
         }
     }
 
+    /**
+     * Highlights the geometry type selected by the user
+     * @param newGeomChoice A string indicated the geometry type selected by the user 
+     * @return None 
+    */
     highlightGeomType(newGeomChoice) {
         if (newGeomChoice === "Point") {
             pointBtn.style.border = "3px solid black";

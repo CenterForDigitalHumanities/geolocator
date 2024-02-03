@@ -177,7 +177,7 @@ class UserResource extends HTMLElement {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
                 obj.creator = objCreator.value? objCreator.value : undefined;
-                uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
+                uriPreview.innerHTML = `<pre><code style="white-space: pre;overflow-x: auto;">${hljs.highlight('json', (JSON.stringify(obj, null, '\t')) ).value } </code></pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
             })
@@ -456,7 +456,7 @@ class GeolocatorPreview extends HTMLElement {
                 this.querySelector(".createBtn").addClass("is-hidden")
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
-        this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
+        this.querySelector(".resourcePreview").innerHTML = `<pre><code style="white-space: pre;overflow-x: auto;">${hljs.highlight('json', (JSON.stringify(wrapper, null, '\t')) ).value } </code></pre>`
         localStorage.setItem("newResource", JSON.stringify(wrapper, undefined, 4))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.

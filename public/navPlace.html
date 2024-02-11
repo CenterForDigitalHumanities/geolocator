@@ -104,7 +104,7 @@
         document.querySelector("geolocator-preview").classList.add("is-hidden")
         finished.classList.remove("is-hidden")
         delete createdResource.__rerum
-        takeout.innerHTML = JSON.stringify(createdResource, null, '\t')
+        takeout.innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(createdResource, null, '\t')))}</pre>`
         const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
         theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
         navPlaceLink.setAttribute("href", `https://map.rerum.io/?iiif-content=${uri}`)

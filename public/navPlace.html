@@ -17,6 +17,7 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
      crossorigin=""></script>
+    <script src="//unpkg.com/json-format-highlight@1.0.1/dist/json-format-highlight.js" type="text/javascript" charset="utf-8"></script>
     <!--<script src="https://cdn.osmbuildings.org/classic/0.2.2b/OSMBuildings-Leaflet.js"></script>-->
 </head>
 
@@ -103,7 +104,7 @@
         document.querySelector("geolocator-preview").classList.add("is-hidden")
         finished.classList.remove("is-hidden")
         delete createdResource.__rerum
-        takeout.innerHTML = JSON.stringify(createdResource, null, '\t')
+        takeout.innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(createdResource, null, '\t')))}</pre>`
         const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
         theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
         navPlaceLink.setAttribute("href", `https://map.rerum.io/?iiif-content=${uri}`)

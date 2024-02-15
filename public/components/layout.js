@@ -258,7 +258,7 @@ class PointPicker extends HTMLElement {
         this.chooseGeometry(localStorage.getItem("geometryType"), true); 
 
         pointBtn.addEventListener("click", () => {this.chooseGeometry('Point', false); markerGroup.clearLayers()})
-        polylineBtn.addEventListener("click", () => {this.chooseGeometry('LineString', false); markerGroup.clearLayers()})
+        polylineBtn.addEventListener("click", () => {this.chooseGeometry('Polyline', false); markerGroup.clearLayers()})
         polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon', false); markerGroup.clearLayers()})   
         
         previewMap.on('click', (e) => {
@@ -267,8 +267,8 @@ class PointPicker extends HTMLElement {
 
             let previouslySelectedCoords = localStorage.getItem('coordinates')
             previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
-            previouslySelectedCoords.push(e.latlng.lng)
             previouslySelectedCoords.push(e.latlng.lat)
+            previouslySelectedCoords.push(e.latlng.lng)
             localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
 
             document.getElementById("confirmCoords").disabled = false
@@ -317,7 +317,7 @@ class PointPicker extends HTMLElement {
             pointBtn.style.border = "3px solid black";
             polygonBtn.style.border = "0px solid black";
             polylineBtn.style.border = "0px solid black";
-        } else if (newGeomChoice === "LineString") {
+        } else if (newGeomChoice === "Polyline") {
             pointBtn.style.border = "0px solid black";
             polygonBtn.style.border = "0px solid black";
             polylineBtn.style.border = "3px solid black";
@@ -340,27 +340,13 @@ class PointPicker extends HTMLElement {
         geo.type = geometry_type
         geo.coordinates = []
         for (let index = 0; index < coords.length; index += 2) {
-            let long = parseInt(coords[index] * 1000000) / 1000000
-            let lat = parseInt(coords[index+1] * 1000000) / 1000000
-            geo.coordinates.push([long, lat])
+            let lat = parseInt(coords[index] * 1000000) / 1000000
+            let long = parseInt(coords[index+1] * 1000000) / 1000000
+            geo.coordinates.push([lat, long])
         }
-        switch(geometry_type){
-            case 'Point':
-                geo.coordinates = geo.coordinates[0]
-                break
-            case 'LineString':
-                geo.coordinates = geo.coordinates
-                break
-            case 'Polygon':
-                const first_point = geo.coordinates[0]
-                geo.coordinates.push(first_point)
-                let poly_array = []
-                poly_array.push(geo.coordinates)
-                geo.coordinates = poly_array
-                break
-            default:
-                geo.coordinates = geo.coordinates[0]
-                break
+        // Every geo type is an Array of arrays. Point is just an array.
+        if (geometry_type == 'Point') {
+            geo.coordinates = geo.coordinates[0]
         }
         let geoJSON = {
             "type": "Feature",

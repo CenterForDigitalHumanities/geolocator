@@ -251,9 +251,7 @@ class PointPicker extends HTMLElement {
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
 
-        let pointList = [];
-	    let polygonList = [];
-	    let marker;
+        let marker;
         let markerGroup = L.layerGroup().addTo(previewMap);
         this.chooseGeometry(localStorage.getItem("geometryType"), true); 
 
@@ -277,16 +275,6 @@ class PointPicker extends HTMLElement {
             } 
             marker = L.marker(e.latlng);
             markerGroup.addLayer(marker);
-
-		if(storedGeomType === "LineString"){
-			pointList.push(e.latlng);
-			L.polyline(pointList).addTo(previewMap);
-		}
-
-		if(storedGeomType === "Polygon"){
-			polygonList.push(e.latlng);
-			L.polygon(polygonList).addTo(previewMap);
-		}
             
         })
     }

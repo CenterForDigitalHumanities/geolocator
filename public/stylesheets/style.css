@@ -1,128 +1,141 @@
 body{
-  margin-bottom: 20rem;
+	margin-bottom: 20rem;
 }
 footer{
-  bottom : 0;
-  background-color : #FFF;
-  z-index : 1;
+	bottom : 0;
+	background-color : #FFF;
+	z-index : 1;
 }
+
+@media screen and (min-width: 480px){
+	footer{
+		bottom: 0;
+		background-color: #FFF;
+		z-index: 1;
+
 header {
-  background: #222;
-  width: 100%;
-  padding: 1rem;
-  position: relative;
-  box-shadow: 0 0 3rem #001e3c;
-  margin-bottom: 3rem;
+	background: #222;
+	width: 100%;
+	padding: 1rem;
+	position: relative;
+	box-shadow: 0 0 3rem #001e3c;
+	margin-bottom: 3rem;
 }
-header small {
-  position: absolute;
-  bottom: 1rem;
-  line-height: 1;
-  margin-left: 17.1%;
-  color: #dfdfdf;
+@media screen and (min-width: 480px){
+	header small {
+		position: absolute;
+		bottom: 1rem;
+		line-height: 1;
+		margin-left: 17.1%;
+		color: #dfdfdf;
+		max-width: 500px;
+	}
+}
+header small{
+	color: #a3d1ff:
 }
 header h1 {
-  color: #a3d1ff;
-  top: 3rem;
-  letter-spacing: .55rem;
-  position: relative;
-  font-weight: 300;
-  right: 1em;
+	color: #a3d1ff;
+	top: 3rem;
+	letter-spacing: .55rem;
+	position: relative;
+	font-weight: 300;
+	right: 1em;
 }
 header img{
-  max-width: 69%;
-  margin-left: 3%;
+	max-width: 69%;
+	margin-left: 3%;
 }
 .card header{
-  background-color: white;
-  box-shadow: none;
-  margin-bottom: 1em;
-  padding: 0px;
+	background-color: white;
+	box-shadow: none;
+	margin-bottom: 1em;
+	padding: 0px;
 }
 .col-green{
-  padding-right:20px;
-  padding-left:20px;
-  padding-bottom:10px;
-  text-align: center;
-  background: radial-gradient(circle, #bdd5bd, #e4ece4);
-  border-radius: 15px;
+	padding-right:20px;
+	padding-left:20px;
+	padding-bottom:10px;
+	text-align: center;
+	background: radial-gradient(circle, #bdd5bd, #e4ece4);
+	border-radius: 15px;
 }
 .button.primary{
-  display: block;
-  margin: 1rem 0px 0px 0px;
+	display: block;
+	margin: 1rem 0px 0px 0px;
 }
 .download-button{
-  background-color: transparent;
-  background-image: url("https://icongr.am/feather/download.svg?size=24");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  width: 25px;
-  height: 25px;
+	background-color: transparent;
+	background-image: url("https://icongr.am/feather/download.svg?size=24");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	width: 25px;
+	height: 25px;
 }
 .navLinks{
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 #leafletPreview {
-  height: 48rem;
-  margin-top: 2rem;
-  z-index: 0;
+	height: 48rem;
+	margin-top: 2rem;
+	z-index: 0;
 }
 #coordinatesCard{
-  position: relative;
-  width: 100%;
-  max-width: var(--grid-maxWidth);
+	position: relative;
+	width: 100%;
+	max-width: var(--grid-maxWidth);
 }
 .not-visible{
-  visibility: hidden;
+	visibility: hidden;
 }
 .card footer input[type="button"]{
-    display: inline-block;
+	display: inline-block;
 }
 abbr{
-  cursor: default;
+	cursor: default;
 }
 #takeout{
-  border: 1px solid black;
+	border: 1px solid black;
 }
 .popup {
-  position: relative;
-  display: inline-block;
-  cursor: text;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+	position: relative;
+	display: inline-block;
+	cursor: text;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 .popup .popuptext {
-  visibility: hidden;
-  width: 500px;
-  background-color: #ffffcc;
-  color: #996633;
-  text-align: center;
-  border-radius: 6px;
-  border: 2px solid #ffeea5;
-  padding: 8px 0;
-  position: fixed;
-  z-index: 1;
-  top: 2%; 
-  left: 50%;
-  transform: translateX(-50%);
-  padding-right: 30px
+	visibility: hidden;
+	width: 500px;
+	background-color: #ffffcc;
+	color: #996633;
+	text-align: center;
+	border-radius: 6px;
+	border: 2px solid #ffeea5;
+	padding: 8px 0;
+	position: fixed;
+	z-index: 1;
+	top: 2%; 
+	left: 50%;
+	transform: translateX(-50%);
+	padding-right: 30px
 }
 .close-button {
-  background-color: #ffffcc;
-  color: #996633;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 4px;
-  position: absolute;
-  top: 2px; 
-  right: 2px; 
+	background-color: #ffffcc;
+	color: #996633;
+	border: none;
+	padding: 5px 10px;
+	cursor: pointer;
+	border-radius: 4px;
+	position: absolute;
+	top: 2px; 
+	right: 2px; 
 }
 .popup .show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
+	visibility: visible;
+	-webkit-animation: fadeIn 1s;
+	animation: fadeIn 1s;
 }

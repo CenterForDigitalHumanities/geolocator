@@ -28,7 +28,7 @@ class GeoHeader extends HTMLElement {
     <header>
     <div class="row" style="display: flex; justify-content: flex-start;">
         <div>
-            <img src="https://centerfordigitalhumanities.github.io/rerum/logo.png" alt="logo">
+            <img src="https://centerfordigitalhumanities.github.io/rerum/logo.png" object-fit="fill" alt="logo">
         </div>
         <small class="rerum_shimmer">reconditorium eximium rerum universalium mutabiliumque</small>
         <h1>
@@ -82,7 +82,7 @@ class GeoFooter extends HTMLElement {
         <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
                 src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg"><small>RERUM
                 v1</small></a>
-	    <a target="_blank" href="https://github.com/CenterForDigitalHumanities/geolocator.git"><img width="30" height="30" alt="Git logo" src="./github.svg">
+	    <a target="_blank" href="https://github.com/CenterForDigitalHumanities/geolocator.git"><img width="30" height="30" object-fit="contain" alt="Git logo" src="./github.svg">
         <small>&nbsp;&nbsp;Support/Contribute to Geolocator</small></a>
     </footer>`
     constructor(){

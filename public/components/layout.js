@@ -11,8 +11,10 @@ class GeoPage extends HTMLBodyElement {
     constructor(){
         super()
         const header = document.createElement('geo-header')
+        const navbar = document.createElement('geo-nav')
         const footer = document.createElement('geo-footer')
         this.prepend(header)
+        this.append(navbar)
         this.append(footer)
     }
 }
@@ -34,7 +36,7 @@ class GeoHeader extends HTMLElement {
         </h1>
     </div>
     </header>
-`
+    `
     constructor(){
         super()        
         this.attachShadow({mode:'open'})
@@ -43,6 +45,26 @@ class GeoHeader extends HTMLElement {
 }
 
 customElements.define("geo-header",GeoHeader)
+
+class GeoNav extends HTMLElement {
+    #navTmpl = `
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="stylesheets/style.css">
+
+    <nav class="nav-center" style="justify-content: center; position: relative;"}>
+        <a style="margin: 0 10px;" class="active" href="index.html"> Home </a>
+        <a style="margin: 0 10px;" class="active" href="about.html"> About Geolocator </a>
+        <a style="margin: 0 10px;" class="active" href="moreLinks.html"> Additional Links </a>
+    </nav>
+    `
+    constructor(){
+        super()
+        this.attachShadow({mode:'open'})
+        this.shadowRoot.innerHTML = this.#navTmpl
+    }
+}
+
+customElements.define("geo-nav",GeoNav)
 
 class GeoFooter extends HTMLElement {
     #footerTmpl = `
@@ -60,6 +82,8 @@ class GeoFooter extends HTMLElement {
         <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
                 src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg"><small>RERUM
                 v1</small></a>
+	    <a target="_blank" href="https://github.com/CenterForDigitalHumanities/geolocator.git"><img width="30" height="30" alt="Git logo" src="./github.svg">
+        <small>&nbsp;&nbsp;Support/Contribute to Geolocator</small></a>
     </footer>`
     constructor(){
         super()
@@ -155,7 +179,7 @@ class UserResource extends HTMLElement {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
                 obj.creator = objCreator.value? objCreator.value : undefined;
-                uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
+                uriPreview.innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(obj, null, '\t')))}</pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
             })
@@ -437,8 +461,7 @@ class GeolocatorPreview extends HTMLElement {
                 if (button) { button.addClass("is-hidden") }
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
-        const resPrev = this.querySelector(".resourcePreview")
-        if (resPrev) { resPrev.innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>` }
+        this.querySelector(".resourcePreview").innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(wrapper, null, '\t')))}</pre>`
         localStorage.setItem("newResource", JSON.stringify(wrapper, undefined, 4))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.
@@ -515,3 +538,4 @@ class GeolocatorPreview extends HTMLElement {
 
 customElements.define("geolocator-preview", GeolocatorPreview)
 module.exports = GeolocatorPreview
+

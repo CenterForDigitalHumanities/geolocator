@@ -416,7 +416,8 @@ class GeolocatorPreview extends HTMLElement {
         let wrapper
         switch(newValue){
             case "Annotation":
-                this.querySelector(".createBtn").addEventListener("click", this.saveResource)
+                const el = this.querySelector(".createBtn")
+                if (el) { el.addEventListener("click", this.saveResource) }
                 let a_context = userObj["@context"]
                 let w3URI = "://www.w3.org/ns/anno.jsonld"
                 let geoURI = "://geojson.org/geojson-ld/geojson-context.jsonld"
@@ -435,7 +436,8 @@ class GeolocatorPreview extends HTMLElement {
                 }
             break
             case "navPlace":
-                this.querySelector(".createBtn").addEventListener("click", this.importResource)
+                const element = this.querySelector(".createBtn")
+                if(element) { element.addEventListener("click", this.importResource) }
                 let n_context = userObj["@context"]
                 let navPlaceURI = "://iiif.io/api/extension/navplace/context.json"
                 let APIuri = "://iiif.io/api/presentation/3/context.json"
@@ -455,7 +457,8 @@ class GeolocatorPreview extends HTMLElement {
                 
             break
             default: 
-                this.querySelector(".createBtn").addClass("is-hidden")
+                const button = this.querySelector(".createBtn")
+                if (button) { button.addClass("is-hidden") }
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
         this.querySelector(".resourcePreview").innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(wrapper, null, '\t')))}</pre>`
@@ -534,3 +537,5 @@ class GeolocatorPreview extends HTMLElement {
 }
 
 customElements.define("geolocator-preview", GeolocatorPreview)
+module.exports = GeolocatorPreview
+

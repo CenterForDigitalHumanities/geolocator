@@ -19,7 +19,17 @@
     "http-errors": "~1.6.3",
     "jest": "^29.7.0",
     "morgan": "~1.9.1",
-    "pug": "^3.0.1",
+    "pug": "^3.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.3",
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^27.5.1",
+    "jest-environment-jsdom": "^29.7.0",
+    "superagent": "^7.1.1",
     "supertest": "^6.3.3"
   }
 }

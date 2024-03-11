@@ -6,14 +6,34 @@ footer{
 	background-color : #FFF;
 	z-index : 1;
 }
-
-@media screen and (min-width: 480px){
+@media screen and (max-width: 480px){
 	footer{
-		bottom: 0;
-		background-color: #FFF;
-		z-index: 1;
+		flex-direction: row !important;
+	}
+	footer small{
+		display: none !important;
+		position: relative;
+	}
 
+	footer img{
+		display: block !important;
+		height: auto;
+
+
+	}
+	header small{
+		display: none !important;
+	}
+	header h1{
+		margin-left: 4rem;
+		color: #a3d1ff;
+		letter-spacing: .55rem;
+		font-weight: 300;
+
+	}
+}
 header {
+	display: block;
 	background: #222;
 	width: 100%;
 	padding: 1rem;
@@ -21,18 +41,13 @@ header {
 	box-shadow: 0 0 3rem #001e3c;
 	margin-bottom: 3rem;
 }
-@media screen and (min-width: 480px){
-	header small {
-		position: absolute;
-		bottom: 1rem;
-		line-height: 1;
-		margin-left: 17.1%;
-		color: #dfdfdf;
-		max-width: 500px;
-	}
-}
 header small{
-	color: #a3d1ff:
+	position: absolute;
+	bottom: 1rem;
+	line-height: 1;
+	margin-left: 17.1%;
+	color: #dfdfdf;
+
 }
 header h1 {
 	color: #a3d1ff;

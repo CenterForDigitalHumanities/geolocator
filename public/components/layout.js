@@ -76,10 +76,10 @@ class GeoFooter extends HTMLElement {
                 Computing Group</small></a>
         <a target="_blank" href="https://slu.edu"><img class="brand" alt="SLU logo"
                 src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png"></a>
-        <a target="_blank" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand"
+        <a target="_blank" id="slu" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand"
                 alt="SLU RCG logo"
                 src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png"></a>
-        <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
+        <a target="_blank" id = "rerum" href="http://rerum.io"><img class="brand" alt="Rerum logo"
                 src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg"><small>RERUM
                 v1</small></a>
 	    <a target="_blank" href="https://github.com/CenterForDigitalHumanities/geolocator.git"><img width="30" height="30" object-fit="contain" alt="Git logo" src="./github.svg">

@@ -267,6 +267,9 @@ class PointPicker extends HTMLElement {
 
             let previouslySelectedCoords = localStorage.getItem('coordinates')
             previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
+            if (localStorage.getItem("geometryType") === "Point"){
+                previouslySelectedCoords = [] //clear any previously selected points
+            }
             previouslySelectedCoords.push(e.latlng.lng)
             previouslySelectedCoords.push(e.latlng.lat)
             localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))

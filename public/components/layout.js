@@ -239,6 +239,8 @@ class PointPicker extends HTMLElement {
             </footer>
         </div>`
 
+    pointList = [];
+    polygonList = [];
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
@@ -251,20 +253,17 @@ class PointPicker extends HTMLElement {
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
         }).addTo(previewMap);
 
-        let pointList = [];
-	    let polygonList = [];
 	    let marker;
         let markerGroup = L.layerGroup().addTo(previewMap);
-        this.chooseGeometry(localStorage.getItem("geometryType"), true); 
+        this.chooseGeometry("Point"); 
 
-        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point', false); markerGroup.clearLayers()})
-        polylineBtn.addEventListener("click", () => {this.chooseGeometry('LineString', false); markerGroup.clearLayers()})
-        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon', false); markerGroup.clearLayers()})   
+        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point'); markerGroup.clearLayers()})
+        polylineBtn.addEventListener("click", () => {this.chooseGeometry('LineString'); markerGroup.clearLayers()})
+        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon'); markerGroup.clearLayers()})   
         
         previewMap.on('click', (e) => {
             let storedGeomType = localStorage.getItem("geometryType");
             previewMap.setView(e.latlng, 16)
-
             let previouslySelectedCoords = localStorage.getItem('coordinates')
             previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
             if (localStorage.getItem("geometryType") === "Point"){
@@ -282,14 +281,14 @@ class PointPicker extends HTMLElement {
             markerGroup.addLayer(marker);
 
 		if(storedGeomType === "LineString"){
-			pointList.push(e.latlng);
-			L.polyline(pointList).addTo(previewMap);
+			this.pointList.push(e.latlng);
+			L.polyline(this.pointList).addTo(previewMap);
 		}
 
 		if(storedGeomType === "Polygon"){
-			polygonList.push(e.latlng);
+			this.polygonList.push(e.latlng);
 			previewMap.on('dblclick', (e) => {
-				L.polygon(polygonList).addTo(previewMap);
+				L.polygon(this.polygonList).addTo(previewMap);
 			})
 
 		}
@@ -304,13 +303,13 @@ class PointPicker extends HTMLElement {
      * @param init Indicates if this is called when the page loads(true) or when a new geometry type button is clicked(false) 
      * @return None 
     */
-    chooseGeometry(geomType, init) {
+    chooseGeometry(geomType) {
         document.getElementById("confirmCoords").disabled = true
         localStorage.removeItem('coordinates')
+        if (this.pointList) {this.pointList = []; }
+        if (this.polygonList) {this.polygonList = []; }
         localStorage.setItem("geometryType", geomType)
-        if (!init) {
-            this.highlightGeomType(geomType)
-        }
+        this.highlightGeomType(geomType)
     }
 
     /**

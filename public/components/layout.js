@@ -229,6 +229,8 @@ class PointPicker extends HTMLElement {
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Point"> </button>
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Polyline"> </button>
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Polygon"> </button>
+                    <div style="margin-left: 20px;"></div>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/274180/garbage-basket.svg?size=24');" id="clearBtn" title="Clear map"> </button>
                 </div>
 
                 <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
@@ -262,7 +264,8 @@ class PointPicker extends HTMLElement {
 
         pointBtn.addEventListener("click", () => {this.chooseGeometry('Point')})
         polylineBtn.addEventListener("click", () => {this.chooseGeometry('LineString')})
-        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon')})   
+        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon')})
+        clearBtn.addEventListener("click", () => {this.clearMap()})
         
         this.previewMap.on('click', (e) => {
             let storedGeomType = localStorage.getItem("geometryType");
@@ -304,27 +307,35 @@ class PointPicker extends HTMLElement {
      * @return None 
     */
     chooseGeometry(geomType) {
+        localStorage.setItem("geometryType", geomType)
+        this.highlightGeomType(geomType)
+        this.clearMap()
+    }
+
+    /**
+     * Clears all previously drawn shapes on the preview map.
+     * Deletes any associated data with the previous shapes.
+     * @return None
+     */
+    clearMap() {
         document.getElementById("confirmCoords").disabled = true
         localStorage.removeItem('coordinates')
         this.pointList = []
         this.polygonList = []
         this.markerGroup.clearLayers()
-        localStorage.setItem("geometryType", geomType)
-        this.highlightGeomType(geomType)
-
-        if (geomType === "LineString") {
-            this.previewMap.eachLayer(layer => {
-                if (layer instanceof L.Polyline) {
+        const layerTypes = {
+            "LineString": L.Polyline,
+            "Polygon": L.Polygon
+        };
+        
+        this.previewMap.eachLayer(layer => {
+            for (const geomType in layerTypes) {
+                if (layer instanceof layerTypes[geomType]) {
                     this.previewMap.removeLayer(layer);
+                    break;
                 }
-            });
-        } else if (geomType === "Polygon") {
-            this.previewMap.eachLayer(layer => {
-                if (layer instanceof L.Polygon) {
-                    this.previewMap.removeLayer(layer);
-                }
-            });
-        }
+            }
+        });
     }
 
     /**

@@ -229,6 +229,8 @@ class PointPicker extends HTMLElement {
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Point"> </button>
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Polyline"> </button>
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Polygon"> </button>
+                    <div style="margin-left: 20px;"></div>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/274180/garbage-basket.svg?size=24');" id="clearBtn" title="Clear map"> </button>
                 </div>
 
                 <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
@@ -239,60 +241,107 @@ class PointPicker extends HTMLElement {
             </footer>
         </div>`
 
+    pointList = [];
+    marker;
+    markerGroup;
+    previewMap;
+    
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
         confirmCoords.addEventListener("click", this.confirmCoordinates)
-        let previewMap = L.map('leafletPreview').setView([12, 12], 2)
+        this.previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             maxZoom: 19,
             id: 'mapbox.satellite', //mapbox.streets
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
-        }).addTo(previewMap);
+        }).addTo(this.previewMap);
 
-        let marker;
-        let markerGroup = L.layerGroup().addTo(previewMap);
-        this.chooseGeometry(localStorage.getItem("geometryType"), true); 
+        this.markerGroup = L.layerGroup().addTo(this.previewMap);
+        this.chooseGeometry("Point"); 
 
-        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point', false); markerGroup.clearLayers()})
-        polylineBtn.addEventListener("click", () => {this.chooseGeometry('Polyline', false); markerGroup.clearLayers()})
-        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon', false); markerGroup.clearLayers()})   
+        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point')})
+        polylineBtn.addEventListener("click", () => {this.chooseGeometry('LineString')})
+        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon')})
+        clearBtn.addEventListener("click", () => {this.clearMapData()})
         
-        previewMap.on('click', (e) => {
+        this.previewMap.on('click', (e) => {
             let storedGeomType = localStorage.getItem("geometryType");
-            previewMap.setView(e.latlng, 16)
-
+            this.previewMap.setView(e.latlng, 16)
+            document.getElementById("confirmCoords").disabled = false
+            
             let previouslySelectedCoords = localStorage.getItem('coordinates')
             previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
-            previouslySelectedCoords.push(e.latlng.lat)
+            if (storedGeomType === "Point"){
+                previouslySelectedCoords = [] //clear any previously selected points
+            }
             previouslySelectedCoords.push(e.latlng.lng)
+            previouslySelectedCoords.push(e.latlng.lat)
             localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
 
-            document.getElementById("confirmCoords").disabled = false
-            if (marker && storedGeomType === "Point") {
-                markerGroup.clearLayers();
+            if (this.marker && storedGeomType === "Point") {
+                this.markerGroup.clearLayers();
             } 
-            marker = L.marker(e.latlng);
-            markerGroup.addLayer(marker);
-            
+            this.marker = L.marker(e.latlng);
+            this.markerGroup.addLayer(this.marker);
+
+            if(storedGeomType === "LineString"){
+                this.clearMapLayers()
+                this.pointList.push(e.latlng);
+                L.polyline(this.pointList).addTo(this.previewMap);
+            }
+
+            if(storedGeomType === "Polygon"){
+                this.clearMapLayers()
+                this.pointList.push(e.latlng);
+                L.polygon(this.pointList).addTo(this.previewMap);
+            }
         })
     }
 
     /**
      * chooseGeometry is called when the user clicks on geometry type button.
-     * Serves to disable the Confirm button until new coords are selected and to clear the previous selected coordinates
+     * Serves to disable the Confirm button until new coords are selected and to clear the previous selected coordinates and shapes
      * @param geomType A string indicated the geometry type selected by the user 
-     * @param init Indicates if this is called when the page loads(true) or when a new geometry type button is clicked(false) 
      * @return None 
     */
-    chooseGeometry(geomType, init) {
+    chooseGeometry(geomType) {
+        localStorage.setItem("geometryType", geomType)
+        this.highlightGeomType(geomType)
+        this.clearMapData()
+    }
+
+    /**
+     * Deletes any associated data with the previous shapes.
+     * @return None
+     */
+    clearMapData() {
         document.getElementById("confirmCoords").disabled = true
         localStorage.removeItem('coordinates')
-        localStorage.setItem("geometryType", geomType)
-        if (!init) {
-            this.highlightGeomType(geomType)
-        }
+        this.pointList = []
+        this.markerGroup.clearLayers()
+        this.clearMapLayers()
+    }
+
+    /**
+     * Clears all previously drawn shapes on the preview map.
+     * @return None
+     */
+    clearMapLayers() {
+        const layerTypes = {
+            "LineString": L.Polyline,
+            "Polygon": L.Polygon
+        };
+        
+        this.previewMap.eachLayer(layer => {
+            for (const geomType in layerTypes) {
+                if (layer instanceof layerTypes[geomType]) {
+                    this.previewMap.removeLayer(layer);
+                    break;
+                }
+            }
+        });
     }
 
     /**

@@ -354,7 +354,7 @@ class PointPicker extends HTMLElement {
             pointBtn.style.border = "3px solid black";
             polygonBtn.style.border = "0px solid black";
             polylineBtn.style.border = "0px solid black";
-        } else if (newGeomChoice === "Polyline") {
+        } else if (newGeomChoice === "LineString") {
             pointBtn.style.border = "0px solid black";
             polygonBtn.style.border = "0px solid black";
             polylineBtn.style.border = "3px solid black";

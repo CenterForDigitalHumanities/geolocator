@@ -245,7 +245,12 @@ class PointPicker extends HTMLElement {
     marker;
     markerGroup;
     previewMap;
-    
+
+    leafletIcon = L.icon({
+        iconUrl: 'marker-icon.png',
+        iconSize: [10, 10],
+    });
+
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
@@ -267,8 +272,7 @@ class PointPicker extends HTMLElement {
         clearBtn.addEventListener("click", () => {this.clearMapData()})
         
         this.previewMap.on('click', (e) => {
-            let storedGeomType = localStorage.getItem("geometryType");
-            this.previewMap.setView(e.latlng, 16)
+            let storedGeomType = localStorage.getItem("geometryType")
             document.getElementById("confirmCoords").disabled = false
             
             let previouslySelectedCoords = localStorage.getItem('coordinates')
@@ -280,31 +284,74 @@ class PointPicker extends HTMLElement {
             previouslySelectedCoords.push(e.latlng.lat)
             localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
 
-            if (this.marker && storedGeomType === "Point") {
-                this.markerGroup.clearLayers();
-            } 
-            this.marker = L.marker(e.latlng);
-            this.markerGroup.addLayer(this.marker);
+            this.marker = L.marker(e.latlng, {icon: this.leafletIcon});
 
-            if(storedGeomType === "LineString"){
-                this.clearMapLayers()
-                this.pointList.push(e.latlng);
-                L.polyline(this.pointList).addTo(this.previewMap);
+            if (storedGeomType === "Point") {
+                this.markerGroup.clearLayers()
+                this.markerGroup.addLayer(this.marker);
             }
-
-            if(storedGeomType === "Polygon"){
+            else if(storedGeomType === "LineString"){
                 this.clearMapLayers()
-                this.pointList.push(e.latlng);
-                L.polygon(this.pointList).addTo(this.previewMap);
+                this.pointList.push(e.latlng)
+                this.markerGroup.addLayer(this.marker);
+                L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
+            }
+            else if(storedGeomType === "Polygon"){
+                const currentZoomLevel = this.previewMap.getZoom()
+                const threshold = 1.5
+                this.clearMapLayers()
+                if (this.pointList.length > 0 && this.isCloseToPoint(e.latlng, this.pointList[0], currentZoomLevel, threshold)) {
+                    this.pointList.push(this.pointList[0])
+                    L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
+                }
+                else {
+                    this.pointList.push(e.latlng)
+                    this.markerGroup.addLayer(this.marker);
+                    L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
+                }
+            }
+        })
+
+        this.previewMap.on('dblclick', (e) => {
+            let storedGeomType = localStorage.getItem("geometryType")
+            this.pointList.pop()
+            if (storedGeomType === "LineString") {
+                this.clearMapLayers()
+                this.pointList.push(e.latlng)
+                L.polyline(this.pointList, {color: 'lime'}).addTo(this.previewMap) 
+            }
+            else if (storedGeomType === "Polygon") {
+                this.pointList.push(this.pointList[0])
+                if (this.pointList.length > 1) {
+                    this.pointList.push(this.pointList[0])
+                }
+                L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
             }
         })
     }
 
     /**
+     * Compares the distance between two points to determine if they are close enough to be considered the same point.
+     * Used when creating polygons: users can click (within a margin of Error) the first point to close and complete the shape.
+     * @param {JSON} newPoint object with lat and long keys. Newest point for comparison with firstPoint 
+     * @param {JSON} firstPoint object with lat and long keys. Compared to newPoint for comparing distance
+     * @param {Number} currentZoomLevel current zoom level of previewMap. Included in marginOfError calculation
+     * @param {Number} threshold arbitrary value to determine if two points are close enough
+     * @return {None}
+     */
+    isCloseToPoint(newPoint, firstPoint, currentZoomLevel, threshold){
+        console.log("CurrentZoomLevel: ", currentZoomLevel)
+        const marginOfError = threshold / (currentZoomLevel+1) //+1 is to prevent zero division if zoomed all the way out
+        const isClose = (Math.abs(newPoint.lat - firstPoint.lat) < marginOfError) && (Math.abs(newPoint.lng - firstPoint.lng) < marginOfError)
+        console.log("isClose?: ", isClose)
+        return isClose
+    }
+
+    /**
      * chooseGeometry is called when the user clicks on geometry type button.
      * Serves to disable the Confirm button until new coords are selected and to clear the previous selected coordinates and shapes
-     * @param geomType A string indicated the geometry type selected by the user 
-     * @return None 
+     * @param {String} geomType A string indicated the geometry type selected by the user 
+     * @returns {None} 
     */
     chooseGeometry(geomType) {
         localStorage.setItem("geometryType", geomType)
@@ -314,7 +361,7 @@ class PointPicker extends HTMLElement {
 
     /**
      * Deletes any associated data with the previous shapes.
-     * @return None
+     * @returns {None}
      */
     clearMapData() {
         document.getElementById("confirmCoords").disabled = true
@@ -326,7 +373,7 @@ class PointPicker extends HTMLElement {
 
     /**
      * Clears all previously drawn shapes on the preview map.
-     * @return None
+     * @returns {None}
      */
     clearMapLayers() {
         const layerTypes = {
@@ -346,8 +393,8 @@ class PointPicker extends HTMLElement {
 
     /**
      * Highlights the geometry type selected by the user
-     * @param newGeomChoice A string indicated the geometry type selected by the user 
-     * @return None 
+     * @param {String} newGeomChoice A string indicated the geometry type selected by the user 
+     * @returns {None} 
     */
     highlightGeomType(newGeomChoice) {
         if (newGeomChoice === "Point") {
@@ -367,8 +414,8 @@ class PointPicker extends HTMLElement {
 
     /**
      * Take the coordinates provided by the user and turn them into GeoJSON
-     * @param none
-     * @return none
+     * @param {none}
+     * @return {none}
      */
     confirmCoordinates() {
         let geo = {}

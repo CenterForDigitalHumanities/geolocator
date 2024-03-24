@@ -424,27 +424,13 @@ class PointPicker extends HTMLElement {
         geo.type = geometry_type
         geo.coordinates = []
         for (let index = 0; index < coords.length; index += 2) {
-            let long = parseInt(coords[index] * 1000000) / 1000000
-            let lat = parseInt(coords[index+1] * 1000000) / 1000000
-            geo.coordinates.push([long, lat])
+            let lat = parseInt(coords[index] * 1000000) / 1000000
+            let long = parseInt(coords[index+1] * 1000000) / 1000000
+            geo.coordinates.push([lat, long])
         }
-        switch(geometry_type){
-            case 'Point':
-                geo.coordinates = geo.coordinates[0]
-                break
-            case 'LineString':
-                geo.coordinates = geo.coordinates
-                break
-            case 'Polygon':
-                const first_point = geo.coordinates[0]
-                geo.coordinates.push(first_point)
-                let poly_array = []
-                poly_array.push(geo.coordinates)
-                geo.coordinates = poly_array
-                break
-            default:
-                geo.coordinates = geo.coordinates[0]
-                break
+        // Every geo type is an Array of arrays. Point is just an array.
+        if (geometry_type == 'Point') {
+            geo.coordinates = geo.coordinates[0]
         }
         let geoJSON = {
             "type": "Feature",

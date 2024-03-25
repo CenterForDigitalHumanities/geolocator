@@ -321,7 +321,6 @@ class PointPicker extends HTMLElement {
                 L.polyline(this.pointList, {color: 'lime'}).addTo(this.previewMap) 
             }
             else if (storedGeomType === "Polygon") {
-                this.pointList.push(this.pointList[0])
                 if (this.pointList.length > 1) {
                     this.pointList.push(this.pointList[0])
                 }
@@ -424,13 +423,27 @@ class PointPicker extends HTMLElement {
         geo.type = geometry_type
         geo.coordinates = []
         for (let index = 0; index < coords.length; index += 2) {
-            let lat = parseInt(coords[index] * 1000000) / 1000000
-            let long = parseInt(coords[index+1] * 1000000) / 1000000
-            geo.coordinates.push([lat, long])
+            let long = parseInt(coords[index] * 1000000) / 1000000
+            let lat = parseInt(coords[index+1] * 1000000) / 1000000
+            geo.coordinates.push([long, lat])
         }
-        // Every geo type is an Array of arrays. Point is just an array.
-        if (geometry_type == 'Point') {
-            geo.coordinates = geo.coordinates[0]
+        switch(geometry_type){
+            case 'Point':
+                geo.coordinates = geo.coordinates[0]
+                break
+            case 'LineString':
+                geo.coordinates = geo.coordinates
+                break
+            case 'Polygon':
+                const first_point = geo.coordinates[0]
+                geo.coordinates.push(first_point)
+                let poly_array = []
+                poly_array.push(geo.coordinates)
+                geo.coordinates = poly_array
+                break
+            default:
+                geo.coordinates = geo.coordinates[0]
+                break
         }
         let geoJSON = {
             "type": "Feature",

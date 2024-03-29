@@ -245,6 +245,7 @@ class PointPicker extends HTMLElement {
     marker;
     markerGroup;
     previewMap;
+    isCompleteShape = false
 
     leafletIcon = L.icon({
         iconUrl: 'marker-icon.png',
@@ -272,6 +273,8 @@ class PointPicker extends HTMLElement {
         clearBtn.addEventListener("click", () => {this.clearMapData()})
         
         this.previewMap.on('click', (e) => {
+            if (this.isCompleteShape) { this.clearMapData() }
+            this.isCompleteShape = false
             let storedGeomType = localStorage.getItem("geometryType")
             document.getElementById("confirmCoords").disabled = false
             
@@ -301,6 +304,7 @@ class PointPicker extends HTMLElement {
                 const threshold = 1.5
                 this.clearMapLayers()
                 if (this.pointList.length > 0 && this.isCloseToPoint(e.latlng, this.pointList[0], currentZoomLevel, threshold)) {
+                    this.isCompleteShape = true
                     this.pointList.push(this.pointList[0])
                     L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
                 }
@@ -313,6 +317,7 @@ class PointPicker extends HTMLElement {
         })
 
         this.previewMap.on('dblclick', (e) => {
+            this.isCompleteShape = true
             let storedGeomType = localStorage.getItem("geometryType")
             this.pointList.pop()
             if (storedGeomType === "LineString") {

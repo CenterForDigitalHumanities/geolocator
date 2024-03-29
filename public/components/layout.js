@@ -301,9 +301,8 @@ class PointPicker extends HTMLElement {
             }
             else if(storedGeomType === "Polygon"){
                 const currentZoomLevel = this.previewMap.getZoom()
-                const threshold = 1.5
                 this.clearMapLayers()
-                if (this.pointList.length > 0 && this.isCloseToPoint(e.latlng, this.pointList[0], currentZoomLevel, threshold)) {
+                if (this.pointList.length > 0 && this.isCloseToPoint(e.latlng, this.pointList[0], currentZoomLevel)) {
                     this.isCompleteShape = true
                     this.pointList.push(this.pointList[0])
                     L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
@@ -340,14 +339,15 @@ class PointPicker extends HTMLElement {
      * @param {JSON} newPoint object with lat and long keys. Newest point for comparison with firstPoint 
      * @param {JSON} firstPoint object with lat and long keys. Compared to newPoint for comparing distance
      * @param {Number} currentZoomLevel current zoom level of previewMap. Included in marginOfError calculation
-     * @param {Number} threshold arbitrary value to determine if two points are close enough
      * @return {None}
      */
-    isCloseToPoint(newPoint, firstPoint, currentZoomLevel, threshold){
-        console.log("CurrentZoomLevel: ", currentZoomLevel)
-        const marginOfError = threshold / (currentZoomLevel+1) //+1 is to prevent zero division if zoomed all the way out
+    isCloseToPoint(newPoint, firstPoint, currentZoomLevel){
+        currentZoomLevel = currentZoomLevel + 1 // Avoid division by zero if zoomed all the way out
+        let marginOfError = 0;
+        if (currentZoomLevel <= 8) { marginOfError = 2.95 * Math.exp(-0.438*currentZoomLevel) }
+        else if (currentZoomLevel <= 14) { marginOfError = 18.1 * Math.exp(-0.675*currentZoomLevel)}
+        else if (currentZoomLevel <= 20) { marginOfError = 16.4 * Math.exp(-0.693*currentZoomLevel)}
         const isClose = (Math.abs(newPoint.lat - firstPoint.lat) < marginOfError) && (Math.abs(newPoint.lng - firstPoint.lng) < marginOfError)
-        console.log("isClose?: ", isClose)
         return isClose
     }
 

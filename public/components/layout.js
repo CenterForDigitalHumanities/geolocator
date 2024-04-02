@@ -285,7 +285,6 @@ class PointPicker extends HTMLElement {
             }
             previouslySelectedCoords.push(e.latlng.lng)
             previouslySelectedCoords.push(e.latlng.lat)
-            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
 
             this.marker = L.marker(e.latlng, {icon: this.leafletIcon});
 
@@ -304,6 +303,8 @@ class PointPicker extends HTMLElement {
                 this.clearMapLayers()
                 if (this.pointList.length > 0 && this.isCloseToPoint(e.latlng, this.pointList[0], currentZoomLevel)) {
                     this.isCompleteShape = true
+                    previouslySelectedCoords.pop()
+                    previouslySelectedCoords.pop()
                     this.pointList.push(this.pointList[0])
                     L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
                 }
@@ -313,11 +314,16 @@ class PointPicker extends HTMLElement {
                     L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
                 }
             }
+            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
         })
 
         this.previewMap.on('dblclick', (e) => {
             this.isCompleteShape = true
             let storedGeomType = localStorage.getItem("geometryType")
+            let previouslySelectedCoords = localStorage.getItem('coordinates')
+            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
+            previouslySelectedCoords.pop()
+            previouslySelectedCoords.pop()
             this.pointList.pop()
             if (storedGeomType === "LineString") {
                 this.clearMapLayers()
@@ -330,6 +336,7 @@ class PointPicker extends HTMLElement {
                 }
                 L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
             }
+            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
         })
     }
 

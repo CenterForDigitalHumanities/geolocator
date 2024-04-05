@@ -220,11 +220,29 @@ class PointPicker extends HTMLElement {
              integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
              crossorigin=""></script>
             <header title="Use the map below to pan around">
-                Use the map to draw a geometry, or upload a GeoJSON. 
+                Use the map to draw a geometry. 
                 <br><input disabled id="confirmCoords" type="button" class="button primary" value="See Preview" />
             </header>
             <div class="card-body">
-
+                <div class="column">
+                    <div class="button-description">
+                        <img src="https://www.svgrepo.com/show/532539/location-pin.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
+                        <strong> Point</strong> - Click on the desired location. Subsequent clicks will clear previous selections.
+                    </div>
+                    <div class="button-description">
+                        <img src="https://www.svgrepo.com/show/399231/polyline-pt.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
+                        <strong> Polyline</strong> - Click to add vertices. Double click to finish the shape. Subsequent clicks after double clicking will clear any previous selections.
+                    </div>
+                    <div class="button-description">
+                        <img src="https://www.svgrepo.com/show/399227/polygon-pt.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
+                        <strong> Polygon</strong> - Click to add vertices. Double click final vertex or click the first vertex to finish the shape. Subsequent clicks after double clicking will clear any previous selections.
+                    </div>
+                    <div class="button-description">
+                        <img src="https://www.svgrepo.com/show/274180/garbage-basket.svg?" style="margin-right: 5px; width: 24px; height: 17px;" /> 
+                        <strong> Trash Can</strong> - Clear the map of any selections. Alternatively, click any of the geometry type buttons.
+                    </div>
+                </div>
+                <br>
                 <div class="row">
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Point"> </button>
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Polyline"> </button>

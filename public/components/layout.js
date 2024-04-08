@@ -226,8 +226,8 @@ class PointPicker extends HTMLElement {
             <div class="card-body">
                 <div class="row">
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Click on the desired location to place a point marker."> </button>
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Click to add vertices. Can click the first vertex to finish the shape."> </button>
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Clear the map of all selections. Alternatively, click any of the geometry type buttons."> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Click to add points connected by line segments."> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Click to add vertices. Can click the first vertex to finish the shape."> </button>
                     <div style="margin-left: 20px;"></div>
                     <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/274180/garbage-basket.svg?size=24');" id="clearBtn" title="Clear the map of all selections. Alternatively, click any of the geometry type buttons."> </button>
                 </div>
@@ -240,15 +240,15 @@ class PointPicker extends HTMLElement {
             </footer>
         </div>`
 
-    pointList = [];
-    marker;
-    markerGroup;
-    previewMap;
+    pointList = []
+    marker
+    markerGroup
+    previewMap
     isCompleteShape = false
 
     leafletIcon = L.icon({
         iconUrl: 'marker-icon.png',
-        iconSize: [10, 10],
+        iconSize: [10, 10]
     });
 
     connectedCallback() {
@@ -261,10 +261,10 @@ class PointPicker extends HTMLElement {
             maxZoom: 19,
             id: 'mapbox.satellite', //mapbox.streets
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
-        }).addTo(this.previewMap);
+        }).addTo(this.previewMap)
 
-        this.markerGroup = L.layerGroup().addTo(this.previewMap);
-        this.chooseGeometry("Point"); 
+        this.markerGroup = L.layerGroup().addTo(this.previewMap)
+        this.chooseGeometry("Point")
 
         pointBtn.addEventListener("click", () => {this.chooseGeometry('Point')})
         polylineBtn.addEventListener("click", () => {this.chooseGeometry('LineString')})
@@ -285,16 +285,16 @@ class PointPicker extends HTMLElement {
             previouslySelectedCoords.push(e.latlng.lng)
             previouslySelectedCoords.push(e.latlng.lat)
 
-            this.marker = L.marker(e.latlng, {icon: this.leafletIcon});
+            this.marker = L.marker(e.latlng, {icon: this.leafletIcon})
 
             if (storedGeomType === "Point") {
                 this.markerGroup.clearLayers()
-                this.markerGroup.addLayer(this.marker);
+                this.markerGroup.addLayer(this.marker)
             }
             else if(storedGeomType === "LineString"){
                 this.clearMapLayers()
                 this.pointList.push(e.latlng)
-                this.markerGroup.addLayer(this.marker);
+                this.markerGroup.addLayer(this.marker)
                 L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
             }
             else if(storedGeomType === "Polygon"){
@@ -309,7 +309,7 @@ class PointPicker extends HTMLElement {
                 }
                 else {
                     this.pointList.push(e.latlng)
-                    this.markerGroup.addLayer(this.marker);
+                    this.markerGroup.addLayer(this.marker)
                     L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
                 }
             }
@@ -320,7 +320,7 @@ class PointPicker extends HTMLElement {
             this.isCompleteShape = true
             let storedGeomType = localStorage.getItem("geometryType")
             let previouslySelectedCoords = localStorage.getItem('coordinates')
-            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
+            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : []
             previouslySelectedCoords.pop()
             previouslySelectedCoords.pop()
             this.pointList.pop()
@@ -349,7 +349,7 @@ class PointPicker extends HTMLElement {
      */
     isCloseToPoint(newPoint, firstPoint, currentZoomLevel){
         currentZoomLevel = currentZoomLevel + 1 // Avoid division by zero if zoomed all the way out
-        let marginOfError = 0;
+        let marginOfError = 0
         if (currentZoomLevel <= 8) { marginOfError = 2.95 * Math.exp(-0.438*currentZoomLevel) }
         else if (currentZoomLevel <= 14) { marginOfError = 18.1 * Math.exp(-0.675*currentZoomLevel)}
         else if (currentZoomLevel <= 20) { marginOfError = 16.4 * Math.exp(-0.693*currentZoomLevel)}
@@ -394,8 +394,8 @@ class PointPicker extends HTMLElement {
         this.previewMap.eachLayer(layer => {
             for (const geomType in layerTypes) {
                 if (layer instanceof layerTypes[geomType]) {
-                    this.previewMap.removeLayer(layer);
-                    break;
+                    this.previewMap.removeLayer(layer)
+                    break
                 }
             }
         });
@@ -408,17 +408,17 @@ class PointPicker extends HTMLElement {
     */
     highlightGeomType(newGeomChoice) {
         if (newGeomChoice === "Point") {
-            pointBtn.style.border = "3px solid black";
-            polygonBtn.style.border = "0px solid black";
-            polylineBtn.style.border = "0px solid black";
+            pointBtn.style.border = "3px solid black"
+            polygonBtn.style.border = "0px solid black"
+            polylineBtn.style.border = "0px solid black"
         } else if (newGeomChoice === "LineString") {
-            pointBtn.style.border = "0px solid black";
-            polygonBtn.style.border = "0px solid black";
-            polylineBtn.style.border = "3px solid black";
+            pointBtn.style.border = "0px solid black"
+            polygonBtn.style.border = "0px solid black"
+            polylineBtn.style.border = "3px solid black"
         } else if (newGeomChoice === "Polygon") {
-            pointBtn.style.border = "0px solid black";
-            polygonBtn.style.border = "3px solid black";
-            polylineBtn.style.border = "0px solid black";
+            pointBtn.style.border = "0px solid black"
+            polygonBtn.style.border = "3px solid black"
+            polylineBtn.style.border = "0px solid black"
         }
     }
 
@@ -443,14 +443,9 @@ class PointPicker extends HTMLElement {
                 geo.coordinates = geo.coordinates[0]
                 break
             case 'LineString':
-                geo.coordinates = geo.coordinates
-                break
+                break //coordinates are already in correct form for LineString 
             case 'Polygon':
-                const first_point = geo.coordinates[0]
-                geo.coordinates.push(first_point)
-                let poly_array = []
-                poly_array.push(geo.coordinates)
-                geo.coordinates = poly_array
+                geo.coordinates = [...geo.coordinates, ...[geo.coordinates[0]]]
                 break
             default:
                 geo.coordinates = geo.coordinates[0]

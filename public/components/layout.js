@@ -220,36 +220,16 @@ class PointPicker extends HTMLElement {
              integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
              crossorigin=""></script>
             <header title="Use the map below to pan around">
-                Use the map to draw a geometry. 
+                Use the map to draw a geometry. Finalize any shape by double clicking the final point. Subsequent clicks will clear any previous selections.
                 <br><input disabled id="confirmCoords" type="button" class="button primary" value="See Preview" />
             </header>
             <div class="card-body">
-                <div class="column">
-                    <p> Finalize any shape by double clicking the final point. Subsequent clicks will clear any previous selections.</p>
-                    <div class="button-description">
-                        <img src="https://www.svgrepo.com/show/532539/location-pin.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
-                        <strong> Point</strong> - Click on the desired location to place a point marker.
-                    </div>
-                    <div class="button-description">
-                        <img src="https://www.svgrepo.com/show/399231/polyline-pt.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
-                        <strong> Polyline</strong> - Click to add points connected by line segments.
-                    </div>
-                    <div class="button-description">
-                        <img src="https://www.svgrepo.com/show/399227/polygon-pt.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
-                        <strong> Polygon</strong> - Click to add vertices. Can click the first vertex to finish the shape.
-                    </div>
-                    <div class="button-description">
-                        <img src="https://www.svgrepo.com/show/274180/garbage-basket.svg?" style="margin-right: 5px; width: 24px; height: 17px;" /> 
-                        <strong> Trash Can</strong> - Clear the map of all selections. Alternatively, click any of the geometry type buttons.
-                    </div>
-                </div>
-                <br>
                 <div class="row">
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Point"> </button>
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Polyline"> </button>
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Polygon"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Click on the desired location to place a point marker."> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Click to add vertices. Can click the first vertex to finish the shape."> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Clear the map of all selections. Alternatively, click any of the geometry type buttons."> </button>
                     <div style="margin-left: 20px;"></div>
-                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/274180/garbage-basket.svg?size=24');" id="clearBtn" title="Clear map"> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/274180/garbage-basket.svg?size=24');" id="clearBtn" title="Clear the map of all selections. Alternatively, click any of the geometry type buttons."> </button>
                 </div>
 
                 <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."

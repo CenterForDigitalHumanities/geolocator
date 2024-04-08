@@ -225,21 +225,22 @@ class PointPicker extends HTMLElement {
             </header>
             <div class="card-body">
                 <div class="column">
+                    <p> Finalize any shape by double clicking the final point. Subsequent clicks will clear any previous selections.</p>
                     <div class="button-description">
                         <img src="https://www.svgrepo.com/show/532539/location-pin.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
-                        <strong> Point</strong> - Click on the desired location. Subsequent clicks will clear previous selections.
+                        <strong> Point</strong> - Click on the desired location to place a point marker.
                     </div>
                     <div class="button-description">
                         <img src="https://www.svgrepo.com/show/399231/polyline-pt.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
-                        <strong> Polyline</strong> - Click to add vertices. Double click to finish the shape. Subsequent clicks after double clicking will clear any previous selections.
+                        <strong> Polyline</strong> - Click to add points connected by line segments.
                     </div>
                     <div class="button-description">
                         <img src="https://www.svgrepo.com/show/399227/polygon-pt.svg?" style="margin-right: 5px; width: 24px; height: 20px;" /> 
-                        <strong> Polygon</strong> - Click to add vertices. Double click final vertex or click the first vertex to finish the shape. Subsequent clicks after double clicking will clear any previous selections.
+                        <strong> Polygon</strong> - Click to add vertices. Can click the first vertex to finish the shape.
                     </div>
                     <div class="button-description">
                         <img src="https://www.svgrepo.com/show/274180/garbage-basket.svg?" style="margin-right: 5px; width: 24px; height: 17px;" /> 
-                        <strong> Trash Can</strong> - Clear the map of any selections. Alternatively, click any of the geometry type buttons.
+                        <strong> Trash Can</strong> - Clear the map of all selections. Alternatively, click any of the geometry type buttons.
                     </div>
                 </div>
                 <br>

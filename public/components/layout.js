@@ -176,7 +176,7 @@ class UserResource extends HTMLElement {
             .then(obj => {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
-                obj.creator = objCreator.value? objCreator.value : undefined;
+                obj.creator = objCreator.value? objCreator.value : undefined
                 uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
@@ -249,7 +249,7 @@ class PointPicker extends HTMLElement {
     leafletIcon = L.icon({
         iconUrl: 'marker-icon.png',
         iconSize: [10, 10]
-    });
+    })
 
     connectedCallback() {
         localStorage.removeItem("geoJSON")
@@ -278,7 +278,7 @@ class PointPicker extends HTMLElement {
             document.getElementById("confirmCoords").disabled = false
             
             let previouslySelectedCoords = localStorage.getItem('coordinates')
-            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : [];
+            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : []
             if (storedGeomType === "Point"){
                 previouslySelectedCoords = [] //clear any previously selected points
             }
@@ -389,7 +389,7 @@ class PointPicker extends HTMLElement {
         const layerTypes = {
             "LineString": L.Polyline,
             "Polygon": L.Polygon
-        };
+        }
         
         this.previewMap.eachLayer(layer => {
             for (const geomType in layerTypes) {
@@ -398,7 +398,7 @@ class PointPicker extends HTMLElement {
                     break
                 }
             }
-        });
+        })
     }
 
     /**
@@ -500,13 +500,13 @@ class GeolocatorPreview extends HTMLElement {
      */
     downloadLocally(event) {
         const objectToSave = localStorage.getItem("newResource")
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(objectToSave));
-        element.setAttribute('download', 'iiif_resource.json');
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+        var element = document.createElement('a')
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(objectToSave))
+        element.setAttribute('download', 'iiif_resource.json')
+        element.style.display = 'none'
+        document.body.appendChild(element)
+        element.click()
+        document.body.removeChild(element)
     }
     
 

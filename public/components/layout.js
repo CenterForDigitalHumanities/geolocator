@@ -178,7 +178,7 @@ class UserResource extends HTMLElement {
             .then(obj => {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
-                obj.creator = objCreator.value? objCreator.value : undefined;
+                obj.creator = objCreator.value? objCreator.value : undefined
                 uriPreview.innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(obj, null, '\t')))}</pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
@@ -221,18 +221,19 @@ class PointPicker extends HTMLElement {
             <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
              integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
              crossorigin=""></script>
-            <header title="Use the map below to pan around.  Click to be given the option to use coordinates, 
-                or enter coordinates manually.">
-                Use the map to select coordinates. You may also supply coordinates manually.
-                <br><input disabled id="confirmCoords" type="button" class="button primary" value="Confirm Coordinates" />
+            <header title="Use the map below to pan around">
+                Use the map to draw a geometry. Finalize any shape by double clicking the final point. Subsequent clicks will clear any previous selections.
+                <br><input disabled id="confirmCoords" type="button" class="button primary" value="See Preview" />
             </header>
             <div class="card-body">
-                <div>
-                    <label>Latitude</label>
-                    <input id="leafLat" step=".000000001" type="number" />
-                    <label>Longitude</label>
-                    <input id="leafLong" step=".000000001" type="number" />
+                <div class="row">
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/532539/location-pin.svg?size=24') "id="pointBtn" title="Click on the desired location to place a point marker."> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399231/polyline-pt.svg?size=24');" id="polylineBtn" title="Click to add points connected by line segments."> </button>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/399227/polygon-pt.svg?size=24');" id="polygonBtn" title="Click to add vertices. Can click the first vertex to finish the shape."> </button>
+                    <div style="margin-left: 20px;"></div>
+                    <button class="geometry-type-button" style="background-image: url('https://www.svgrepo.com/show/274180/garbage-basket.svg?size=24');" id="clearBtn" title="Clear the map of all selections. Alternatively, click any of the geometry type buttons."> </button>
                 </div>
+
                 <div title="Use the map below to pan around.  Click to be given the option to use coordinates, or enter coordinates manually."
                     id="leafletPreview" class="col"></div>
             </div>
@@ -241,64 +242,217 @@ class PointPicker extends HTMLElement {
             </footer>
         </div>`
 
+    pointList = []
+    marker
+    markerGroup
+    previewMap
+    isCompleteShape = false
+
+    leafletIcon = L.icon({
+        iconUrl: 'marker-icon.png',
+        iconSize: [10, 10]
+    })
+
     connectedCallback() {
         localStorage.removeItem("geoJSON")
         this.innerHTML = this.#pointPickerTmpl
-        leafLat.addEventListener("input", (event) => updateGeometry(event))
-        leafLong.addEventListener("input", (event) => updateGeometry(event))
         confirmCoords.addEventListener("click", this.confirmCoordinates)
-        let previewMap = L.map('leafletPreview').setView([12, 12], 2)
+        this.previewMap = L.map('leafletPreview').setView([12, 12], 2)
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             maxZoom: 19,
             id: 'mapbox.satellite', //mapbox.streets
             accessToken: 'pk.eyJ1IjoidGhlaGFiZXMiLCJhIjoiY2pyaTdmNGUzMzQwdDQzcGRwd21ieHF3NCJ9.SSflgKbI8tLQOo2DuzEgRQ'
-        }).addTo(previewMap);
+        }).addTo(this.previewMap)
 
-        function updateGeometry(event, clickedLat, clickedLong) {
-            let lat = clickedLat ? clickedLat : leafLat.value
-            let long = clickedLong ? clickedLong : leafLong.value
-            if (lat == "" || long == "") {
-                document.getElementById("confirmCoords").disabled = true
-                return
-            }
-            lat = parseInt(lat * 1000000) / 1000000
-            long = parseInt(long * 1000000) / 1000000
-            leafLat.value = lat
-            leafLong.value = long
-            document.getElementById("confirmCoords").disabled = false
-            if(clickedLat || clickedLong){
-                event.preventDefault()
-                event.stopPropagation()
-                event.target.closest(".leaflet-popup").remove()
-            }
-        }
+        this.markerGroup = L.layerGroup().addTo(this.previewMap)
+        this.chooseGeometry("Point")
+
+        pointBtn.addEventListener("click", () => {this.chooseGeometry('Point')})
+        polylineBtn.addEventListener("click", () => {this.chooseGeometry('LineString')})
+        polygonBtn.addEventListener("click", () => {this.chooseGeometry('Polygon')})
+        clearBtn.addEventListener("click", () => {this.clearMapData()})
         
-        previewMap.on('click', (e) => {
-            previewMap.setView(e.latlng, 16)
-            L.popup().setLatLng(e.latlng).setContent(`<div>${e.latlng.toString()}<br><button id="useCoords" class="tag is-small text-primary bd-primary">Use These</button></div>`).openOn(previewMap)
-            leafletPreview.querySelector('#useCoords').addEventListener("click", (clickEvent) => {updateGeometry(clickEvent, e.latlng.lat, e.latlng.lng)})
+        this.previewMap.on('click', (e) => {
+            if (this.isCompleteShape) { this.clearMapData() }
+            this.isCompleteShape = false
+            let storedGeomType = localStorage.getItem("geometryType")
+            document.getElementById("confirmCoords").disabled = false
+            
+            let previouslySelectedCoords = localStorage.getItem('coordinates')
+            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : []
+            if (storedGeomType === "Point"){
+                previouslySelectedCoords = [] //clear any previously selected points
+            }
+            previouslySelectedCoords.push(e.latlng.lng)
+            previouslySelectedCoords.push(e.latlng.lat)
+
+            this.marker = L.marker(e.latlng, {icon: this.leafletIcon})
+
+            if (storedGeomType === "Point") {
+                this.markerGroup.clearLayers()
+                this.markerGroup.addLayer(this.marker)
+            }
+            else if(storedGeomType === "LineString"){
+                this.clearMapLayers()
+                this.pointList.push(e.latlng)
+                this.markerGroup.addLayer(this.marker)
+                L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
+            }
+            else if(storedGeomType === "Polygon"){
+                const currentZoomLevel = this.previewMap.getZoom()
+                this.clearMapLayers()
+                if (this.pointList.length > 0 && this.isCloseToPoint(e.latlng, this.pointList[0], currentZoomLevel)) {
+                    this.isCompleteShape = true
+                    previouslySelectedCoords.pop()
+                    previouslySelectedCoords.pop()
+                    this.pointList.push(this.pointList[0])
+                    L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
+                }
+                else {
+                    this.pointList.push(e.latlng)
+                    this.markerGroup.addLayer(this.marker)
+                    L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
+                }
+            }
+            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
+        })
+
+        this.previewMap.on('dblclick', (e) => {
+            this.isCompleteShape = true
+            let storedGeomType = localStorage.getItem("geometryType")
+            let previouslySelectedCoords = localStorage.getItem('coordinates')
+            previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : []
+            previouslySelectedCoords.pop()
+            previouslySelectedCoords.pop()
+            this.pointList.pop()
+            if (storedGeomType === "LineString") {
+                this.clearMapLayers()
+                this.pointList.push(e.latlng)
+                L.polyline(this.pointList, {color: 'lime'}).addTo(this.previewMap) 
+            }
+            else if (storedGeomType === "Polygon") {
+                if (this.pointList.length > 1) {
+                    this.pointList.push(this.pointList[0])
+                }
+                L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
+            }
+            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
         })
     }
 
     /**
+     * Compares the distance between two points to determine if they are close enough to be considered the same point.
+     * Used when creating polygons: users can click (within a margin of Error) the first point to close and complete the shape.
+     * @param {JSON} newPoint object with lat and long keys. Newest point for comparison with firstPoint 
+     * @param {JSON} firstPoint object with lat and long keys. Compared to newPoint for comparing distance
+     * @param {Number} currentZoomLevel current zoom level of previewMap. Included in marginOfError calculation
+     * @return {None}
+     */
+    isCloseToPoint(newPoint, firstPoint, currentZoomLevel){
+        currentZoomLevel = currentZoomLevel + 1 // Avoid division by zero if zoomed all the way out
+        let marginOfError = 0
+        if (currentZoomLevel <= 8) { marginOfError = 2.95 * Math.exp(-0.438*currentZoomLevel) }
+        else if (currentZoomLevel <= 14) { marginOfError = 18.1 * Math.exp(-0.675*currentZoomLevel)}
+        else if (currentZoomLevel <= 20) { marginOfError = 16.4 * Math.exp(-0.693*currentZoomLevel)}
+        const isClose = (Math.abs(newPoint.lat - firstPoint.lat) < marginOfError) && (Math.abs(newPoint.lng - firstPoint.lng) < marginOfError)
+        return isClose
+    }
+
+    /**
+     * chooseGeometry is called when the user clicks on geometry type button.
+     * Serves to disable the Confirm button until new coords are selected and to clear the previous selected coordinates and shapes
+     * @param {String} geomType A string indicated the geometry type selected by the user 
+     * @returns {None} 
+    */
+    chooseGeometry(geomType) {
+        localStorage.setItem("geometryType", geomType)
+        this.highlightGeomType(geomType)
+        this.clearMapData()
+    }
+
+    /**
+     * Deletes any associated data with the previous shapes.
+     * @returns {None}
+     */
+    clearMapData() {
+        document.getElementById("confirmCoords").disabled = true
+        localStorage.removeItem('coordinates')
+        this.pointList = []
+        this.markerGroup.clearLayers()
+        this.clearMapLayers()
+    }
+
+    /**
+     * Clears all previously drawn shapes on the preview map.
+     * @returns {None}
+     */
+    clearMapLayers() {
+        const layerTypes = {
+            "LineString": L.Polyline,
+            "Polygon": L.Polygon
+        }
+        
+        this.previewMap.eachLayer(layer => {
+            for (const geomType in layerTypes) {
+                if (layer instanceof layerTypes[geomType]) {
+                    this.previewMap.removeLayer(layer)
+                    break
+                }
+            }
+        })
+    }
+
+    /**
+     * Highlights the geometry type selected by the user
+     * @param {String} newGeomChoice A string indicated the geometry type selected by the user 
+     * @returns {None} 
+    */
+    highlightGeomType(newGeomChoice) {
+        if (newGeomChoice === "Point") {
+            pointBtn.style.border = "3px solid black"
+            polygonBtn.style.border = "0px solid black"
+            polylineBtn.style.border = "0px solid black"
+        } else if (newGeomChoice === "LineString") {
+            pointBtn.style.border = "0px solid black"
+            polygonBtn.style.border = "0px solid black"
+            polylineBtn.style.border = "3px solid black"
+        } else if (newGeomChoice === "Polygon") {
+            pointBtn.style.border = "0px solid black"
+            polygonBtn.style.border = "3px solid black"
+            polylineBtn.style.border = "0px solid black"
+        }
+    }
+
+    /**
      * Take the coordinates provided by the user and turn them into GeoJSON
-     * @param none
-     * @return none
+     * @param {none}
+     * @return {none}
      */
     confirmCoordinates() {
-        let lat = parseInt(leafLat.value * 1000000) / 1000000
-        let long = parseInt(leafLong.value * 1000000) / 1000000
         let geo = {}
-        if (lat && long) {
-            geo.type = "Point"
-            geo.coordinates = [long, lat]
+        const geometry_type = localStorage.getItem('geometryType') ?? 'Point'
+        const coords = JSON.parse(localStorage.getItem('coordinates'))
+        geo.type = geometry_type
+        geo.coordinates = []
+        for (let index = 0; index < coords.length; index += 2) {
+            let long = parseInt(coords[index] * 1000000) / 1000000
+            let lat = parseInt(coords[index+1] * 1000000) / 1000000
+            geo.coordinates.push([long, lat])
         }
-        else {
-            alert("Supply both a latitude and a longitude")
-            return false
+        switch(geometry_type){
+            case 'Point':
+                geo.coordinates = geo.coordinates[0]
+                break
+            case 'LineString':
+                break //coordinates are already in correct form for LineString 
+            case 'Polygon':
+                geo.coordinates = [...geo.coordinates, ...[geo.coordinates[0]]]
+                break
+            default:
+                geo.coordinates = geo.coordinates[0]
+                break
         }
-        let targetURL = document.getElementById('objURI').value
         let geoJSON = {
             "type": "Feature",
             "geometry": geo,
@@ -348,13 +502,13 @@ class GeolocatorPreview extends HTMLElement {
      */
     downloadLocally(event) {
         const objectToSave = localStorage.getItem("newResource")
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(objectToSave));
-        element.setAttribute('download', 'iiif_resource.json');
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+        var element = document.createElement('a')
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(objectToSave))
+        element.setAttribute('download', 'iiif_resource.json')
+        element.style.display = 'none'
+        document.body.appendChild(element)
+        element.click()
+        document.body.removeChild(element)
     }
     
 

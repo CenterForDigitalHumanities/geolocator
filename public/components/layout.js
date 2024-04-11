@@ -82,6 +82,8 @@ class GeoFooter extends HTMLElement {
         <a target="_blank" href="http://rerum.io"><img class="brand" alt="Rerum logo"
                 src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg"><small>RERUM
                 v1</small></a>
+	    <a target="_blank" href="https://github.com/CenterForDigitalHumanities/geolocator.git"><img width="30" height="30" alt="Git logo" src="./github.svg">
+        <small>&nbsp;&nbsp;Support/Contribute to Geolocator</small></a>
     </footer>`
     constructor(){
         super()
@@ -177,7 +179,7 @@ class UserResource extends HTMLElement {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
                 obj.creator = objCreator.value? objCreator.value : undefined
-                uriPreview.innerHTML = `<pre>${JSON.stringify(obj, null, '\t')}</pre>`
+                uriPreview.innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(obj, null, '\t')))}</pre>`
                 localStorage.setItem("userResource", JSON.stringify(obj))
                 return obj
             })
@@ -610,7 +612,7 @@ class GeolocatorPreview extends HTMLElement {
                 this.querySelector(".createBtn").addClass("is-hidden")
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
-        this.querySelector(".resourcePreview").innerHTML = `<pre>${JSON.stringify(wrapper, null, '\t')}</pre>`
+        this.querySelector(".resourcePreview").innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(wrapper, null, '\t')))}</pre>`
         localStorage.setItem("newResource", JSON.stringify(wrapper, undefined, 4))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.

@@ -447,7 +447,7 @@ class PointPicker extends HTMLElement {
             case 'LineString':
                 break //coordinates are already in correct form for LineString 
             case 'Polygon':
-                geo.coordinates = [...geo.coordinates, ...[geo.coordinates[0]]]
+                geo.coordinates = [[...geo.coordinates, ...[geo.coordinates[0]]]]
                 break
             default:
                 geo.coordinates = geo.coordinates[0]

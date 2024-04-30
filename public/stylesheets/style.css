@@ -5,6 +5,7 @@ footer{
 	bottom : 0;
 	background-color : #FFF;
 	z-index : 1;
+
 }
 
 .tooltip{
@@ -57,12 +58,11 @@ span{
 	}
 	footer small{
 		display: none !important;
-		position: relative;
 	}
 
 	footer img{
 		display: block !important;
-		height: auto;
+		height: 300px;
 		width: auto;
 
 
@@ -82,6 +82,12 @@ span{
 	.tooltip:hover .tooltiptext{
 		visibility: visible !important;
 		opacity: 1;
+	}
+
+	#github{
+		display: block;
+		height: 30 !important;
+		width: 30 !important;
 	}
 
 

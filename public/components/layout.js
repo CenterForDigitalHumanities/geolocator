@@ -72,17 +72,31 @@ class GeoFooter extends HTMLElement {
     <link rel="stylesheet" href="stylesheets/style.css">
     <footer class="nav nav-center text-primary is-fixed is-full-width is-vertical-align">
 
-	<a target="_blank"href="https://www.slu.edu/research/faculty-resources/research-computing.php"><small class = "tooltiptext">&copy;2022 Research Computing Group</small></a>
+	<a target="_blank"
+		href="https://www.slu.edu/research/faculty-resources/research-computing.php">
+		<small class = "tooltiptext">&copy;2022 Research Computing Group</small></a>
 
-	<a target="_blank" class="tooltip" href="https://slu.edu"><img class="brand" alt="SLU logo" src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png"><span class= "tooltiptext">SLU Homepage</span></a>
+	<a target="_blank" class="tooltip" href="https://slu.edu">
+		<img class="brand" alt="SLU logo" src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png">
+		<span class= "tooltiptext">SLU Homepage</span></a>
 
-	<a target="_blank" class = "tooltip" id="slu" href="https://www.slu.edu/arts-and-sciences/ong-center/"><img class="brand" alt="SLU RCG logo" src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png"><span class= "tooltiptext">SLU Research Group</span></a>
+	<a target="_blank" class = "tooltip" id="slu" href="https://www.slu.edu/arts-and-sciences/ong-center/">
+		<img class="brand" alt="SLU RCG logo" src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png">
+		<span class= "tooltiptext">SLU Research Group</span></a>
 
 
-	<a target="_blank" class= "tooltip"id = "rerum" href="http://rerum.io"><img class="brand" alt="Rerum logo" src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg"><span class="tooltiptext">RERUM v1</span></a>
+	<a target="_blank" class= "tooltip"id = "rerum" href="http://rerum.io">
+		<img class="brand" alt="Rerum logo" src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg">
+		<small> RERUM v1 </small>
+		<span class="tooltiptext">RERUM v1</span></a>
 
-	    <a target="_blank" class= "tooltip" href="https://github.com/CenterForDigitalHumanities/geolocator.git"><img class="brand" alt="Git logo" src="./github.svg">
-	<small>&nbsp;&nbsp;Support/Contribute to Geolocator</small> <span class= "tooltiptext"> Geolocator Github </span></a>
+	<a target="_blank" class= "tooltip" href="https://github.com/CenterForDigitalHumanities/geolocator.git">
+		<img class="brand" height= "300px" alt="Git logo" src="./github.svg">
+		<small>&nbsp;&nbsp;Support/Contribute to Geolocator</small> 
+		<span class= "tooltiptext"> Geolocator GitHub </span></a>
+
+
+
     </footer>`
 	constructor(){
 		super()

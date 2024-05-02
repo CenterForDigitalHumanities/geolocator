@@ -4,57 +4,53 @@ Emily Henken
 4/8/2024
 
 
-Intro
-Welcome
-Purpose of site
-Developed by Open Source @ SLU
-Links at bottom
+Hello, Welcome to the RERUM Geolocator. In this video I will walk through the steps on how to use this tool.
 
-**Should I have “About Geolocator” first?
+First things first, there are two main functionalities of this site.
+	1. Creating a navplace object
+	2. Creating a Geolocating Web annotation.
 
-**Landing Page**
-“Learn more” Links
-Difference between 2 options. They function the same, but serve different purposes.
-Why/when you would want to choose each
-Describe “Create a navplace object” and describe “Geolocating Web Annotation”
+Chances are, if you have come to this site, then that means you have a research object, reflected in the form of a URI link. Make sure you have that handy as we walk through these steps.
+
+So, the difference between these two options is where exactly the geometry you are defining is stored. Before we begin, it is important to understand so you can use the right tool according to your research goals.
+	- When creating a navplace object, you are defining a primary property to your resource, called 'navplace'. This is the standard name for the IIIF community. 
+	- With the Geolpcating web annotation, you are defining a Secondary property consisting of geometry. 
+
+We will talk through this and an example later on.
+Let's start with defining a navplace property.
+
 
 **How to: Create the navplace object.**
-Optionally, provide a name or email or something to attribute the resource to you. This will be saved into the JSON, as you will see in the end.
-Supply the URI of the object to which you want to add the navplace object.
-When you hit “Next”, the resource’s JSON will pop up below.
-UNRESOLVABLE: https://iiif.io/api/cookbook/recipe/000m-image/manifest.json 
-Note that if the URI cannot be found, AKA is not resolvable, the site will warn you before you move on. (Explain error message)
+Optionally, provide a name or email or something to attribute the resource to you. This will be saved into the JSON, primarily, along with the navplace property.
+Supply the URI of the object to which you want to add the navplace object. Here I have my personal URI.
+When you hit “Next”, if you get a warning, there will be some helpful popups that explain what the issue was. Otherwise, the resource’s JSON will pop up below as a preview.
 
-Lets look now at the case where the URI points to a resource that IS RESOLVABLE, and DOES NOT yet have a navplace object. (**GO GET A NEW URI FROM THE REPO SOMEWHERE TO DEMO**)
-As you can see, the JSON will appear with no warnings. This is just your already existing resource provided from the URI, but now we add the “creator” property, as you can see at the bottom, and next we will add the navPlace property.
-
-Note that there also may be a case where the resource you provided already has an existing navplace Property in it.  https://iiif.io/api/cookbook/recipe/0154-geo-extension/manifest.json 
-If you want to continue, you can, but it will overwrite the previous navplace property and create a new one in the next step. Luckily, Geolocator will give you this warning so that you don’t accidentally overwrite anything if you do not want to.
-	
-Let’s go back to this resource, the one with no navplace property yet, and add it. Once everything looks right, Go ahead and hit “Confirm URI”.
-
+This is just your already existing resource provided from the URI, but next we add the “creator” property, and next we will construct the "navPlace" property.
 
 **How to: Create the geometry of the navPlace property.**
-
-
-
+Here is where you draw the geometry you desire. There are options for a point, line, and polygon. (point click, line draw the points and end eith a double click/2nd click on last point, polygon ends the same way as the line). You can switch or trash the geometry at any time; you do not move on until you hit "See preview"
 
 **How to: Final Step**
-Congrats, you have made it to the final step. This is where we look over all our progress, and officially create our new and improved resource.
-(Point out original JSON vs new properties)
+Congrats, you have made it to the final step. This is where we look over all our progress, and officially create our new and improved resource. 
+As you can see, the object constains all the old properties, now with the 'creator' and 'navplace' properties.
 Now, if something in here looks wrong, if your navplace is off, if you accidentally provided the wrong URI, you misspelled your name, don’t worry, nothing is official yet. At the bottom you can “Start Over”, which will bring you back to the first page where you provided the URI and creator attribute.
-But if it does look right, and you want to (save your object to rerum?) Hit Create.
+
+But if it does look right, and you want to save your object as a new URI, then we can move on.
 If you just want it for yourself, there is a download button at the top that will download the JSON object to your computer.
 
-Hitting “Create” will bring you here, where your new and improved resource is at this link (Open link)
-You can see it in navplace viewer too. As you can see, this is exactly the geometry we created for this!
+Otherwise, hitting “Create” will bring you here, where your new and improved resource is at this link, which can now be viewed in navplace viewer.
+As you can see, this is exactly the geometry we created for this!
 
+
+If your goal was to create a navplace property, then you are complete! If you are still trying to learn about creating a Geolocating web annotation, then keep listening. 
 
 **How to: Geolocating Web Annotation**
-(Navegate here)
-Notice that in the web annotator, it does not matter if this resource already has a navplace property. That is because _________.
-In terms of what you need to be doing, everything here pretty much works the same.
-Differences:
-__
-__
-At the end, you still have this link you can take with you, but you view it in the Annotation Viewer because it is a LOUD W3C Web Annotation. If you want to learn more about these types of annotations, you can visit the “Additional Links” page.
+Back on the home page, we click on the Geolocating Web Annotation button.
+Recall that at the beginning of this video, I explained that while navplace objects are a primary property of a resource, the geolocating annotation is secondary. That means, for example, if you wanted to apply geometry to a resource about an event that happened somewhere, the location of that event should be in the navplace property. But, there may be other supplemental locations that are associated with the event, but not quite necessary for the definition. These would be defined as web annotations.
+
+Moving forward, the process is exactly the same as creating a navplace object. Supply your name, optionally, and URI - note that this object already has a navpalce object, its primary geometry - and define your geometry how you please.
+
+In the preview, you can see there is no new navplace being defined, as this object already had one. but rather just coordinates stored. 
+When you are done here, you can download the object for yourself and you can view it in the Annotation Viewer.
+
+This concludes the tutorial on how to annotate a IIIF research object using the rerum geolocator. Thank you, and good luck!

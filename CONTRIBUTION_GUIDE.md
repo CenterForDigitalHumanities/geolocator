@@ -1,6 +1,6 @@
 # Contribute to the RERUM Geolocator
 
-# Developers
+## Developers
 
 Bryan Haberberger -- bryan.j.haberberger@slu.edu
 Patrick Cuba -- patrick.m.cuba@slu.edu

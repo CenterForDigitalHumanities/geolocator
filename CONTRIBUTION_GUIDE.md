@@ -6,7 +6,8 @@ Bryan Haberberger -- bryan.j.haberberger@slu.edu
 Patrick Cuba -- patrick.m.cuba@slu.edu
 Research Computing Group at Saint Louis Univsersity -- research.computing@slu.edu
 
-## <3 Thank you
+## ❤️ Thank You
+
 Thank you for considering a contribution to this application! The `main` branch is protected and you cannot push it.
 
 ## Installation
@@ -42,6 +43,7 @@ RERUM_ACCESS_TOKEN_URL = https://devstore.rerum.io/v1/client/request-new-access-
 PORT = 3005
 ```
 You obtain an `ACCESS_TOKEN` AND `REFRESH_TOKEN` by signing up with [RERUM](https://store.rerum.io/v1/).
+
 **Note: do not commit .env file when trying to push into main branch**
 
 ## Run it

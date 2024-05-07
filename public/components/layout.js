@@ -55,6 +55,7 @@ class GeoNav extends HTMLElement {
         <a style="margin: 0 10px;" class="active" href="index.html"> Home </a>
         <a style="margin: 0 10px;" class="active" href="about.html"> About Geolocator </a>
         <a style="margin: 0 10px;" class="active" href="moreLinks.html"> Additional Links </a>
+        <a style="margin: 0 10px;" class="active" href="helpVideo.html"> Tutorial </a>
     </nav>
     `
     constructor(){

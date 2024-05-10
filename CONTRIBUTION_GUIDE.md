@@ -1,20 +1,21 @@
 # Contribute to the RERUM Geolocator
 
+## ❤️ Thank You
+
+Thank you for considering a contribution to this application! The `main` branch is protected and you cannot push it.
+
 ## Developers
 
 Bryan Haberberger -- bryan.j.haberberger@slu.edu
 Patrick Cuba -- patrick.m.cuba@slu.edu
 Research Computing Group at Saint Louis Univsersity -- research.computing@slu.edu
 
-## ❤️ Thank You
-
-Thank you for considering a contribution to this application! The `main` branch is protected and you cannot push it.
 
 ## Installation
 
 You will need NodeJs and Git installed on your machine:
-[NodeJS Installation Guide](https://nodejs.org/en/download)
-[Git Installaition Guide](https://desktop.github.com)
+[NodeJS Installation Guide](https://nodejs.org/en/download)- Npm allows you to run geolocator on your localhost
+[Git Installaition Guide](https://desktop.github.com)- Use git to commit any changes you want to make to the geolocator github
 
 Then use the following git shell for installing the app on your local machine.
 
@@ -42,7 +43,6 @@ RERUM_ID_PATTERN = https://devstore.rerum.io/v1/id/
 RERUM_ACCESS_TOKEN_URL = https://devstore.rerum.io/v1/client/request-new-access-token
 PORT = 3005
 ```
-You obtain an `ACCESS_TOKEN` AND `REFRESH_TOKEN` by signing up with [RERUM](https://store.rerum.io/v1/).
 
 **Note: do not commit .env file when trying to push into main branch**
 
@@ -60,10 +60,25 @@ To stop the service, kill or exit the process via your shell (CTRL + c or CTRL +
 
 ## 🎉 Ready to Start Contributing!
 
-Excellent, way to get there.  First, make a new branch through the GitHub Interface or through your shell.  Make sure you 'checkout' that branch.
+Excellent, way to get there!  Now find an issue you want to work on and create a new branch through the GitHub Interface or through your shell.  Make sure you 'checkout' that branch.
 
 ```
 cd /code_folder/geolocator
 git checkout my_new_branch
 ```
+Now you can make code changes and see them in real time by using npm start. When you are finished with your changes add you file to and commit your changes.
+
+```
+git add file
+git commit -a -m "Adding file"
+git push
+```
+
+Once you have pushed your changes, open a Pull Request that targets the main branch at [Geolocator Main](https://github.com/CenterFor DigitalHumanitites/geolocator/tree/main/).
+
+## Other Helpful Resources
+[Chota CSS Github](https://github.com/jenil/chota.git)
+[JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScripti/Guide/)
+[CSS Guide](https://www.w3schools.com/css/)
+[HTML Guide](https://www.w3schools.com/html/default.asp)
 

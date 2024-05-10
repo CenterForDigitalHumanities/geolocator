@@ -17,6 +17,7 @@ Research Computing Group at Saint Louis Univsersity -- research.computing@slu.ed
 
 You will need NodeJs and Git installed on your machine:
 [NodeJS Installation Guide](https://nodejs.org/en/download)- Npm allows you to run geolocator on your localhost
+
 [Git Installaition Guide](https://desktop.github.com)- Use git to commit any changes you want to make to the geolocator github
 
 Then use the following git shell for installing the app on your local machine.

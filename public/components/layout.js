@@ -74,18 +74,18 @@ class GeoFooter extends HTMLElement {
 
 	<a target="_blank"
 		href="https://www.slu.edu/research/faculty-resources/research-computing.php">
-		<small class = "tooltiptext">&copy;2022 Research Computing Group</small></a>
+		<small class = "tooltiptext">&copy;2024 Research Computing Group</small></a>
 
 	<a target="_blank" class="tooltip" href="https://slu.edu">
 		<img class="brand" alt="SLU logo" src="https://www.slu.edu/marcom/tools-downloads/imgs/logo/left-aligned/slu_logoleftaligned_rgb.png">
 		<span class= "tooltiptext">SLU Homepage</span></a>
 
-	<a target="_blank" class = "tooltip" id="slu" href="https://www.slu.edu/arts-and-sciences/ong-center/">
+	<a target="_blank" class = "tooltip" id="slu" href="href="https://www.slu.edu/research/about-slu-research/index.php">
 		<img class="brand" alt="SLU RCG logo" src="https://centerfordigitalhumanities.github.io/media-assets/logos/rcg-logo.png">
 		<span class= "tooltiptext">SLU Research Group</span></a>
 
 
-	<a target="_blank" class= "tooltip"id = "rerum" href="http://rerum.io">
+	<a target="_blank" class= "tooltip"id = "rerum" href="https://rerum.io">
 		<img class="brand" alt="Rerum logo" src="https://centerfordigitalhumanities.github.io/blog/assets/images/rerum.jpg">
 		<small> RERUM v1 </small>
 		<span class="tooltiptext">RERUM v1</span></a>

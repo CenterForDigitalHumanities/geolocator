@@ -80,7 +80,10 @@ Once you have pushed your changes, open a Pull Request that targets the main bra
 
 ## Other Helpful Resources
 [Chota CSS Github](https://github.com/jenil/chota.git)
+
 [JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScripti/Guide/)
+
 [CSS Guide](https://www.w3schools.com/css/)
+
 [HTML Guide](https://www.w3schools.com/html/default.asp)
 

@@ -71,7 +71,8 @@ cd /code_folder/geolocator
 git checkout my_new_branch
 ```
 Now you can make code changes and see them in real time by using npm start. 
-**Note: ** Add documentation to your code to help other contributors understand your code
+
+**Note: Add documentation to your code to help other contributors understand your changes**
 
 When you are finished with your changes add you file to and commit your changes.
 

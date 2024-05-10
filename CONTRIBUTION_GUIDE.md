@@ -16,6 +16,7 @@ Research Computing Group at Saint Louis Univsersity -- research.computing@slu.ed
 ## Installation
 
 You will need NodeJs and Git installed on your machine:
+
 [NodeJS Installation Guide](https://nodejs.org/en/download)- Npm allows you to run geolocator on your localhost
 
 [Git Installaition Guide](https://desktop.github.com)- Use git to commit any changes you want to make to the geolocator github
@@ -35,7 +36,7 @@ npm install
 
  Contact the developers for the required development secrets!
 
-Create a file named `.env` in the root folder.  In the above example, the root is `/code_folder/geolocator`.  `/code_folder/geolocator/.env` looks like this:
+After obtaining the secret tokens create a file named `.env` in the root folder.  In the above example, the root is `/code_folder/geolocator`.  `/code_folder/geolocator/.env` looks like this:
 
 ```
 ACCESS_TOKEN = OBTAINED_FROM_ADMINS
@@ -63,13 +64,16 @@ To stop the service, kill or exit the process via your shell (CTRL + c or CTRL +
 
 ## 🎉 Ready to Start Contributing!
 
-Excellent, way to get there!  Now find an issue you want to work on and create a new branch through the GitHub Interface or through your shell.  Make sure you 'checkout' that branch.
+Now find an issue you want to work on and create a new branch through the GitHub Interface or through your shell.  Make sure you 'checkout' that branch.
 
 ```
 cd /code_folder/geolocator
 git checkout my_new_branch
 ```
-Now you can make code changes and see them in real time by using npm start. When you are finished with your changes add you file to and commit your changes.
+Now you can make code changes and see them in real time by using npm start. 
+**Note: ** Add documentation to your code to help other contributors understand your code
+
+When you are finished with your changes add you file to and commit your changes.
 
 ```
 git add file
@@ -77,12 +81,12 @@ git commit -a -m "Adding file"
 git push
 ```
 
-Once you have pushed your changes, open a Pull Request that targets the main branch at [Geolocator Main](https://github.com/CenterFor DigitalHumanitites/geolocator/tree/main/).
+Once you have pushed your changes, open a Pull Request that targets the main branch at [Geolocator Main](https://github.com/CenterForDigitalHumanitites/geolocator/tree/main/).
 
 ## Other Helpful Resources
 [Chota CSS Github](https://github.com/jenil/chota.git)
 
-[JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScripti/Guide/)
+[JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/)
 
 [CSS Guide](https://www.w3schools.com/css/)
 

@@ -7,7 +7,9 @@ Thank you for considering a contribution to this application! The `main` branch 
 ## Developers
 
 Bryan Haberberger -- bryan.j.haberberger@slu.edu
+
 Patrick Cuba -- patrick.m.cuba@slu.edu
+
 Research Computing Group at Saint Louis Univsersity -- research.computing@slu.edu
 
 

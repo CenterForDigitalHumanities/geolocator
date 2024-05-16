@@ -6,6 +6,63 @@ footer{
   background-color : #FFF;
   z-index : 1;
 }
+.tooltip{
+  position: relative;
+  display: flex;
+}
+.tooltip .tooltiptext{
+	visibility:hidden;
+	width:120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 110%;
+	left: 50%;
+	margin-left: -60px;
+}
+footer span{
+	font-size: 12px;
+}
+.tooltip .tooltiptext::after{
+	content:" ";
+	position: absolute;
+	top: 100;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: black transparent transparent transparent;
+}
+@media screen and (max-width: 790px){
+	footer{
+		flex-direction: row;
+	}
+	footer small{
+		display: none;
+	}
+	footer img{
+		display: block;
+		height: 300px;
+		width: auto;
+	}
+	header small{
+		display: none;
+	}
+	header h1{
+		margin-left: 4rem;
+		color: #a3d1ff;
+		letter-spacing: .55rem;
+		font-weight: 300;
+	}
+	.tooltip:hover .tooltiptext{
+		visibility:visible;
+		opacity: 1;
+	}
+}
 header {
   background: #222;
   width: 100%;

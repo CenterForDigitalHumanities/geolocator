@@ -23,6 +23,11 @@ You can obtain an `ACCESS_TOKEN` and a `REFRESH_TOKEN` by signing up with RERUM 
 
 Your geolocator will attempt to run on port `3005`.  If port `3005` is taken, then update the .env value `PORT` to an open port and try to start it again.
 
+## Open a resource from a link
+A link can name the resource to geolocate with the `iiif-content` parameter, such as `annotate.html?iiif-content=https://store.rerum.io/v1/id/123`.  The resource is resolved and previewed right away, and you confirm it as usual.  The home page passes the parameter on to whichever generator you choose.
+
+[Oh My RERUM](https://oh-my.rerum.io) hosts a static copy of these pages and opens them this way.  A static copy has no geolocator server behind it, so the hosts listed in `STATIC_HOSTS` in `public/components/layout.js` save through https://geo.rerum.io instead.  That server must allow cross-origin requests, so leave `OPEN_API_CORS` unset or set to anything but `false`.  It still accepts writes only from pages on its own host and on the origins in `ALLOWED_ORIGINS` in `app.js`.  A request that names any other `Origin` gets a 403.
+
 ## License and Attribution
 Primary Developers: 
 Bryan Haberberger -- [https://github.com/thehabes](https://github.com/thehabes)

@@ -6,7 +6,7 @@
 
 <head>
     <title>Geolocating Web Annotation Generator</title>
-    <link rel="icon" href="/images/favicon.ico" type="image/ico">
+    <link rel="icon" href="images/favicon.ico" type="image/ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
@@ -49,23 +49,23 @@
     }
 
     document.addEventListener("coordinatesConfirmed", (e) => {
-        localStorage.setItem("geoJSON", e.detail)
+        localStorage.setItem("geolocator:geoJSON", e.detail)
         coordinatesCard.classList.add("is-hidden")
         document.querySelector("geolocator-preview").setAttribute("resource-type", "Annotation")
     })
 
     document.addEventListener("userResourceConfirmed", (e) => {
-        localStorage.setItem("providedURI", e.detail)
+        localStorage.setItem("geolocator:providedURI", e.detail)
         document.querySelector("user-resource").classList.add("is-hidden")
         document.querySelector("point-picker").classList.remove("not-visible")
     })
 
     document.addEventListener("newResourceCreated", (e) => {
-        const createdResource = JSON.parse(localStorage.getItem("newResource"))
+        const createdResource = JSON.parse(localStorage.getItem("geolocator:newResource"))
         document.querySelector("geolocator-preview").classList.add("is-hidden")
         finished.classList.remove("is-hidden")
         delete createdResource.__rerum
-        takeout.innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(createdResource, null, '\t')))}</pre>`
+        takeout.innerHTML = `<pre>${highlightJSON(createdResource)}</pre>`
         const uri = createdResource["@id"] ?? createdResource.id ?? "{ no URI }"
         theuri.innerHTML = `<a target="_blank" href="${uri}">${uri}</a>`
         annoLink.setAttribute("href", `https://map.rerum.io/annotation-viewer.html?data=${uri}`)

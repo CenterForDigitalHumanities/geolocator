@@ -7,6 +7,25 @@
  * @author bryan.j.haberberger@slu.edu
  */
 
+// Hosts that serve a static copy of these pages with no geolocator server behind them.
+// Their saves go to geo.rerum.io, which holds the RERUM token.
+const STATIC_HOSTS = ["oh-my.rerum.io"]
+const GEOLOCATOR_SERVER = STATIC_HOSTS.includes(location.hostname) ? "https://geo.rerum.io/" : ""
+
+/**
+ * Format an object as highlighted JSON for a preview.
+ * The highlighter does not escape HTML, and previews show resources from anywhere, so escape it first.
+ * @param {Object} obj The object to preview
+ * @return {String} HTML for the preview
+ */
+function highlightJSON(obj) {
+    const text = JSON.stringify(obj, null, '\t')
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+    return jsonFormatHighlight(text)
+}
+
 class GeoPage extends HTMLBodyElement {
     constructor(){
         super()
@@ -143,13 +162,19 @@ class UserResource extends HTMLElement {
 
     connectedCallback() {
         this.innerHTML = this.#uriInputTmpl
-        localStorage.removeItem("providedURI")
-        localStorage.removeItem("userResource")
+        localStorage.removeItem("geolocator:providedURI")
+        localStorage.removeItem("geolocator:userResource")
         notResolvedBtn.addEventListener("click", ()=>this.closePopup("notResolvedMessage"))
         IIIFbtn.addEventListener("click", ()=>this.closePopup("outdatedIIIFmessage"))
         navPlaceBtn.addEventListener("click", ()=>this.closePopup("navPlaceMessage"))
         uriBtn.addEventListener("click", this.provideTargetID.bind(this))
         confirmUriBtn.addEventListener("click", this.confirmTarget.bind(this))
+        // A link can name the resource, as Oh My RERUM does when it opens this tool.
+        const providedURI = new URLSearchParams(location.search).get("iiif-content")
+        if(providedURI){
+            objURI.value = providedURI
+            this.provideTargetID()
+        }
     }
 
     closePopup(popupId) {
@@ -180,14 +205,14 @@ class UserResource extends HTMLElement {
                 // The RERUM property is noisy.  Let's remove it from previews.
                 delete obj.__rerum
                 obj.creator = objCreator.value? objCreator.value : undefined
-                uriPreview.innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(obj, null, '\t')))}</pre>`
-                localStorage.setItem("userResource", JSON.stringify(obj))
+                uriPreview.innerHTML = `<pre>${highlightJSON(obj)}</pre>`
+                localStorage.setItem("geolocator:userResource", JSON.stringify(obj))
                 return obj
             })
             .catch(err => {
                 document.getElementById("notResolvedMessage").classList.toggle("show")
                 uriPreview.innerHTML = `<pre>{Not Resolvable}</pre>`
-                localStorage.setItem('userResource', objCreator.value? JSON.stringify({'@id':target, 'creator':objCreator.value}): JSON.stringify({'@id':target}))
+                localStorage.setItem('geolocator:userResource', objCreator.value? JSON.stringify({'@id':target, 'creator':objCreator.value}): JSON.stringify({'@id':target}))
                 return null
             })
         confirmURI.classList.remove("is-hidden")
@@ -255,7 +280,7 @@ class PointPicker extends HTMLElement {
     })
 
     connectedCallback() {
-        localStorage.removeItem("geoJSON")
+        localStorage.removeItem("geolocator:geoJSON")
         this.innerHTML = this.#pointPickerTmpl
         confirmCoords.addEventListener("click", this.confirmCoordinates)
         this.previewMap = L.map('leafletPreview').setView([12, 12], 2)
@@ -277,10 +302,10 @@ class PointPicker extends HTMLElement {
         this.previewMap.on('click', (e) => {
             if (this.isCompleteShape) { this.clearMapData() }
             this.isCompleteShape = false
-            let storedGeomType = localStorage.getItem("geometryType")
+            let storedGeomType = localStorage.getItem("geolocator:geometryType")
             document.getElementById("confirmCoords").disabled = false
             
-            let previouslySelectedCoords = localStorage.getItem('coordinates')
+            let previouslySelectedCoords = localStorage.getItem('geolocator:coordinates')
             previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : []
             if (storedGeomType === "Point"){
                 previouslySelectedCoords = [] //clear any previously selected points
@@ -316,13 +341,13 @@ class PointPicker extends HTMLElement {
                     L.polyline(this.pointList, {color: 'orange'}).addTo(this.previewMap)
                 }
             }
-            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
+            localStorage.setItem('geolocator:coordinates', JSON.stringify(previouslySelectedCoords))
         })
 
         this.previewMap.on('dblclick', (e) => {
             this.isCompleteShape = true
-            let storedGeomType = localStorage.getItem("geometryType")
-            let previouslySelectedCoords = localStorage.getItem('coordinates')
+            let storedGeomType = localStorage.getItem("geolocator:geometryType")
+            let previouslySelectedCoords = localStorage.getItem('geolocator:coordinates')
             previouslySelectedCoords = previouslySelectedCoords ? JSON.parse(previouslySelectedCoords) : []
             previouslySelectedCoords.pop()
             previouslySelectedCoords.pop()
@@ -338,7 +363,7 @@ class PointPicker extends HTMLElement {
                 }
                 L.polygon(this.pointList, {color: 'lime'}).addTo(this.previewMap)
             }
-            localStorage.setItem('coordinates', JSON.stringify(previouslySelectedCoords))
+            localStorage.setItem('geolocator:coordinates', JSON.stringify(previouslySelectedCoords))
         })
     }
 
@@ -367,7 +392,7 @@ class PointPicker extends HTMLElement {
      * @returns {None} 
     */
     chooseGeometry(geomType) {
-        localStorage.setItem("geometryType", geomType)
+        localStorage.setItem("geolocator:geometryType", geomType)
         this.highlightGeomType(geomType)
         this.clearMapData()
     }
@@ -378,7 +403,7 @@ class PointPicker extends HTMLElement {
      */
     clearMapData() {
         document.getElementById("confirmCoords").disabled = true
-        localStorage.removeItem('coordinates')
+        localStorage.removeItem('geolocator:coordinates')
         this.pointList = []
         this.markerGroup.clearLayers()
         this.clearMapLayers()
@@ -432,8 +457,8 @@ class PointPicker extends HTMLElement {
      */
     confirmCoordinates() {
         let geo = {}
-        const geometry_type = localStorage.getItem('geometryType') ?? 'Point'
-        const coords = JSON.parse(localStorage.getItem('coordinates'))
+        const geometry_type = localStorage.getItem('geolocator:geometryType') ?? 'Point'
+        const coords = JSON.parse(localStorage.getItem('geolocator:coordinates'))
         geo.type = geometry_type
         geo.coordinates = []
         for (let index = 0; index < coords.length; index += 2) {
@@ -485,7 +510,7 @@ class GeolocatorPreview extends HTMLElement {
         </div>`
 
     connectedCallback() {
-        localStorage.removeItem("newResource")
+        localStorage.removeItem("geolocator:newResource")
         this.innerHTML = this.#uriInputTmpl
         this.querySelector(".downloadBtn").addEventListener("click", this.downloadLocally)
         if(this.getAttribute("do-save")){
@@ -502,7 +527,7 @@ class GeolocatorPreview extends HTMLElement {
      * @return none
      */
     downloadLocally(event) {
-        const objectToSave = localStorage.getItem("newResource")
+        const objectToSave = localStorage.getItem("geolocator:newResource")
         var element = document.createElement('a')
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(objectToSave))
         element.setAttribute('download', 'iiif_resource.json')
@@ -531,8 +556,8 @@ class GeolocatorPreview extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if(oldValue === newValue) return
 
-        const userObj = JSON.parse(localStorage.getItem("userResource"))
-        const geo = JSON.parse(localStorage.getItem("geoJSON"))
+        const userObj = JSON.parse(localStorage.getItem("geolocator:userResource"))
+        const geo = JSON.parse(localStorage.getItem("geolocator:geoJSON"))
         if(!geo || !userObj) return
 
         function createNewContext(context, uri){
@@ -613,8 +638,8 @@ class GeolocatorPreview extends HTMLElement {
                 this.querySelector(".createBtn").addClass("is-hidden")
                 wrapper = JSON.parse(JSON.stringify(userObj))
         }
-        this.querySelector(".resourcePreview").innerHTML = `<pre>${jsonFormatHighlight((JSON.stringify(wrapper, null, '\t')))}</pre>`
-        localStorage.setItem("newResource", JSON.stringify(wrapper, undefined, 4))
+        this.querySelector(".resourcePreview").innerHTML = `<pre>${highlightJSON(wrapper)}</pre>`
+        localStorage.setItem("geolocator:newResource", JSON.stringify(wrapper, undefined, 4))
         // Typically when this has happened the preview is ready to be seen.
         // It may be better to let a front end handle whether they want to show this preview or not by dispatching an event.
         if(Array.from(this.classList).includes("is-hidden")){
@@ -630,24 +655,24 @@ class GeolocatorPreview extends HTMLElement {
      * @return none
      */
     importResource(event) {
-        const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
+        const resourceToSave = JSON.parse(localStorage.getItem("geolocator:newResource"))
         const id = resourceToSave["@id"] ?? resourceToSave.id
         if(!id){
             alert("This object must contain 'id' or '@id' in order to continue.")
             return
         }
-        fetch("update", {
+        fetch(`${GEOLOCATOR_SERVER}update`, {
             method: "PUT",
             mode: "cors",
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: localStorage.getItem("newResource")
+            body: localStorage.getItem("geolocator:newResource")
         })
         .then(response => response.json())
         .then(newObj => {
             delete newObj.new_obj_state
-            localStorage.setItem("newResource", JSON.stringify(newObj))
+            localStorage.setItem("geolocator:newResource", JSON.stringify(newObj))
             const e = new CustomEvent("newResourceCreated", {"detail":JSON.stringify(newObj)})
             document.dispatchEvent(e)
             return newObj
@@ -661,25 +686,25 @@ class GeolocatorPreview extends HTMLElement {
      * @return none
      */
     saveResource(event) {
-        const resourceToSave = JSON.parse(localStorage.getItem("newResource"))
+        const resourceToSave = JSON.parse(localStorage.getItem("geolocator:newResource"))
         const id = resourceToSave["@id"] ?? resourceToSave.id
         if(id){
             //You already did this and you have the Annotation URI!
             alert(`This Annotation already exists!  See ${id}`)
             return
         }
-        fetch("create", {
+        fetch(`${GEOLOCATOR_SERVER}create`, {
             method: "POST",
             mode: "cors",
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: localStorage.getItem("newResource")
+            body: localStorage.getItem("geolocator:newResource")
         })
         .then(response => response.json())
         .then(newObj => {
             delete newObj.new_obj_state
-            localStorage.setItem("newResource", JSON.stringify(newObj))
+            localStorage.setItem("geolocator:newResource", JSON.stringify(newObj))
             const e = new CustomEvent("newResourceCreated", {"detail":JSON.stringify(newObj)})
             document.dispatchEvent(e)
             return newObj

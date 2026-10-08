@@ -55,8 +55,27 @@ if(process.env.OPEN_API_CORS !== "false") {
       "origin" : "*",
       "maxAge" : "600"
     })
-  ) 
+  )
 }
+
+// Only the Geolocator's own pages and Oh My RERUM's copy of them may send anything but a read.
+// Browsers always send Origin on a cross-origin request and on a same-origin POST, PUT, PATCH, or DELETE.
+// A request with no Origin is not from a page, and this check cannot stop it.
+const ALLOWED_ORIGINS = ["https://geo.rerum.io", "https://oh-my.rerum.io"]
+app.use(function(req, res, next) {
+  const origin = req.get("Origin")
+  if (!origin || ["GET", "HEAD", "OPTIONS"].includes(req.method)) return next()
+  if (ALLOWED_ORIGINS.includes(origin)) return next()
+  // The same host, such as http://localhost:3005 while developing.
+  try {
+    if (new URL(origin).host === req.get("Host")) return next()
+  }
+  catch (err) {
+    // An opaque origin such as "null" is not a URL.  It is not allowed.
+  }
+  res.status(403).send("This origin may not send requests to the Geolocator.")
+})
+
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))

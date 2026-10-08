@@ -30,8 +30,10 @@ app.set('view engine', 'pug')
 
 app.use(logger('dev'))
 app.use(express.json())
-if(process.env.OPEN_API_CORS !== "false") { 
-  // This enables CORS for all requests. We may want to update this in the future and only apply to some routes.
+// Only the Geolocator's own pages and Oh My RERUM's copy of them may use this API from a browser.
+const ALLOWED_ORIGINS = ["https://geo.rerum.io", "https://oh-my.rerum.io"]
+if(process.env.OPEN_API_CORS !== "false") {
+  // This enables CORS for ALLOWED_ORIGINS.  The browser does not let a page on any other origin read a response or send a write.
   const cors = require('cors')
   app.use(
     cors({
@@ -52,11 +54,18 @@ if(process.env.OPEN_API_CORS !== "false") {
         'X-HTTP-Method-Override'
       ],
       "exposedHeaders" : "*",
-      "origin" : "*",
+      "origin" : ALLOWED_ORIGINS,
       "maxAge" : "600"
     })
-  ) 
+  )
 }
+
+// Requiring JSON makes the browser ask first, and cors() above turns away other origins.
+app.use(function(req, res, next) {
+  if (req.method === "POST" && !req.is("application/json")) return res.status(415).send("The Geolocator only accepts JSON.")
+  next()
+})
+
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))

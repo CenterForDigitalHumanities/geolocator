@@ -7,7 +7,7 @@
 <head>
     <title>RERUM Geolocator</title>
     <meta charset="UTF-8">
-    <link rel="icon" href="/images/favicon.ico" type="image/ico">
+    <link rel="icon" href="images/favicon.ico" type="image/ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
     <link rel="stylesheet" href="stylesheets/style.css">
@@ -52,5 +52,9 @@
     </div>
 
     <script src="components/layout.js"></script>
+    <script>
+        // Pass a resource named in the link, such as ?iiif-content=, on to whichever generator is chosen.
+        for (const link of document.querySelectorAll("a.button")) link.search = location.search
+    </script>
 </body>
 </html>

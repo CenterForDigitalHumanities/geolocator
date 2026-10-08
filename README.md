@@ -23,6 +23,9 @@ You can obtain an `ACCESS_TOKEN` and a `REFRESH_TOKEN` by signing up with RERUM 
 
 Your geolocator will attempt to run on port `3005`.  If port `3005` is taken, then update the .env value `PORT` to an open port and try to start it again.
 
+## Open a resource from a link
+A link can name the resource to geolocate with the `iiif-content` parameter, such as `annotate.html?iiif-content=https://store.rerum.io/v1/id/123`.  The resource is resolved and previewed right away, and you confirm it as usual.  The home page passes the parameter on to whichever generator you choose.
+
 ## License and Attribution
 Primary Developers: 
 Bryan Haberberger -- [https://github.com/thehabes](https://github.com/thehabes)

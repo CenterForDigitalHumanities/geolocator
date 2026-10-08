@@ -30,8 +30,10 @@ app.set('view engine', 'pug')
 
 app.use(logger('dev'))
 app.use(express.json())
-if(process.env.OPEN_API_CORS !== "false") { 
-  // This enables CORS for all requests. We may want to update this in the future and only apply to some routes.
+// Only the Geolocator's own pages and Oh My RERUM's copy of them may use this API from a browser.
+const ALLOWED_ORIGINS = ["https://geo.rerum.io", "https://oh-my.rerum.io"]
+if(process.env.OPEN_API_CORS !== "false") {
+  // This enables CORS for ALLOWED_ORIGINS.  The browser does not let a page on any other origin read a response or send a write.
   const cors = require('cors')
   app.use(
     cors({
@@ -52,28 +54,18 @@ if(process.env.OPEN_API_CORS !== "false") {
         'X-HTTP-Method-Override'
       ],
       "exposedHeaders" : "*",
-      "origin" : "*",
+      "origin" : ALLOWED_ORIGINS,
       "maxAge" : "600"
     })
   )
 }
 
-// Only the Geolocator's own pages and Oh My RERUM's copy of them may send anything but a read.
-// Browsers always send Origin on a cross-origin request and on a same-origin POST, PUT, PATCH, or DELETE.
-// A request with no Origin is not from a page, and this check cannot stop it.
-const ALLOWED_ORIGINS = ["https://geo.rerum.io", "https://oh-my.rerum.io"]
+// CORS only stops a browser from reading a response.  A POST that skips the preflight, such as an HTML form, still runs.
+// Requiring JSON makes the browser ask first, and cors() above turns away other origins.
+// A request that does not come from a browser is not stopped by either.
 app.use(function(req, res, next) {
-  const origin = req.get("Origin")
-  if (!origin || ["GET", "HEAD", "OPTIONS"].includes(req.method)) return next()
-  if (ALLOWED_ORIGINS.includes(origin)) return next()
-  // The same host, such as http://localhost:3005 while developing.
-  try {
-    if (new URL(origin).host === req.get("Host")) return next()
-  }
-  catch (err) {
-    // An opaque origin such as "null" is not a URL.  It is not allowed.
-  }
-  res.status(403).send("This origin may not send requests to the Geolocator.")
+  if (req.method === "POST" && !req.is("application/json")) return res.status(415).send("The Geolocator only accepts JSON.")
+  next()
 })
 
 app.use(express.urlencoded({ extended: false }))

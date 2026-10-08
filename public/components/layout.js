@@ -169,7 +169,7 @@ class UserResource extends HTMLElement {
         navPlaceBtn.addEventListener("click", ()=>this.closePopup("navPlaceMessage"))
         uriBtn.addEventListener("click", this.provideTargetID.bind(this))
         confirmUriBtn.addEventListener("click", this.confirmTarget.bind(this))
-        // A link can name the resource, as Oh My RERUM does when it opens this tool.
+        // A link can name the resource.
         const providedURI = new URLSearchParams(location.search).get("iiif-content")
         if(providedURI){
             objURI.value = providedURI

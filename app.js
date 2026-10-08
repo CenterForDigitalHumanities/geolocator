@@ -60,9 +60,7 @@ if(process.env.OPEN_API_CORS !== "false") {
   )
 }
 
-// CORS only stops a browser from reading a response.  A POST that skips the preflight, such as an HTML form, still runs.
 // Requiring JSON makes the browser ask first, and cors() above turns away other origins.
-// A request that does not come from a browser is not stopped by either.
 app.use(function(req, res, next) {
   if (req.method === "POST" && !req.is("application/json")) return res.status(415).send("The Geolocator only accepts JSON.")
   next()

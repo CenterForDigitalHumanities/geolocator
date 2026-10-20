@@ -37,4 +37,4 @@ async function generateNewAccessToken() {
  * This does not validate your access token, so you may still be rejected by 
  * your RERUM instance as unauthorized.
  */
-if (isTokenExpired(process.env.ACCESS_TOKEN)) { generateNewAccessToken() }
+if (process.env.ACCESS_TOKEN && isTokenExpired(process.env.ACCESS_TOKEN)) { generateNewAccessToken() }

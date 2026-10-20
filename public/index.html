@@ -9,48 +9,60 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/images/favicon.ico" type="image/ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="https://unpkg.com/chota@0.9.2/dist/chota.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
     <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 </head>
 
-<body is="geo-page">
-
-    <div class="container">
+<body>
+    <geo-page>
         <div class="row">
             <div class="col">
                 <h3> Welcome to the RERUM Geolocator </h3>
                 <p class="intro">
-                    Here you can enhance any <a target="_blank" href="https://www.w3.org/standards/semanticweb/data.html">Linked Open Data</a> resource by providing geospatial descriptors. This does not affect the original resource nor does it notify the resource owner. You are able to attribute the data created here to yourself. At the end, you can download your object as a JSON file or save it to RERUM as real usable linked data.
+                    Here you can enhance any <a target="_blank"
+                        href="https://www.w3.org/standards/semanticweb/data.html">Linked Open Data</a> resource by
+                    providing geospatial descriptors. This does not affect the original resource nor does it notify the
+                    resource owner. You are able to attribute the data created here to yourself. At the end, you can
+                    download your object as a JSON file or save it to RERUM as real usable linked data.
                 </p>
             </div>
         </div>
 
-        <div class="row" >
-            <div class="col col-green">
-                <h4> Create a navPlace object </h4>
-                <p>
-                    The navPlace property is for web resources that are IIIF Presentation API Defined Types. <a target="_blank" href="https://iiif.io/api/presentation/3.0/#21-defined-types".> </a> Learn more about IIIF and the navPlace property by exploring <a target="_blank" href="https://iiif.io/api/extension/navplace/">navPlace Extension</a>.
-                </p>
-                <a class="button primary" style="display: inline-block;" href="navPlace.html">
-                    Create a navPlace Object
-                </a>
-            </div>
-        
-            <div class="col col-green">
-                <h4> Create a Geolocating Web Annotation </h4>
-                
-                <p>
-                    Web Annotations are for any web resource.  To explore what exactly this means, learn about <a target="_blank" href="https://www.w3.org/TR/annotation-model/">W3C Web Annotation</a> and <a target="_blank" href="https://lod-cloud.net/">Linked Open Usable Data</a>.
-                </p>
-                <a class="button primary" style="display: inline-block;" href="annotate.html">
-                    Create a Geolocating Web Annotation
-                </a>
-                
-            </div>
+        <div class="row mode-toggle" role="group" aria-label="Choose what to create">
+            <button id="navPlaceModeBtn" class="button" type="button"
+                title="Add a navPlace property to your IIIF Presentation API resource (v2, v3, or v4).">
+                Add navPlace to a IIIF resource</button>
+            <button id="annotationModeBtn" class="button" type="button"
+                title="Create a W3C Web Annotation for any web resource.">
+                Create a Geolocating Web Annotation</button>
         </div>
 
-    </div>
+        <user-resource></user-resource>
+        <point-picker class="is-hidden"></point-picker>
+        <preview-card class="is-hidden"></preview-card>
 
-    <script src="components/layout.js"></script>
+        <div id="finished" class="row is-hidden">
+            <div class="col">
+                <h3> Thank You for Using RERUM Geolocator </h3>
+                <p class="intro">
+                    Your resource is ready to use in IIIF viewers and your own applications. Just keep track of the
+                    URI, or share this page's link with others.
+                </p>
+                <p id="theuri"></p>
+                <p class="intro">
+                    See your object in the <a target="_blank" id="viewerLink">viewer!</a>
+                </p>
+                <p id="resultError" class="is-hidden" style="color: red"></p>
+                <pre id="takeout"></pre>
+                <input id="startOverBtn" type="button" class="button secondary" value="Create Another" />
+            </div>
+        </div>
+    </geo-page>
+    <script type="module" src="js/app.js"></script>
 </body>
+
 </html>

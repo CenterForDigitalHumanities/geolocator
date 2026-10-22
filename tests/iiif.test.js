@@ -67,6 +67,11 @@ test('buildAnnotation omits creator when not provided and serializes single cont
   assert.equal(ctx[0], CONTEXTS.w3Annotation)
 })
 
+test('buildAnnotation falls back to the supplied URI when the object has no id', () => {
+  const anno = buildAnnotation({}, toFeature('Point', [0, 0]), null, 'https://example.org/no-id')
+  assert.equal(anno.target, 'https://example.org/no-id')
+})
+
 test('buildNavPlace keeps the source version, orders contexts, and wraps the feature', () => {
   const source = {
     '@context': CONTEXTS.api2,

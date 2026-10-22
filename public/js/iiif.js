@@ -92,9 +92,10 @@ function serializeContext(list) {
  * @param {Object} userObj the resolved (or minimal) target resource
  * @param {Object} feature a GeoJSON Feature
  * @param {String} [creator] optional name or e-mail to attribute the data
+ * @param {String} [fallbackTarget] URI to target when userObj carries no id
  * @returns {Object}
  */
-export function buildAnnotation(userObj, feature, creator) {
+export function buildAnnotation(userObj, feature, creator, fallbackTarget) {
   let context = ensureContext(userObj['@context'], CONTEXTS.w3Annotation)
   context = ensureContext(context, CONTEXTS.geojson)
   context = orderContext(context, CONTEXTS.w3Annotation, CONTEXTS.geojson)
@@ -103,7 +104,8 @@ export function buildAnnotation(userObj, feature, creator) {
     type: 'Annotation',
     motivation: 'tagging',
     body: feature,
-    target: getId(userObj)
+    // A resolved object without an id still targets the URI it was fetched from.
+    target: getId(userObj) || fallbackTarget || ''
   }
   if (creator) anno.creator = creator
   return anno

@@ -2,14 +2,15 @@
  * <point-picker> — step 2: draw a geometry on a Leaflet map.
  *
  * Replaces the old Mapbox-tile version (whose personal access token is burned)
- * with OpenStreetMap tiles.  Geometry type, vertices, and completion state are
- * instance fields instead of localStorage keys.  Emits `geometry-confirmed`
- * with a GeoJSON Feature built by toFeature().
+ * with OpenStreetMap tiles.  All drawing state lives in the pure
+ * GeometryDraft state machine (js/geometry.js); this component only wires
+ * Leaflet events into it and re-renders the map from its state.  Emits
+ * `geometry-confirmed` with the draft's GeoJSON Feature.
  *
  * Requires the Leaflet global `L` (loaded by the page).
  */
 
-import { toFeature } from '../iiif.js'
+import { GeometryDraft } from '../geometry.js'
 
 const ICONS = {
   Point: '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>',
@@ -43,10 +44,7 @@ const TILE_ATTRIBUTION =
   'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 
 export class PointPicker extends HTMLElement {
-  #pointList = []
-  #coords = []
-  #geometryType = 'Point'
-  #isCompleteShape = false
+  #draft = new GeometryDraft('Point')
   #map = null
   #markerGroup = null
   #markerIcon = null
@@ -74,91 +72,57 @@ export class PointPicker extends HTMLElement {
 
   /** The GeoJSON Feature for the current selection, or null if incomplete. */
   get feature() {
-    if (!this.#coords.length) return null
-    return toFeature(this.#geometryType, this.#coords)
+    return this.#draft.feature
   }
 
   reset() {
     this.#chooseGeometry('Point')
   }
 
+  /** The map is created while hidden; re-measure when its step becomes visible. */
+  refresh() {
+    this.#map?.invalidateSize()
+  }
+
   #onClick(e) {
-    if (this.#isCompleteShape) this.#clearMapData()
-    this.#isCompleteShape = false
-    this.querySelector('[data-el="confirmCoords"]').disabled = false
+    this.#draft.click(e.latlng, this.#map.getZoom())
+    this.querySelector('[data-el="confirmCoords"]').disabled = !this.#draft.valid
+    this.#render()
+  }
 
-    if (this.#geometryType === 'Point') this.#coords = [] // a point replaces prior selections
-    this.#coords.push(e.latlng.lng, e.latlng.lat)
-    const marker = L.marker(e.latlng, { icon: this.#markerIcon })
+  #onDblClick() {
+    if (this.#draft.type === 'Point') return // the click already placed the point
+    this.#draft.doubleClick()
+    this.querySelector('[data-el="confirmCoords"]').disabled = !this.#draft.valid
+    this.#render()
+  }
 
-    if (this.#geometryType === 'Point') {
-      this.#markerGroup.clearLayers()
-      this.#markerGroup.addLayer(marker)
-    } else if (this.#geometryType === 'LineString') {
-      this.#clearMapLayers()
-      this.#pointList.push(e.latlng)
-      this.#markerGroup.addLayer(marker)
-      L.polyline(this.#pointList, { color: 'orange' }).addTo(this.#map)
-    } else if (this.#geometryType === 'Polygon') {
-      this.#clearMapLayers()
-      const zoom = this.#map.getZoom()
-      if (this.#pointList.length > 0 && this.isCloseToPoint(e.latlng, this.#pointList[0], zoom)) {
-        this.#isCompleteShape = true
-        this.#coords.pop()
-        this.#coords.pop()
-        this.#pointList.push(this.#pointList[0])
-        L.polygon(this.#pointList, { color: 'lime' }).addTo(this.#map)
+  /** Redraw markers and the shape from the draft's current state. */
+  #render() {
+    this.#markerGroup.clearLayers()
+    this.#clearMapLayers()
+    const { type, vertices, complete } = this.#draft
+    if (vertices.length > 1) {
+      if (complete && type === 'Polygon') {
+        L.polygon(vertices, { color: 'lime' }).addTo(this.#map)
       } else {
-        this.#pointList.push(e.latlng)
-        this.#markerGroup.addLayer(marker)
-        L.polyline(this.#pointList, { color: 'orange' }).addTo(this.#map)
+        L.polyline(vertices, { color: complete ? 'lime' : 'orange' }).addTo(this.#map)
       }
     }
-  }
-
-  #onDblClick(e) {
-    this.#isCompleteShape = true
-    // The click that precedes a double-click added a duplicate vertex; drop it.
-    this.#coords.pop()
-    this.#coords.pop()
-    this.#pointList.pop()
-    this.#clearMapLayers()
-    if (this.#geometryType === 'LineString') {
-      this.#pointList.push(e.latlng)
-      L.polyline(this.#pointList, { color: 'lime' }).addTo(this.#map)
-    } else if (this.#geometryType === 'Polygon') {
-      if (this.#pointList.length > 1) this.#pointList.push(this.#pointList[0])
-      L.polygon(this.#pointList, { color: 'lime' }).addTo(this.#map)
+    for (const v of vertices) {
+      this.#markerGroup.addLayer(L.marker(v, { icon: this.#markerIcon }))
     }
-  }
-
-  /**
-   * Compares the distance between two points to determine if they are close
-   * enough to be considered the same point. Used when creating polygons:
-   * users can click (within a margin of error) the first point to close and
-   * complete the shape. The margin shrinks as zoom increases.
-   */
-  isCloseToPoint(newPoint, firstPoint, currentZoomLevel) {
-    const z = currentZoomLevel + 1 // Avoid division by zero if zoomed all the way out
-    let marginOfError = 0
-    if (z <= 8) marginOfError = 2.95 * Math.exp(-0.438 * z)
-    else if (z <= 14) marginOfError = 18.1 * Math.exp(-0.675 * z)
-    else if (z <= 20) marginOfError = 16.4 * Math.exp(-0.693 * z)
-    return Math.abs(newPoint.lat - firstPoint.lat) < marginOfError &&
-      Math.abs(newPoint.lng - firstPoint.lng) < marginOfError
   }
 
   #chooseGeometry(geomType) {
-    this.#geometryType = geomType
+    this.#draft.setType(geomType)
     this.#highlightGeomType(geomType)
     this.#clearMapData()
   }
 
   #clearMapData() {
     this.querySelector('[data-el="confirmCoords"]').disabled = true
-    this.#pointList = []
-    this.#coords = []
-    this.#isCompleteShape = false
+    this.#draft.reset()
     this.#markerGroup?.clearLayers()
     this.#clearMapLayers()
   }
@@ -185,7 +149,7 @@ export class PointPicker extends HTMLElement {
     this.dispatchEvent(new CustomEvent('geometry-confirmed', {
       bubbles: true,
       composed: true,
-      detail: { feature, geometryType: this.#geometryType }
+      detail: { feature, geometryType: this.#draft.type }
     }))
   }
 }

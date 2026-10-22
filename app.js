@@ -91,12 +91,22 @@ app.use(function(req, res, next) {
 })
 
 // error handler
+function escapeHtml (value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500)
+  const status = err.status || 500
+  res.status(status)
   res.type('html').send(
-    `<!DOCTYPE html><html lang="en"><head><title>${err.status || 500}</title></head>` +
-    `<body><h1>${err.status || 500}</h1><p>${err.message}</p>` +
-    (req.app.get('env') === 'development' ? `<pre>${err.stack}</pre>` : '') +
+    `<!DOCTYPE html><html lang="en"><head><title>${escapeHtml(status)}</title></head>` +
+    `<body><h1>${escapeHtml(status)}</h1><p>${escapeHtml(err.message)}</p>` +
+    (req.app.get('env') === 'development' ? `<pre>${escapeHtml(err.stack)}</pre>` : '') +
     `</body></html>`
   )
 })

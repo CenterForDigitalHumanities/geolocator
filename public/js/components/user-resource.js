@@ -118,13 +118,19 @@ export class UserResource extends HTMLElement {
     confirmCard.classList.remove('is-hidden')
     preview.innerHTML = '<pre>Resolving URI...</pre>'
     let resolved = null
-    try {
-      // Match the page protocol to avoid mixed-content blocks on http deploys.
-      const resp = await fetch(target.replace(/^https?:/, window.location.protocol))
-      if (!resp.ok) throw new Error(`status ${resp.status}`)
-      resolved = await resp.json()
-    } catch {
-      resolved = null
+    // Try the URI exactly as given.  Only if that fails, retry with the
+    // page's protocol: an https-only resource must not be downgraded just
+    // because the Geolocator happens to be served over http.
+    const attempts = [target, target.replace(/^https?:/, window.location.protocol)]
+    for (const url of new Set(attempts)) {
+      try {
+        const resp = await fetch(url)
+        if (!resp.ok) continue
+        resolved = await resp.json()
+        break
+      } catch {
+        resolved = null
+      }
     }
     if (resolved && typeof resolved === 'object') {
       delete resolved.__rerum

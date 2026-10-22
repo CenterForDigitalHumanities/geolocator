@@ -19,8 +19,35 @@ import { buildAnnotation, buildNavPlace, getId } from './iiif.js'
 import { jsonPreview } from './utils.js'
 
 const VIEWERS = {
-  navPlace: (uri) => `https://map.rerum.io/?iiif-content=${uri}`,
-  annotation: (uri) => `https://map.rerum.io/annotation-viewer.html?data=${uri}`
+  navPlace: (uri) => `https://map.rerum.io/?iiif-content=${encodeURIComponent(uri)}`,
+  annotation: (uri) => `https://map.rerum.io/annotation-viewer.html?data=${encodeURIComponent(uri)}`
+}
+
+/** The href for a resource URI only if it is a safe web URL; '' otherwise. */
+function safeUrl(uri) {
+  try {
+    const u = new URL(uri, window.location.href)
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.href : ''
+  } catch {
+    return ''
+  }
+}
+
+/** Render a resource URI as a textContent-built link (never innerHTML) so a
+ * crafted id cannot inject markup or a javascript: href. */
+function renderUriLink(el, uri) {
+  el.innerHTML = ''
+  const href = uri ? safeUrl(uri) : ''
+  if (href) {
+    const a = document.createElement('a')
+    a.target = '_blank'
+    a.rel = 'noopener'
+    a.href = href
+    a.textContent = uri
+    el.appendChild(a)
+  } else {
+    el.textContent = uri || '{ no URI }'
+  }
 }
 
 const els = {
@@ -54,6 +81,7 @@ function showStep(step) {
   els.pointPicker.classList.toggle('is-hidden', step !== 'draw')
   els.preview.classList.toggle('is-hidden', step !== 'preview')
   els.finished.classList.toggle('is-hidden', step !== 'done')
+  if (step === 'draw') els.pointPicker.refresh() // map was built while hidden
 }
 
 function resetAll() {
@@ -74,10 +102,8 @@ function resetAll() {
 
 function showFinished(resource) {
   const uri = getId(resource)
-  els.theuri.innerHTML = uri
-    ? `<a target="_blank" href="${uri}">${uri}</a>`
-    : '{ no URI }'
-  els.viewerLink.setAttribute('href', uri ? VIEWERS[mode](uri) : '#')
+  renderUriLink(els.theuri, uri)
+  els.viewerLink.setAttribute('href', safeUrl(uri) ? VIEWERS[mode](uri) : '#')
   const copy = { ...resource }
   delete copy.__rerum
   els.takeout.innerHTML = `<pre>${jsonPreview(copy)}</pre>`
@@ -105,7 +131,7 @@ els.userResource.addEventListener('target-confirmed', (e) => {
 els.pointPicker.addEventListener('geometry-confirmed', (e) => {
   const resource = mode === 'navPlace'
     ? buildNavPlace(target.resource, e.detail.feature)
-    : buildAnnotation(target.resource, e.detail.feature, target.creator)
+    : buildAnnotation(target.resource, e.detail.feature, target.creator, target.uri)
   els.preview.mode = mode
   els.preview.resource = resource
   showStep('preview')
@@ -133,11 +159,9 @@ async function init() {
       if (!resp.ok) throw new Error(`status ${resp.status}`)
       const resource = await resp.json()
       const uri = getId(resource)
-      mode = resource.navPlace ? 'navPlace' : 'annotation'
-      els.theuri.innerHTML = uri
-        ? `<a target="_blank" href="${uri}">${uri}</a>`
-        : '{ no URI }'
-      els.viewerLink.setAttribute('href', uri ? VIEWERS[mode](uri) : '#')
+      setMode(resource.navPlace ? 'navPlace' : 'annotation')
+      renderUriLink(els.theuri, uri)
+      els.viewerLink.setAttribute('href', safeUrl(uri) ? VIEWERS[mode](uri) : '#')
       const copy = { ...resource }
       delete copy.__rerum
       els.takeout.innerHTML = `<pre>${jsonPreview(copy)}</pre>`

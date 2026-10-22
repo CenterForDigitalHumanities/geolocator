@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseQueryString, buildUrl, safeDecode } from '../public/js/query.js'
+import { parseQueryString, buildUrl } from '../public/js/query.js'
 
 test('parseQueryString reads iiif-content, mode, and result', () => {
   const q = parseQueryString('?iiif-content=https%3A%2F%2Fexample.org%2Fm&mode=annotation&result=https%3A%2F%2Fexample.org%2Fa1')
@@ -25,10 +25,16 @@ test('unknown or missing mode is null', () => {
   assert.equal(parseQueryString('?mode=navPlace').mode, 'navPlace')
 })
 
-test('safeDecode leaves malformed percent-encoding alone', () => {
-  assert.equal(safeDecode('100%'), '100%')
-  assert.equal(safeDecode('%E2%9C%93'), '✓')
-  assert.equal(safeDecode(null), null)
+test('percent-encoding is decoded exactly once (no double-decode)', () => {
+  // URLSearchParams already decodes; a second pass would corrupt %2520 -> ' '.
+  const q = parseQueryString('?iiif-content=https%3A%2F%2Fexample.org%2Ffoo%2520bar')
+  assert.equal(q.iiifContent, 'https://example.org/foo%20bar')
+})
+
+test('malformed percent-encoding is left alone', () => {
+  const q = parseQueryString('?iiif-content=100%25&result=%E2%9C%93')
+  assert.equal(q.iiifContent, '100%')
+  assert.equal(q.result, '✓')
 })
 
 test('buildUrl sets, replaces, and removes parameters', () => {

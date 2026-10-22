@@ -12,16 +12,9 @@
  *   result        URI of an already-created resource (shareable finished state)
  */
 
-export function safeDecode(s) {
-  if (s == null) return s
-  try {
-    return decodeURIComponent(s)
-  } catch {
-    return s
-  }
-}
-
 export function parseQueryString(search) {
+  // URLSearchParams.get() already percent-decodes once; decoding again would
+  // corrupt URIs that legitimately contain %XX sequences (e.g. %2520 -> %20).
   const params = new URLSearchParams(search)
   const get = (name) => {
     const v = params.get(name)
@@ -29,9 +22,9 @@ export function parseQueryString(search) {
   }
   const mode = get('mode')
   return {
-    iiifContent: safeDecode(get('iiif-content') ?? get('manifest')),
+    iiifContent: get('iiif-content') ?? get('manifest'),
     mode: mode === 'annotation' || mode === 'navPlace' ? mode : null,
-    result: safeDecode(get('result'))
+    result: get('result')
   }
 }
 

@@ -42,7 +42,12 @@ PORT = 3005
 ```
 
 Now, you can run tests
-`npm run runtest`
+`npm test`
+
+The test suite uses the built-in `node --test` runner and does not need real
+tokens or network access.  Unit tests cover the frontend logic modules
+(`public/js/`) and a supertest smoke suite covers the Express app.  Route
+proxying to a live RERUM store is only exercised when you use the app itself.
 
 And start the app
 `npm start`
@@ -50,6 +55,32 @@ And start the app
 Your geolocator will attempt to run at `http://localhost:3005`.  If port `3005` is taken, then update the .env value `PORT` to an open port and try to start it again.
 
 To stop the service, kill or exit the process via your shell (CTRL + c or CTRL + x).
+
+## 🗺️ Project Structure
+
+```
+app.js               Express app: CORS allow-list, JSON-only POSTs, static
+                     hosting, 301s for the retired navPlace/annotate pages
+bin/geolocator.js    Process entry point (reads PORT, starts the listener)
+tokens.js            Access-token expiry check + refresh (skipped when no
+                     ACCESS_TOKEN is set, so tests run without secrets)
+routes/              Thin proxy of /query /create /update /overwrite /delete
+                     to RERUM_API_ADDR using the server ACCESS_TOKEN
+public/              Static site, loaded as ES modules
+  index.html         The single-page generator (both modes)
+  js/iiif.js         Pure IIIF 2/3/4 detection + annotation/navPlace builders
+  js/query.js        Shareable URL parameters
+  js/store.js        Client for the proxy above (future TinyNode one-file swap)
+  js/utils.js        HTML escaping + JSON syntax highlighting
+  js/app.js          Page orchestrator (steps, mode, URL state)
+  js/components/     Custom elements: geo-page, user-resource, point-picker,
+                     preview-card
+tests/               node:test suites (frontend logic + route smoke tests)
+```
+
+Components communicate through CustomEvents (`target-resolved`,
+`target-confirmed`, `geometry-confirmed`, `resource-created`, `start-over`) —
+no localStorage message bus.
 
 ## 🎉 Ready to Start Contributing!
 

@@ -1,5 +1,29 @@
 # RERUM Geolocator
-Thank you for you interest in the RERUM Geolocator by the Research Computing Group at Saint Louis University.  Here you can bring your own resource and generate Geolocating Web Annotations to place them on a web map.  You can also add a `navPlace` property to [IIIF Defined Types](https://iiif.io/api/presentation/3.0/#21-defined-types) and import them into [RERUM](httos://rerum.io), which will make them viewable in the [Navplace Viewer](https://map.rerum.io).
+Thank you for you interest in the RERUM Geolocator by the Research Computing Group at Saint Louis University.  Here you can bring your own resource and generate Geolocating Web Annotations to place them on a web map.  You can also add a `navPlace` property to [IIIF Defined Types](https://iiif.io/api/presentation/3.0/#21-defined-types) and import them into [RERUM](https://rerum.io), which will make them viewable in the [Navplace Viewer](https://map.rerum.io).
+
+## 🧭 Using the Geolocator
+Everything happens on one page.  Pick a mode at the top:
+
+- **Add navPlace to a IIIF resource** — accepts IIIF Presentation API **v2, v3, and v4** resources.  Your resource keeps the version it arrived with; the geolocator only adds the `navPlace` property and its context.
+- **Create a Geolocating Web Annotation** — works with any web resource whose URI resolves to JSON, not just IIIF.
+
+Then supply the URI, draw a point / line / polygon on the map (OpenStreetMap
+tiles), preview the result, and Download it or save it into RERUM.
+
+## 🔗 Shareable URLs
+The address bar always describes the current state, so any step can be
+bookmarked or sent to a colleague:
+
+| Parameter | Meaning |
+| --- | --- |
+| `?mode=navPlace` \| `?mode=annotation` | Which generator is active |
+| `?iiif-content=URI` | Pre-fills the target URI (alias: `?manifest=URI`, matching Oh My RERUM) |
+| `?result=URI` | Shows the finished state of an already-created resource |
+
+Example: `https://geo.rerum.io/?mode=navPlace&iiif-content=https%3A%2F%2F...`
+
+Old links to `/navPlace.html` and `/annotate.html` are 301-redirected to the
+equivalent `?mode=` URL.
 
 ## 🌟👍 Contributors 👍🌟
 To contribute (you will want to run this on localhost), read the [RERUM Geolocator Contributors Guide](CONTRIBUTING.md).  You will need to contact the site admins for the token information.  If you are looking to fork and run your own geolocator, continue reading.
@@ -24,6 +48,8 @@ You can obtain an `ACCESS_TOKEN` and a `REFRESH_TOKEN` by signing up with RERUM 
 Your geolocator will attempt to run on port `3005`.  If port `3005` is taken, then update the .env value `PORT` to an open port and try to start it again.
 
 ## License and Attribution
+Map data and tiles are provided by [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors under [ODbL/CC-BY-SA](https://creativecommons.org/licenses/by-sa/2.0/).  Rendering is done with [Leaflet](https://leafletjs.com/).
+
 Primary Developers: 
 Bryan Haberberger -- [https://github.com/thehabes](https://github.com/thehabes)
 Patrick Cuba -- [https://github.com/cubap](https://github.com/cubap)

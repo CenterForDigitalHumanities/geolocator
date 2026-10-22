@@ -53,19 +53,57 @@ header img{
 }
 .download-button{
   background-color: transparent;
-  background-image: url("https://icongr.am/feather/download.svg?size=24");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  width: 25px;
-  height: 25px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  color: #333;
+  font-size: .85rem;
+  padding: .25rem .75rem;
+  cursor: pointer;
 }
 .geometry-type-button{
   background-color: #d0d6d0;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  width: 20px;
-  height: 25px;
+  color: #222;
+  border: 3px solid transparent;
+  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
+.geometry-type-button.selected{
+  border: 3px solid black;
+}
+.geometry-type-row{
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.mode-toggle{
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.mode-toggle .button.active{
+  background-color: #001e3c;
+  color: #fff;
+}
+.resourcePreview{
+  max-height: 30rem;
+  overflow: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: .5rem;
+  background: #fafafa;
+}
+/* JSON syntax highlighting tokens (see public/js/utils.js) */
+.json-key{ color: #a31515; }
+.json-string{ color: #0451a5; }
+.json-number{ color: #098658; }
+.json-boolean{ color: #795e26; }
+.json-null{ color: #795e26; }
 .navLinks{
   display: flex;
   justify-content: center;
